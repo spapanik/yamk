@@ -36,6 +36,9 @@ classifiers=[
     "Topic :: Software Development :: Build Tools",
 ]
 
+[tool.poetry.scripts]
+yamk = "yamk.main:main"
+
 [tool.poetry.dependencies]
 python = "^3.6.0"
 
