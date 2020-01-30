@@ -1,0 +1,14 @@
+# cache
+__pycache__/
+.pytest_cache/
+
+# tests
+.coverage
+
+# installation artifacts
+requirements.txt
+
+# Distribution / packaging
+pip-wheel-metadata/
+dist/
+*.egg-info/

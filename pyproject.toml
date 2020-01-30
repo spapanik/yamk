@@ -1,0 +1,60 @@
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"
+
+[tool.black]
+target-version = ["py36", "py37", "py38"]
+
+[tool.isort]
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+known_tests = "tests"
+sections = ["STDLIB", "THIRDPARTY", "FIRSTPARTY", "TESTS"]
+
+[tool.poetry]
+name = "yamk"
+version = "0.1.0"
+description = "Yet another make"
+authors = [
+    "Stephanos Kuma <spapanik21@gmail.com>",
+]
+
+license = "LGPLv3"
+readme = "README.md"
+include = ["CHANGELOG.md"]
+
+repository = "https://github.com/spapanik/yamk"
+
+keywords = ["make", "build", "cli"]
+classifiers=[
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Build Tools",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6.0"
+
+[tool.poetry.dev-dependencies]
+black = {version = "*", allow-prereleases = true}
+isort = "^4.3.0"
+
+pytest = "^5.1.0"
+pytest-cov = "^2.8.0"
+coveralls = "^1.8.0"
+
+ipython = "^7.8.0"
+ipdb = "^0.12.0"
+
+flake8 = "^3.7.0"
+flake8-bugbear = "^20.1.0"
+flake8-builtins = "^1.4.0"
+flake8-comprehensions = "^3.1.0"
+flake8-eradicate = "^0.2.0"
+flake8-executable = "^2.0.0"
+flake8-mutable = "^1.2.0"
+flake8-tidy-imports = "^4.0.0"
