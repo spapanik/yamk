@@ -1,6 +1,10 @@
 import argparse
+import sys
 
 from yamk import __version__
+from yamk.make import MakeCommand
+
+sys.tracebacklimit = 0
 
 
 def parse_args():
@@ -14,9 +18,13 @@ def parse_args():
         version=f"%(prog)s {__version__}",
         help="Print the version and exit",
     )
+    parser.add_argument(
+        "targets", nargs="+", help="Print the version and exit",
+    )
 
     return parser.parse_args()
 
 
 def main():
-    parse_args()
+    args = parse_args()
+    MakeCommand(args).make()
