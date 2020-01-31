@@ -11,18 +11,3 @@ poetry.lock: pyproject.toml
 requirements.txt: poetry.lock
 	poetry install $(POETRY_EXTRA)
 	poetry export --without-hashes -f requirements.txt -o $@
-
-.PHONY: format
-format:
-	isort --recursive .
-	black .
-
-.PHONY: lint
-lint:
-	flake8 .
-	isort --check-only --recursive .
-	black --check .
-
-.PHONY: tests
-tests:
-	py.test $(TEST_FLAGS) $(TEST_PATH)

@@ -1,0 +1,20 @@
+[format]
+phony = true
+commands = [
+    "isort --recursive .",
+    "black .",
+]
+
+[lint]
+phony = true
+commands = [
+    "flake8",
+    "isort --check-only --recursive .",
+    "black --check .",
+]
+
+[tests]
+phony = true
+commands = [
+    "pytest -vv --cov=src tests/"
+]

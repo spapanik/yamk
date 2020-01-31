@@ -10,7 +10,7 @@ install:
   - "make requirements.txt"
 
 script:
-  - "make tests"
+  - "yamk tests"
 
 after_success:
   - coveralls
