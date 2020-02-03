@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
+- Create yam alias for yamk
 - Allow using variables for strings of text
 
 ## [0.1.1] - 2020-01-31
