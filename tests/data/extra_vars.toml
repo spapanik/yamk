@@ -1,0 +1,14 @@
+["$globals"]
+vars = [
+    {dir = "that"},
+    {filename = "phony.txt"},
+]
+
+[phony]
+phony = true
+vars = [
+    {dir = "this"},
+]
+commands = [
+    "echo ${dir}/${filename}",
+]

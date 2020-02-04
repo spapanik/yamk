@@ -19,6 +19,9 @@ def parse_args():
         help="Print the version and exit",
     )
     parser.add_argument(
+        "-m", "--makefile", default="make.toml", help="The path to makefile",
+    )
+    parser.add_argument(
         "targets", nargs="+", help="The list of targets for yamk",
     )
 

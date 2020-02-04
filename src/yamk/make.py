@@ -8,7 +8,8 @@ import toml
 class MakeCommand:
     def __init__(self, args):
         self.targets = args.targets
-        with open("make.toml") as file:
+        self.makefile = args.makefile
+        with open(self.makefile) as file:
             self.recipes = toml.load(file)
         self.globals = self.recipes.get("$globals", {})
         self.vars = dict(**os.environ)

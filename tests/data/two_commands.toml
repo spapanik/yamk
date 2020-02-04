@@ -1,0 +1,6 @@
+[phony]
+phony = true
+commands = [
+    "ls -l",
+    "echo NULL",
+]
