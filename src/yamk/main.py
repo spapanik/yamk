@@ -19,7 +19,7 @@ def parse_args():
         help="Print the version and exit",
     )
     parser.add_argument(
-        "targets", nargs="+", help="Print the version and exit",
+        "targets", nargs="+", help="The list of targets for yamk",
     )
 
     return parser.parse_args()
