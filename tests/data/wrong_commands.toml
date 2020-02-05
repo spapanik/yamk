@@ -1,0 +1,20 @@
+[failure]
+phony = true
+commands = [
+    "false",
+    "ls"
+]
+
+[allowed_failure]
+phony = true
+allow_failures = true
+commands = [
+    "false",
+    "ls",
+]
+
+[allowed_failure_in_command]
+phony = true
+commands = [
+    "[allow_failures]false",
+]

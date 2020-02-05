@@ -1,0 +1,12 @@
+[echo]
+phony = true
+echo = true
+commands = [
+    "ls",
+]
+
+[echo_in_command]
+phony = true
+commands = [
+    "[echo]ls",
+]

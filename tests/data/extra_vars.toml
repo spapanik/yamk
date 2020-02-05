@@ -2,6 +2,8 @@
 vars = [
     {dir = "that"},
     {filename = "phony.txt"},
+    {"[strong]FOO" = "foo"},
+    {BAR =  "bar"}
 ]
 
 [phony]
@@ -11,4 +13,13 @@ vars = [
 ]
 commands = [
     "echo ${dir}/${filename}",
+]
+
+[strong_var]
+phony = true
+vars = [
+    {dir = "this"},
+]
+commands = [
+    "echo ${FOO} ${BAR}",
 ]
