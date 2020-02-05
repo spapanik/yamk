@@ -28,7 +28,7 @@ class TestMakeCommand:
         runner.assert_not_called()
 
     @staticmethod
-    @mock.patch("yamk.make.subprocess.run")
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
     def test_make_builds_with_two_commands(runner):
         args = mock.MagicMock()
         args.target = "phony"
@@ -38,7 +38,7 @@ class TestMakeCommand:
         assert runner.call_count == 2
 
     @staticmethod
-    @mock.patch("yamk.make.subprocess.run")
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
     def test_make_extra_vars(runner):
         args = mock.MagicMock()
         args.target = "phony"

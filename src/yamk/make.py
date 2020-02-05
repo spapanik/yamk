@@ -1,5 +1,7 @@
 import os
+import re
 import subprocess
+import sys
 from string import Template
 
 import toml
@@ -26,8 +28,30 @@ class MakeCommand:
         commands = recipe.get("commands", [])
         for command in commands:
             command = self._substitute_vars(command, variables)
-            print(command)
-            subprocess.run(command, shell=True)
+            command, options = self._parse_command(command)
+            if recipe.get("echo") or options.get("echo"):
+                print(command)
+            result = subprocess.run(command, shell=True)
+            if (
+                result.returncode
+                and not recipe.get("allow_failures")
+                and not options.get("allow_failures")
+            ):
+                sys.exit(result.returncode)
+
+    @staticmethod
+    def _parse_command(command):
+        match = re.match(r"\[.*?\]", command)
+        if match is None:
+            return command.strip(), {}
+
+        end = match.end()
+        options = command[1 : end - 1]
+        command = command[end:]
+        return (
+            command.strip(),
+            dict.fromkeys(map(lambda s: s.strip(), options.split(",")), True),
+        )
 
     def _update_variables(self, variables, new_variables):
         for var_block in new_variables:
