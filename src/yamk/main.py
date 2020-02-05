@@ -22,7 +22,7 @@ def parse_args():
         "-m", "--makefile", default="make.toml", help="The path to makefile",
     )
     parser.add_argument(
-        "target", help="The target for yamk",
+        "target", nargs="?", default="all", help="The target for yamk",
     )
 
     return parser.parse_args()
