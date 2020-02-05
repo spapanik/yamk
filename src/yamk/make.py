@@ -19,7 +19,7 @@ class MakeCommand:
         try:
             recipe = self.recipes[self.target]
         except KeyError:
-            raise ValueError
+            raise ValueError(f"No recipe for {self.target}")
 
         variables = self.vars.copy()
         self._update_variables(variables, recipe.get("vars", []))
