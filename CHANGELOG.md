@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.3.0] - 2020-02-05
 ### Added
 - Allow specifying a different makefile
 - `all` is now the default target
