@@ -15,16 +15,6 @@ class MakeCommand:
         self.vars = dict(**os.environ)
         self._update_variables(self.vars, self.globals.get("vars", []))
 
-    def _update_variables(self, variables, new_variables):
-        for var_block in new_variables:
-            for key, value in var_block.items():
-                key = self._substitute_vars(key, variables)
-                value = self._substitute_vars(value, variables)
-                variables[key] = value
-
-    def _substitute_vars(self, string, variables):
-        return Template(string).substitute(**variables)
-
     def make(self):
         try:
             recipe = self.recipes[self.target]
@@ -38,3 +28,13 @@ class MakeCommand:
             command = self._substitute_vars(command, variables)
             print(command)
             subprocess.run(command, shell=True)
+
+    def _update_variables(self, variables, new_variables):
+        for var_block in new_variables:
+            for key, value in var_block.items():
+                key = self._substitute_vars(key, variables)
+                value = self._substitute_vars(value, variables)
+                variables[key] = value
+
+    def _substitute_vars(self, string, variables):
+        return Template(string).substitute(**variables)
