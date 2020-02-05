@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Allow only one target for yamk
+- Change the order of variables
 - Commands are echoed and failures are allowed only if the respective setting is enabled
 
 ## [0.2.0] - 2020-02-03

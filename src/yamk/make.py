@@ -28,7 +28,7 @@ class MakeCommand:
         commands = recipe.get("commands", [])
         for command in commands:
             command = self._substitute_vars(command, variables)
-            command, options = self._parse_command(command)
+            command, options = self._parse_string(command)
             if recipe.get("echo") or options.get("echo"):
                 print(command)
             result = subprocess.run(command, shell=True)
@@ -40,16 +40,16 @@ class MakeCommand:
                 sys.exit(result.returncode)
 
     @staticmethod
-    def _parse_command(command):
-        match = re.match(r"\[.*?\]", command)
+    def _parse_string(string):
+        match = re.match(r"\[.*?\]", string)
         if match is None:
-            return command.strip(), {}
+            return string.strip(), {}
 
         end = match.end()
-        options = command[1 : end - 1]
-        command = command[end:]
+        options = string[1 : end - 1]
+        string = string[end:]
         return (
-            command.strip(),
+            string.strip(),
             dict.fromkeys(map(lambda s: s.strip(), options.split(",")), True),
         )
 
@@ -57,6 +57,9 @@ class MakeCommand:
         for var_block in new_variables:
             for key, value in var_block.items():
                 key = self._substitute_vars(key, variables)
+                key, options = self._parse_string(key)
+                if key in os.environ and not options.get("strong"):
+                    continue
                 value = self._substitute_vars(value, variables)
                 variables[key] = value
 
