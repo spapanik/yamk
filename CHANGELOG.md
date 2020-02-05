@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Allow specifying a different makefile
 
+### Changed
+- Allow only one target for yamk
+
 ## [0.2.0] - 2020-02-03
 ### Added
 - Create yam alias for yamk

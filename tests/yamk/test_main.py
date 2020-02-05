@@ -6,7 +6,7 @@ from yamk import main
 @mock.patch("sys.argv", ["yamk", "phony"])
 def test_parse_args():
     args = main.parse_args()
-    assert args.targets == ["phony"]
+    assert args.target == "phony"
 
 
 @mock.patch("sys.argv", ["yamk", "phony"])

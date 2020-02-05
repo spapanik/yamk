@@ -7,7 +7,7 @@ import toml
 
 class MakeCommand:
     def __init__(self, args):
-        self.targets = args.targets
+        self.target = args.target
         self.makefile = args.makefile
         with open(self.makefile) as file:
             self.recipes = toml.load(file)
@@ -26,16 +26,15 @@ class MakeCommand:
         return Template(string).substitute(**variables)
 
     def make(self):
-        for target in self.targets:
-            try:
-                recipe = self.recipes[target]
-            except KeyError:
-                raise ValueError
+        try:
+            recipe = self.recipes[self.target]
+        except KeyError:
+            raise ValueError
 
-            variables = self.vars.copy()
-            self._update_variables(variables, recipe.get("vars", []))
-            commands = recipe.get("commands", [])
-            for command in commands:
-                command = self._substitute_vars(command, variables)
-                print(command)
-                subprocess.run(command, shell=True)
+        variables = self.vars.copy()
+        self._update_variables(variables, recipe.get("vars", []))
+        commands = recipe.get("commands", [])
+        for command in commands:
+            command = self._substitute_vars(command, variables)
+            print(command)
+            subprocess.run(command, shell=True)
