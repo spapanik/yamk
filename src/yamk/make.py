@@ -63,5 +63,6 @@ class MakeCommand:
                 value = self._substitute_vars(value, variables)
                 variables[key] = value
 
-    def _substitute_vars(self, string, variables):
+    @staticmethod
+    def _substitute_vars(string, variables):
         return Template(string).substitute(**variables)
