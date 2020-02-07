@@ -1,9 +1,17 @@
 ["$globals"]
 vars = [
     {
-        "pytest_args"= "-vv --cov=src/",
-        "pytest_path"= "tests/"
+        "pytest_args" = "-vv --cov=src/",
+        "pytest_path" = "tests/",
+        "poetry_extra" = ""
     },
+]
+
+[all]
+phony = true
+requires = ["requirements.txt"]
+commands = [
+    "poetry install ${poetry_extra}",
 ]
 
 [format]
@@ -24,5 +32,18 @@ commands = [
 [tests]
 phony = true
 commands = [
-    "pytest ${pytest_args} ${pytest_path}"
+    "pytest ${pytest_args} ${pytest_path}",
+]
+
+["poetry.lock"]
+requires = ["pyproject.toml"]
+commands = [
+    "poetry lock",
+]
+
+["requirements.txt"]
+requires = ["poetry.lock"]
+commands = [
+    "poetry install ${poetry_extra}",
+    "poetry export --without-hashes -f requirements.txt -o requirements.txt",
 ]

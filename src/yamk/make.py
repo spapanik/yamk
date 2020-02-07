@@ -1,4 +1,5 @@
 import os
+import pathlib
 import re
 import subprocess
 import sys
@@ -18,11 +19,45 @@ class MakeCommand:
         self._update_variables(self.vars, self.globals.get("vars", []))
 
     def make(self):
-        try:
-            recipe = self.recipes[self.target]
-        except KeyError:
-            raise ValueError(f"No recipe for {self.target}")
+        recipe = self._extract_recipe(self.target)
+        if recipe is None:
+            raise ValueError(f"No recipe to build {self.target}")
+        unprocessed = {self.target: {"recipe": recipe, "priority": 0}}
+        preprocessed = {}
+        while unprocessed:
+            target, info = unprocessed.popitem()
+            priority = info["priority"] + 1
+            recipe = info["recipe"]
+            preprocessed[target] = info
+            for requirement in recipe.get("requires", []):
+                recipe = self._extract_recipe(requirement)
+                path = pathlib.Path(requirement)
+                if requirement in preprocessed:
+                    current_priority = preprocessed[requirement]["priority"]
+                    preprocessed[requirement]["priority"] = max(
+                        priority, current_priority
+                    )
+                elif recipe is not None:
+                    unprocessed[requirement] = {
+                        "recipe": self._extract_recipe(requirement),
+                        "priority": priority,
+                    }
+                elif path.exists():
+                    preprocessed[requirement] = {
+                        "priority": priority,
+                        "timestamp": path.stat().st_mtime,
+                    }
+                else:
+                    raise ValueError(f"No recipe to build {requirement}")
 
+        self._mark_unchanged(preprocessed)
+        for info in filter(
+            lambda x: x["should_build"],
+            sorted(preprocessed.values(), key=lambda x: x["priority"], reverse=True),
+        ):
+            self._make_target(info["recipe"])
+
+    def _make_target(self, recipe):
         variables = self.vars.copy()
         self._update_variables(variables, recipe.get("vars", []))
         commands = recipe.get("commands", [])
@@ -38,6 +73,36 @@ class MakeCommand:
                 and not options.get("allow_failures")
             ):
                 sys.exit(result.returncode)
+
+    def _extract_recipe(self, target):
+        try:
+            return self.recipes[target]
+        except KeyError:
+            return None
+
+    def _mark_unchanged(self, preprocessed):
+        for target, info in sorted(
+            preprocessed.items(), key=lambda x: x[1]["priority"], reverse=True
+        ):
+            target_path = pathlib.Path(target)
+            if "recipe" not in info:
+                info["should_build"] = False
+            elif info["recipe"].get("phony"):
+                info["should_build"] = True
+            elif not target_path.exists():
+                info["should_build"] = True
+            elif any(
+                preprocessed[requirement]["should_build"]
+                for requirement in info["recipe"]["requires"]
+            ):
+                info["should_build"] = True
+            else:
+                ts = target_path.stat().st_mtime
+                req_ts = max(
+                    pathlib.Path(requirement).stat().st_mtime
+                    for requirement in info["recipe"]["requires"]
+                )
+                info["should_build"] = req_ts > ts
 
     @staticmethod
     def _parse_string(string):
