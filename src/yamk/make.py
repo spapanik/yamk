@@ -19,9 +19,18 @@ class MakeCommand:
         self._update_variables(self.vars, self.globals.get("vars", []))
 
     def make(self):
+        preprocessed = self._preprocess_target()
+        for info in filter(
+            lambda x: x["should_build"],
+            sorted(preprocessed.values(), key=lambda x: x["priority"], reverse=True),
+        ):
+            self._make_target(info["recipe"])
+
+    def _preprocess_target(self):
         recipe = self._extract_recipe(self.target)
         if recipe is None:
             raise ValueError(f"No recipe to build {self.target}")
+
         unprocessed = {self.target: {"recipe": recipe, "priority": 0}}
         preprocessed = {}
         while unprocessed:
@@ -51,11 +60,7 @@ class MakeCommand:
                     raise ValueError(f"No recipe to build {requirement}")
 
         self._mark_unchanged(preprocessed)
-        for info in filter(
-            lambda x: x["should_build"],
-            sorted(preprocessed.values(), key=lambda x: x["priority"], reverse=True),
-        ):
-            self._make_target(info["recipe"])
+        return preprocessed
 
     def _make_target(self, recipe):
         variables = self.vars.copy()
