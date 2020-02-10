@@ -48,7 +48,7 @@ class MakeCommand:
                     )
                 elif recipe is not None:
                     unprocessed[requirement] = {
-                        "recipe": self._extract_recipe(requirement),
+                        "recipe": recipe,
                         "priority": priority,
                     }
                 elif path.exists():
