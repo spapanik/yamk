@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Allow specifying requirements
 
+### Changed
+- Build only if something has actually changed
+
 ## [0.3.0] - 2020-02-05
 ### Added
 - Allow specifying a different makefile

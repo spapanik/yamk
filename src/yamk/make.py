@@ -20,11 +20,11 @@ class MakeCommand:
 
     def make(self):
         preprocessed = self._preprocess_target()
-        for info in filter(
-            lambda x: x["should_build"],
-            sorted(preprocessed.values(), key=lambda x: x["priority"], reverse=True),
+        for target, info in filter(
+            lambda x: x[1]["should_build"],
+            sorted(preprocessed.items(), key=lambda x: x[1]["priority"], reverse=True),
         ):
-            self._make_target(info["recipe"])
+            self._make_target(target, info["recipe"])
 
     def _preprocess_target(self):
         recipe = self._extract_recipe(self.target)
@@ -52,17 +52,14 @@ class MakeCommand:
                         "priority": priority,
                     }
                 elif path.exists():
-                    preprocessed[requirement] = {
-                        "priority": priority,
-                        "timestamp": path.stat().st_mtime,
-                    }
+                    preprocessed[requirement] = {"priority": priority}
                 else:
                     raise ValueError(f"No recipe to build {requirement}")
 
         self._mark_unchanged(preprocessed)
         return preprocessed
 
-    def _make_target(self, recipe):
+    def _make_target(self, target, recipe):
         variables = self.vars.copy()
         self._update_variables(variables, recipe.get("vars", []))
         commands = recipe.get("commands", [])
@@ -72,6 +69,9 @@ class MakeCommand:
             if recipe.get("echo") or options.get("echo"):
                 print(command)
             result = subprocess.run(command, shell=True)
+            if not result.returncode and recipe.get("phony") and recipe.get("keep_ts"):
+                path = self._phony_path(target)
+                path.touch()
             if (
                 result.returncode
                 and not recipe.get("allow_failures")
@@ -89,25 +89,64 @@ class MakeCommand:
         for target, info in sorted(
             preprocessed.items(), key=lambda x: x[1]["priority"], reverse=True
         ):
-            target_path = pathlib.Path(target)
-            if "recipe" not in info:
-                info["should_build"] = False
-            elif info["recipe"].get("phony"):
-                info["should_build"] = True
-            elif not target_path.exists():
-                info["should_build"] = True
-            elif any(
-                preprocessed[requirement]["should_build"]
-                for requirement in info["recipe"]["requires"]
-            ):
-                info["should_build"] = True
-            else:
-                ts = target_path.stat().st_mtime
-                req_ts = max(
-                    pathlib.Path(requirement).stat().st_mtime
-                    for requirement in info["recipe"]["requires"]
-                )
-                info["should_build"] = req_ts > ts
+            ts = self._infer_timestamp(target, info)
+            info["timestamp"] = ts
+            should_build = self._should_build(target, preprocessed)
+            info["should_build"] = should_build
+
+    def _phony_path(self, target):
+        phony_dir = pathlib.Path(self.makefile).parent
+        encoded_target = target.replace('.', '.46').replace('/', '.47')
+        return phony_dir.joinpath(encoded_target)
+
+    def _should_build(self, target, preprocessed):
+        info = preprocessed[target]
+        recipe = info.get("recipe")
+        if recipe is None:
+            return False
+        if recipe.get("phony"):
+            if not recipe.get("keep_ts"):
+                return True
+            path = self._phony_path(target)
+            if not path.exists():
+                return True
+        else:
+            path = pathlib.Path(target)
+            if not path.exists():
+                return True
+            if recipe.get("exists_only"):
+                return False
+
+        if any(
+            preprocessed[requirement]["should_build"]
+            for requirement in recipe["requires"]
+        ):
+            return True
+        ts = info["timestamp"]
+
+        req_ts = max(
+            preprocessed[requirement]["timestamp"]
+            for requirement in recipe["requires"]
+        )
+        return req_ts > ts
+
+    def _infer_timestamp(self, target, info):
+        recipe = info.get("recipe")
+        path = pathlib.Path(target)
+        if recipe is None:
+            return path.stat().st_mtime
+        if recipe.get("phony"):
+            path = self._phony_path(target)
+            if recipe.get("keep_ts") and path.exists():
+                return path.stat().st_mtime
+            return float("inf")
+        if recipe.get("exists_only"):
+            return 0
+        if path.exists():
+            if recipe.get("recursive"):
+                return max(p.stat().st_mtime for p in path)
+            return path.stat().st_mtime
+        return float("inf")
 
     @staticmethod
     def _parse_string(string):
