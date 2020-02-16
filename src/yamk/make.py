@@ -3,9 +3,10 @@ import pathlib
 import re
 import subprocess
 import sys
-from string import Template
 
 import toml
+
+from yamk.lib import substitute_vars
 
 
 class MakeCommand:
@@ -64,7 +65,7 @@ class MakeCommand:
         self._update_variables(variables, recipe.get("vars", []))
         commands = recipe.get("commands", [])
         for command in commands:
-            command = self._substitute_vars(command, variables)
+            command = substitute_vars(command, variables)
             command, options = self._parse_string(command)
             if recipe.get("echo") or options.get("echo"):
                 print(command)
@@ -96,7 +97,7 @@ class MakeCommand:
 
     def _phony_path(self, target):
         phony_dir = pathlib.Path(self.makefile).parent
-        encoded_target = target.replace('.', '.46').replace('/', '.47')
+        encoded_target = target.replace(".", ".46").replace("/", ".47")
         return phony_dir.joinpath(encoded_target)
 
     def _should_build(self, target, preprocessed):
@@ -125,8 +126,7 @@ class MakeCommand:
         ts = info["timestamp"]
 
         req_ts = max(
-            preprocessed[requirement]["timestamp"]
-            for requirement in recipe["requires"]
+            preprocessed[requirement]["timestamp"] for requirement in recipe["requires"]
         )
         return req_ts > ts
 
@@ -165,13 +165,9 @@ class MakeCommand:
     def _update_variables(self, variables, new_variables):
         for var_block in new_variables:
             for key, value in var_block.items():
-                key = self._substitute_vars(key, variables)
+                key = substitute_vars(key, variables)
                 key, options = self._parse_string(key)
                 if key in os.environ and not options.get("strong"):
                     continue
-                value = self._substitute_vars(value, variables)
+                value = substitute_vars(value, variables)
                 variables[key] = value
-
-    @staticmethod
-    def _substitute_vars(string, variables):
-        return Template(string).substitute(**variables)
