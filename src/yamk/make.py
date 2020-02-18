@@ -1,12 +1,11 @@
 import os
 import pathlib
-import re
 import subprocess
 import sys
 
 import toml
 
-from yamk.lib import substitute_vars
+from yamk import lib
 
 
 class MakeCommand:
@@ -65,9 +64,9 @@ class MakeCommand:
         self._update_variables(variables, recipe.get("vars", []))
         commands = recipe.get("commands", [])
         for command in commands:
-            command = substitute_vars(command, variables)
-            command, options = self._parse_string(command)
-            if recipe.get("echo") or options.get("echo"):
+            command = lib.substitute_vars(command, variables)
+            command, options = lib.extract_options(command)
+            if recipe.get("echo") or "echo" in options:
                 print(command)
             result = subprocess.run(command, shell=True)
             if not result.returncode and recipe.get("phony") and recipe.get("keep_ts"):
@@ -76,7 +75,7 @@ class MakeCommand:
             if (
                 result.returncode
                 and not recipe.get("allow_failures")
-                and not options.get("allow_failures")
+                and "allow_failures" not in options
             ):
                 sys.exit(result.returncode)
 
@@ -148,26 +147,12 @@ class MakeCommand:
             return path.stat().st_mtime
         return float("inf")
 
-    @staticmethod
-    def _parse_string(string):
-        match = re.match(r"\[.*?\]", string)
-        if match is None:
-            return string.strip(), {}
-
-        end = match.end()
-        options = string[1 : end - 1]
-        string = string[end:]
-        return (
-            string.strip(),
-            dict.fromkeys(map(lambda s: s.strip(), options.split(",")), True),
-        )
-
     def _update_variables(self, variables, new_variables):
         for var_block in new_variables:
             for key, value in var_block.items():
-                key = substitute_vars(key, variables)
-                key, options = self._parse_string(key)
-                if key in os.environ and not options.get("strong"):
+                key = lib.substitute_vars(key, variables)
+                key, options = lib.extract_options(key)
+                if key in os.environ and "strong" not in options:
                     continue
-                value = substitute_vars(value, variables)
+                value = lib.substitute_vars(value, variables)
                 variables[key] = value

@@ -21,16 +21,8 @@ def test_substite_vars(string, variables, expected):
 @pytest.mark.parametrize(
     ["regex", "sample", "variables"],
     [
-        [
-            r"./path/to/(?P<daemon>\w+).conf",
-            "./path/not/to/sqld.conf",
-            {},
-        ],
-        [
-            r"./path/to/(?P<daemon>\w+).conf",
-            "./path/to/sqld.conf",
-            {"daemon": "sqld"},
-        ],
+        [r"./path/to/(?P<daemon>\w+).conf", "./path/not/to/sqld.conf", {}],
+        [r"./path/to/(?P<daemon>\w+).conf", "./path/to/sqld.conf", {"daemon": "sqld"}],
         [
             r"(.+)/path/to/(?P<daemon>\w+).conf",
             "./path/to/sqld.conf",
@@ -40,3 +32,18 @@ def test_substite_vars(string, variables, expected):
 )
 def test_extract_regex_vars(regex, sample, variables):
     assert lib.extract_regex_vars(regex, sample) == variables
+
+
+@pytest.mark.parametrize(
+    ["string", "expected_options", "expected_string"],
+    [
+        ["string", set(), "string"],
+        ["[english]string", {"english"}, "string"],
+        ["[english, utf-8]string", {"english", "utf-8"}, "string"],
+        ["[more_brackets]string_with_]_in_it", {"more_brackets"}, "string_with_]_in_it"]
+    ],
+)
+def test_extract_options(string, expected_options, expected_string):
+    string, options = lib.extract_options(string)
+    assert string == expected_string
+    assert options == expected_options

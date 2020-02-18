@@ -1,6 +1,7 @@
 import re
 
 VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>\w+(:\w+)?)}")
+OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
 
 
 def _stringify(value):
@@ -26,6 +27,19 @@ def substitute_vars(string, variables):
         return f"{'$'*(len(dollars)//2)}{{{variable}}}"
 
     return re.sub(VAR, repl, string)
+
+
+def extract_options(string):
+    match = re.fullmatch(OPTIONS, string)
+    if match is None:
+        return string.strip(), set()
+
+    options = match.group("options")
+    string = match.group("string")
+    return (
+        string,
+        set(map(lambda s: s.strip(), options.split(","))),
+    )
 
 
 def extract_regex_vars(regex, sample):
