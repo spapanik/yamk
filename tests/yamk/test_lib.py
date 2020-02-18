@@ -16,3 +16,27 @@ from yamk import lib
 )
 def test_substite_vars(string, variables, expected):
     assert lib.substitute_vars(string, variables) == expected
+
+
+@pytest.mark.parametrize(
+    ["regex", "sample", "variables"],
+    [
+        [
+            r"./path/to/(?P<daemon>\w+).conf",
+            "./path/not/to/sqld.conf",
+            {},
+        ],
+        [
+            r"./path/to/(?P<daemon>\w+).conf",
+            "./path/to/sqld.conf",
+            {"daemon": "sqld"},
+        ],
+        [
+            r"(.+)/path/to/(?P<daemon>\w+).conf",
+            "./path/to/sqld.conf",
+            {"daemon": "sqld"},
+        ],
+    ],
+)
+def test_extract_regex_vars(regex, sample, variables):
+    assert lib.extract_regex_vars(regex, sample) == variables

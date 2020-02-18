@@ -26,3 +26,11 @@ def substitute_vars(string, variables):
         return f"{'$'*(len(dollars)//2)}{{{variable}}}"
 
     return re.sub(VAR, repl, string)
+
+
+def extract_regex_vars(regex, sample):
+    match = re.fullmatch(regex, sample)
+    if match is None:
+        return {}
+
+    return match.groupdict()
