@@ -12,6 +12,7 @@ class MakeCommand:
     def __init__(self, args):
         self.target = args.target
         self.makefile = args.makefile
+        self.phony_dir = pathlib.Path(self.makefile).parent.joinpath(".yamk")
         with open(self.makefile) as file:
             self.recipes = toml.load(file)
         self.globals = self.recipes.get("$globals", {})
@@ -78,6 +79,11 @@ class MakeCommand:
                 and "allow_failures" not in options
             ):
                 sys.exit(result.returncode)
+        if recipe.get("phony") and recipe.get("keep_ts"):
+            path = self._phony_path(target)
+            self.phony_dir.mkdir(exist_ok=True)
+            path.touch()
+            print(path)
 
     def _extract_recipe(self, target):
         try:
@@ -95,9 +101,8 @@ class MakeCommand:
             info["should_build"] = should_build
 
     def _phony_path(self, target):
-        phony_dir = pathlib.Path(self.makefile).parent
         encoded_target = target.replace(".", ".46").replace("/", ".47")
-        return phony_dir.joinpath(encoded_target)
+        return self.phony_dir.joinpath(encoded_target)
 
     def _should_build(self, target, preprocessed):
         info = preprocessed[target]
