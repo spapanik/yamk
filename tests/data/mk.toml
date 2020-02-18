@@ -1,0 +1,59 @@
+["$globals"]
+vars = [
+    {dir = "/etc"},
+    {"[strong]conf_dir" = "local.service.d"},
+    {filename = "local.service.conf"},
+]
+
+[phony]
+phony = true
+
+[two_commands]
+phony = true
+commands = [
+    "ls",
+    "echo 42",
+]
+
+[variables]
+phony = true
+vars = [
+    {dir = "/path/to/local/conf"},
+]
+commands = [
+    "echo ${dir}/${conf_dir}/${filename}",
+]
+
+[failure]
+phony = true
+commands = [
+    "false",
+    "ls"
+]
+
+[allowed_failure]
+phony = true
+allow_failures = true
+commands = [
+    "false",
+    "ls",
+]
+
+[allowed_failure_in_command]
+phony = true
+commands = [
+    "[allow_failures]false",
+]
+
+[echo]
+phony = true
+echo = true
+commands = [
+    "ls",
+]
+
+[echo_in_command]
+phony = true
+commands = [
+    "[echo]ls",
+]
