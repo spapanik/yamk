@@ -1,5 +1,6 @@
 import os
 import pathlib
+import re
 import subprocess
 import sys
 
@@ -10,12 +11,15 @@ from yamk import lib
 
 class MakeCommand:
     def __init__(self, args):
+        self.regex_recipes = {}
+        self.static_recipes = {}
         self.target = args.target
         self.makefile = args.makefile
         self.phony_dir = pathlib.Path(self.makefile).parent.joinpath(".yamk")
         with open(self.makefile) as file:
-            self.recipes = toml.load(file)
-        self.globals = self.recipes.get("$globals", {})
+            parsed_toml = toml.load(file)
+        self.globals = parsed_toml.pop("$globals", {})
+        self._parse_recipes(parsed_toml)
         self.vars = dict(**os.environ)
         self._update_variables(self.vars, self.globals.get("vars", []))
 
@@ -26,6 +30,13 @@ class MakeCommand:
             sorted(preprocessed.items(), key=lambda x: x[1]["priority"], reverse=True),
         ):
             self._make_target(target, info["recipe"])
+
+    def _parse_recipes(self, parsed_toml):
+        for target, recipe in parsed_toml.items():
+            if recipe.get("regex"):
+                self.regex_recipes[re.compile(target)] = recipe
+            else:
+                self.static_recipes[target] = recipe
 
     def _preprocess_target(self):
         recipe = self._extract_recipe(self.target)
@@ -87,8 +98,11 @@ class MakeCommand:
 
     def _extract_recipe(self, target):
         try:
-            return self.recipes[target]
+            return self.static_recipes[target]
         except KeyError:
+            for regex, recipe in self.regex_recipes.items():
+                if re.fullmatch(regex, target):
+                    return recipe
             return None
 
     def _mark_unchanged(self, preprocessed):

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Allow lists and dicts for string replacement
+- Allow regex targets
 
 ## [0.4.0] - 2020-02-12
 ### Added
