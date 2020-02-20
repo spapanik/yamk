@@ -40,7 +40,11 @@ def test_extract_regex_vars(regex, sample, variables):
         ["string", set(), "string"],
         ["[english]string", {"english"}, "string"],
         ["[english, utf-8]string", {"english", "utf-8"}, "string"],
-        ["[more_brackets]string_with_]_in_it", {"more_brackets"}, "string_with_]_in_it"]
+        [
+            "[more_brackets]string_with_]_in_it",
+            {"more_brackets"},
+            "string_with_]_in_it",
+        ],
     ],
 )
 def test_extract_options(string, expected_options, expected_string):
