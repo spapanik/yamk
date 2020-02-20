@@ -1,7 +1,22 @@
 import re
+import os
 
 VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>\w+(:\w+)?)}")
 OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
+
+
+class Variables(dict):
+    def add_batch(self, batch):
+        new_vars = self.__class__(**self)
+        for var_block in batch:
+            for key, value in var_block.items():
+                key = substitute_vars(key, new_vars)
+                key, options = extract_options(key)
+                if key in os.environ and "strong" not in options:
+                    continue
+                value = substitute_vars(value, new_vars)
+                new_vars[key] = value
+        return new_vars
 
 
 def _stringify(value):

@@ -40,8 +40,7 @@ class MakeCommand:
             parsed_toml = toml.load(file)
         self.globals = parsed_toml.pop("$globals", {})
         self._parse_recipes(parsed_toml)
-        self.vars = dict(**os.environ)
-        self._update_variables(self.vars, self.globals.get("vars", []))
+        self.vars = lib.Variables(**os.environ).add_batch(self.globals.get("vars", []))
 
     def make(self):
         preprocessed = self._preprocess_target()
@@ -95,8 +94,7 @@ class MakeCommand:
         return preprocessed
 
     def _make_target(self, target, recipe):
-        variables = self.vars.copy()
-        self._update_variables(variables, recipe.vars)
+        variables = self.vars.add_batch(recipe.vars)
         commands = recipe.commands
         for command in commands:
             command = lib.substitute_vars(command, variables)
@@ -187,13 +185,3 @@ class MakeCommand:
                 return max(p.stat().st_mtime for p in path)
             return path.stat().st_mtime
         return float("inf")
-
-    def _update_variables(self, variables, new_variables):
-        for var_block in new_variables:
-            for key, value in var_block.items():
-                key = lib.substitute_vars(key, variables)
-                key, options = lib.extract_options(key)
-                if key in os.environ and "strong" not in options:
-                    continue
-                value = lib.substitute_vars(value, variables)
-                variables[key] = value
