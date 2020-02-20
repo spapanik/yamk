@@ -9,6 +9,26 @@ import toml
 from yamk import lib
 
 
+class Recipe:
+    def __init__(self, target, raw_recipe):
+        self.target = target
+        self.phony = raw_recipe.get("phony", False)
+        self.requires = raw_recipe.get("requires", [])
+        self.vars = raw_recipe.get("vars", [])
+        self.commands = raw_recipe.get("commands", [])
+        self.echo = raw_recipe.get("echo", False)
+        self.regex = raw_recipe.get("regex", False)
+        self.allow_failures = raw_recipe.get("allow_failures", False)
+        if self.phony:
+            self.keep_ts = raw_recipe.get("keep_ts", False)
+            self.exists_only = False
+            self.recursive = False
+        else:
+            self.keep_ts = False
+            self.exists_only = raw_recipe.get("exists_only", False)
+            self.recursive = raw_recipe.get("recursive", False)
+
+
 class MakeCommand:
     def __init__(self, args):
         self.regex_recipes = {}
@@ -32,11 +52,14 @@ class MakeCommand:
             self._make_target(target, info["recipe"])
 
     def _parse_recipes(self, parsed_toml):
-        for target, recipe in parsed_toml.items():
-            if recipe.get("regex"):
-                self.regex_recipes[re.compile(target)] = recipe
+        for target, raw_recipe in parsed_toml.items():
+            if raw_recipe.get("regex"):
+                compiled_target = re.compile(target)
+                self.regex_recipes[compiled_target] = Recipe(
+                    compiled_target, raw_recipe
+                )
             else:
-                self.static_recipes[target] = recipe
+                self.static_recipes[target] = Recipe(target, raw_recipe)
 
     def _preprocess_target(self):
         recipe = self._extract_recipe(self.target)
@@ -50,7 +73,7 @@ class MakeCommand:
             priority = info["priority"] + 1
             recipe = info["recipe"]
             preprocessed[target] = info
-            for requirement in recipe.get("requires", []):
+            for requirement in recipe.requires:
                 recipe = self._extract_recipe(requirement)
                 path = pathlib.Path(requirement)
                 if requirement in preprocessed:
@@ -73,24 +96,24 @@ class MakeCommand:
 
     def _make_target(self, target, recipe):
         variables = self.vars.copy()
-        self._update_variables(variables, recipe.get("vars", []))
-        commands = recipe.get("commands", [])
+        self._update_variables(variables, recipe.vars)
+        commands = recipe.commands
         for command in commands:
             command = lib.substitute_vars(command, variables)
             command, options = lib.extract_options(command)
-            if recipe.get("echo") or "echo" in options:
+            if recipe.echo or "echo" in options:
                 print(command)
             result = subprocess.run(command, shell=True)
-            if not result.returncode and recipe.get("phony") and recipe.get("keep_ts"):
+            if not result.returncode and recipe.phony and recipe.keep_ts:
                 path = self._phony_path(target)
                 path.touch()
             if (
                 result.returncode
-                and not recipe.get("allow_failures")
+                and not recipe.allow_failures
                 and "allow_failures" not in options
             ):
                 sys.exit(result.returncode)
-        if recipe.get("phony") and recipe.get("keep_ts"):
+        if recipe.phony and recipe.keep_ts:
             path = self._phony_path(target)
             self.phony_dir.mkdir(exist_ok=True)
             path.touch()
@@ -123,8 +146,8 @@ class MakeCommand:
         recipe = info.get("recipe")
         if recipe is None:
             return False
-        if recipe.get("phony"):
-            if not recipe.get("keep_ts"):
+        if recipe.phony:
+            if not recipe.keep_ts:
                 return True
             path = self._phony_path(target)
             if not path.exists():
@@ -133,18 +156,17 @@ class MakeCommand:
             path = pathlib.Path(target)
             if not path.exists():
                 return True
-            if recipe.get("exists_only"):
+            if recipe.exists_only:
                 return False
 
         if any(
-            preprocessed[requirement]["should_build"]
-            for requirement in recipe["requires"]
+            preprocessed[requirement]["should_build"] for requirement in recipe.requires
         ):
             return True
         ts = info["timestamp"]
 
         req_ts = max(
-            preprocessed[requirement]["timestamp"] for requirement in recipe["requires"]
+            preprocessed[requirement]["timestamp"] for requirement in recipe.requires
         )
         return req_ts > ts
 
@@ -153,15 +175,15 @@ class MakeCommand:
         path = pathlib.Path(target)
         if recipe is None:
             return path.stat().st_mtime
-        if recipe.get("phony"):
+        if recipe.phony:
             path = self._phony_path(target)
-            if recipe.get("keep_ts") and path.exists():
+            if recipe.keep_ts and path.exists():
                 return path.stat().st_mtime
             return float("inf")
-        if recipe.get("exists_only"):
+        if recipe.exists_only:
             return 0
         if path.exists():
-            if recipe.get("recursive"):
+            if recipe.recursive:
                 return max(p.stat().st_mtime for p in path)
             return path.stat().st_mtime
         return float("inf")
