@@ -14,7 +14,7 @@ from yamk import lib
         ["${list}", {"list": ["spam", "eggs"]}, "spam eggs"],
     ],
 )
-def test_substite_vars(string, variables, expected):
+def test_substitute_vars(string, variables, expected):
     assert lib.substitute_vars(string, variables) == expected
 
 
