@@ -28,6 +28,29 @@ class Recipe:
             self.exists_only = raw_recipe.get("exists_only", False)
             self.recursive = raw_recipe.get("recursive", False)
 
+    def specify(self, target, globs):
+        if self.regex:
+            groups = re.fullmatch(self.target, target).groupdict()
+            self.target = target
+        else:
+            groups = {}
+        self._update_variables(globs, groups)
+        self._update_requirements()
+        self._update_commands()
+
+    def _update_variables(self, globs, groups):
+        self.vars = globs.add_batch(self.vars).add_batch([groups])
+
+    def _update_commands(self):
+        self.commands = [
+            lib.substitute_vars(command, self.vars) for command in self.commands
+        ]
+
+    def _update_requirements(self):
+        self.requires = [
+            lib.substitute_vars(requirement, self.vars) for requirement in self.requires
+        ]
+
 
 class MakeCommand:
     def __init__(self, args):
@@ -38,17 +61,17 @@ class MakeCommand:
         self.phony_dir = pathlib.Path(self.makefile).parent.joinpath(".yamk")
         with open(self.makefile) as file:
             parsed_toml = toml.load(file)
-        self.globals = parsed_toml.pop("$globals", {})
+        file_vars = parsed_toml.pop("$globals", {})
         self._parse_recipes(parsed_toml)
-        self.vars = lib.Variables(**os.environ).add_batch(self.globals.get("vars", []))
+        self.vars = lib.Variables(**os.environ).add_batch(file_vars.get("vars", []))
 
     def make(self):
         preprocessed = self._preprocess_target()
-        for target, info in filter(
-            lambda x: x[1]["should_build"],
-            sorted(preprocessed.items(), key=lambda x: x[1]["priority"], reverse=True),
+        for info in filter(
+            lambda x: x["should_build"],
+            sorted(preprocessed.values(), key=lambda x: x["priority"], reverse=True),
         ):
-            self._make_target(target, info["recipe"])
+            self._make_target(info["recipe"])
 
     def _parse_recipes(self, parsed_toml):
         for target, raw_recipe in parsed_toml.items():
@@ -93,17 +116,14 @@ class MakeCommand:
         self._mark_unchanged(preprocessed)
         return preprocessed
 
-    def _make_target(self, target, recipe):
-        variables = self.vars.add_batch(recipe.vars)
-        commands = recipe.commands
-        for command in commands:
-            command = lib.substitute_vars(command, variables)
+    def _make_target(self, recipe):
+        for command in recipe.commands:
             command, options = lib.extract_options(command)
             if recipe.echo or "echo" in options:
                 print(command)
             result = subprocess.run(command, shell=True)
             if not result.returncode and recipe.phony and recipe.keep_ts:
-                path = self._phony_path(target)
+                path = self._phony_path(recipe.target)
                 path.touch()
             if (
                 result.returncode
@@ -112,19 +132,22 @@ class MakeCommand:
             ):
                 sys.exit(result.returncode)
         if recipe.phony and recipe.keep_ts:
-            path = self._phony_path(target)
+            path = self._phony_path(recipe.target)
             self.phony_dir.mkdir(exist_ok=True)
             path.touch()
-            print(path)
 
     def _extract_recipe(self, target):
         try:
-            return self.static_recipes[target]
+            recipe = self.static_recipes[target]
         except KeyError:
             for regex, recipe in self.regex_recipes.items():
                 if re.fullmatch(regex, target):
-                    return recipe
-            return None
+                    break
+            else:
+                return None
+
+        recipe.specify(target, self.vars)
+        return recipe
 
     def _mark_unchanged(self, preprocessed):
         for target, info in sorted(
@@ -161,8 +184,8 @@ class MakeCommand:
             preprocessed[requirement]["should_build"] for requirement in recipe.requires
         ):
             return True
-        ts = info["timestamp"]
 
+        ts = info["timestamp"]
         req_ts = max(
             preprocessed[requirement]["timestamp"] for requirement in recipe.requires
         )
