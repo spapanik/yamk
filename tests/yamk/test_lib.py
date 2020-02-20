@@ -14,7 +14,7 @@ from yamk import lib
         [{"x": "0"}, [{"x": "1"}], {"x": "1"}],
         [{"TEST_VAR": "test"}, [{"TEST_VAR": "1"}], {"TEST_VAR": "test"}],
         [{"TEST_VAR": "test"}, [{"[strong]TEST_VAR": "1"}], {"TEST_VAR": "1"}],
-    ]
+    ],
 )
 def test_add_batch_to_variables(initial, batch, expected):
     os.environ["TEST_VAR"] = "test"
