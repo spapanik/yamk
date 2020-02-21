@@ -108,3 +108,23 @@ class TestMakeCommand:
         make_command.make()
         mock_print.assert_called_once_with("ls")
         assert runner.call_count == 1
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_alias(runner):
+        args = mock.MagicMock()
+        args.target = "alias"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.make()
+        assert runner.call_count == 2
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_regex_target(runner):
+        args = mock.MagicMock()
+        args.target = "regex_42"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.make()
+        runner.assert_called_once_with("echo 42", shell=True)

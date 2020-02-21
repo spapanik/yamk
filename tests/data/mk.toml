@@ -57,3 +57,14 @@ phony = true
 commands = [
     "[echo]ls",
 ]
+
+[alias]
+alias = "two_commands"
+
+
+["regex[-_](?P<number>[^.]\d+)"]
+phony = true
+regex = true
+commands = [
+    "echo ${number}",
+]
