@@ -25,7 +25,7 @@ def _stringify(value):
     return str(value)
 
 
-def substitute_vars(string, variables):
+def substitute_vars(obj, variables):
     def repl(matchobj):
         dollars = matchobj.group("dollars")
         variable = matchobj.group("variable")
@@ -41,7 +41,13 @@ def substitute_vars(string, variables):
             return _stringify(value[key])
         return f"{'$'*(len(dollars)//2)}{{{variable}}}"
 
-    return re.sub(VAR, repl, string)
+    if isinstance(obj, str):
+        return re.sub(VAR, repl, obj)
+    if isinstance(obj, list):
+        return [re.sub(VAR, repl, string) for string in obj]
+    return {
+        re.sub(VAR, repl, key): re.sub(VAR, repl, value) for key, value in obj.items()
+    }
 
 
 def extract_options(string):

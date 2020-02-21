@@ -23,7 +23,7 @@ def test_add_batch_to_variables(initial, batch, expected):
 
 
 @pytest.mark.parametrize(
-    ["string", "variables", "expected"],
+    ["obj", "variables", "expected"],
     [
         ["string", {"x": 1}, "string"],
         ["string_${x}", {"x": 1}, "string_1"],
@@ -31,10 +31,16 @@ def test_add_batch_to_variables(initial, batch, expected):
         ["${dict:key}", {"dict": {"key": "value"}}, "value"],
         ["${list:0}", {"list": ["spam", "eggs"]}, "spam"],
         ["${list}", {"list": ["spam", "eggs"]}, "spam eggs"],
+        [["string_${x}"], {"x": 1}, ["string_1"]],
+        [
+            {"string_${key}": "string_${value}"},
+            {"key": 1, "value": 2},
+            {"string_1": "string_2"},
+        ],
     ],
 )
-def test_substitute_vars(string, variables, expected):
-    assert lib.substitute_vars(string, variables) == expected
+def test_substitute_vars(obj, variables, expected):
+    assert lib.substitute_vars(obj, variables) == expected
 
 
 @pytest.mark.parametrize(

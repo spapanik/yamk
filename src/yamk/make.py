@@ -42,14 +42,10 @@ class Recipe:
         self.vars = globs.add_batch(self.vars).add_batch([groups])
 
     def _update_commands(self):
-        self.commands = [
-            lib.substitute_vars(command, self.vars) for command in self.commands
-        ]
+        self.commands = lib.substitute_vars(self.commands, self.vars)
 
     def _update_requirements(self):
-        self.requires = [
-            lib.substitute_vars(requirement, self.vars) for requirement in self.requires
-        ]
+        self.requires = lib.substitute_vars(self.requires, self.vars)
 
 
 class MakeCommand:

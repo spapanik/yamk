@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Fixed crashing bug when having lists or dicts as variable values
+
 ## [0.5.0] - 2020-02-20
 ### Added
 - Allow lists and dicts for string replacement
