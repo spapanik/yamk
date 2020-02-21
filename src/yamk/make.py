@@ -57,6 +57,7 @@ class MakeCommand:
     def __init__(self, args):
         self.regex_recipes = {}
         self.static_recipes = {}
+        self.aliases = {}
         self.target = args.target
         self.makefile = args.makefile
         self.phony_dir = pathlib.Path(self.makefile).parent.joinpath(".yamk")
@@ -76,6 +77,8 @@ class MakeCommand:
 
     def _parse_recipes(self, parsed_toml):
         for target, raw_recipe in parsed_toml.items():
+            if raw_recipe.get("alias"):
+                self.aliases[target] = raw_recipe["alias"]
             if raw_recipe.get("regex"):
                 compiled_target = re.compile(target)
                 self.regex_recipes[compiled_target] = Recipe(
@@ -138,10 +141,13 @@ class MakeCommand:
             path.touch()
 
     def _extract_recipe(self, target):
+        if target in self.aliases:
+            target = self.aliases[target]
+
         try:
             recipe = self.static_recipes[target]
         except KeyError:
-            for regex, recipe in self.regex_recipes.items():
+            for regex, recipe in self.regex_recipes.items():  # noqa: B007
                 if re.fullmatch(regex, target):
                     break
             else:

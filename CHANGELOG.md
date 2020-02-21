@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add ${target} and ${requirements} as implicit variables
+- Allow aliases for targets
 
 ### Fixed
 - Fix crashing bug when having lists or dicts as variable values
