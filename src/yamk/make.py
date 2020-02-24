@@ -37,20 +37,18 @@ class Recipe:
         self._update_variables(globs, groups)
         self._update_requirements()
         self._update_commands()
-        self._add_implicit_variables()
 
     def _update_variables(self, globs, groups):
-        self.vars = globs.add_batch(self.vars).add_batch([groups])
-
-    def _update_commands(self):
-        self.commands = lib.substitute_vars(self.commands, self.vars)
+        extra_vars = [groups, {"target": self.target}]
+        self.vars = globs.add_batch(self.vars).add_batch(extra_vars)
 
     def _update_requirements(self):
         self.requires = lib.substitute_vars(self.requires, self.vars)
 
-    def _add_implicit_variables(self):
-        implicit_variables = {"target": self.target, "requirements": self.requires}
-        self.vars = self.vars.add_batch([implicit_variables])
+    def _update_commands(self):
+        extra_vars = [{"requirements": self.requires}]
+        self.vars = self.vars.add_batch(extra_vars)
+        self.commands = lib.substitute_vars(self.commands, self.vars)
 
 
 class MakeCommand:
