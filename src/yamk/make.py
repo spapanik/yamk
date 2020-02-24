@@ -57,9 +57,10 @@ class MakeCommand:
         self.static_recipes = {}
         self.aliases = {}
         self.target = args.target
-        self.makefile = args.makefile
-        self.phony_dir = pathlib.Path(self.makefile).parent.joinpath(".yamk")
-        with open(self.makefile) as file:
+        makefile = args.makefile
+        self.base_dir = pathlib.Path(makefile).parent
+        self.phony_dir = self.base_dir.joinpath(".yamk")
+        with open(makefile) as file:
             parsed_toml = toml.load(file)
         file_vars = parsed_toml.pop("$globals", {})
         self._parse_recipes(parsed_toml)
@@ -99,7 +100,7 @@ class MakeCommand:
             preprocessed[target] = info
             for requirement in recipe.requires:
                 recipe = self._extract_recipe(requirement)
-                path = pathlib.Path(requirement)
+                path = self._file_path(requirement)
                 if requirement in preprocessed:
                     current_priority = preprocessed[requirement]["priority"]
                     preprocessed[requirement]["priority"] = max(
@@ -164,6 +165,9 @@ class MakeCommand:
         encoded_target = target.replace(".", ".46").replace("/", ".47")
         return self.phony_dir.joinpath(encoded_target)
 
+    def _file_path(self, target):
+        return self.base_dir.joinpath(target)
+
     def _should_build(self, target, preprocessed):
         info = preprocessed[target]
         recipe = info.get("recipe")
@@ -176,7 +180,7 @@ class MakeCommand:
             if not path.exists():
                 return True
         else:
-            path = pathlib.Path(target)
+            path = self._file_path(target)
             if not path.exists():
                 return True
             if recipe.exists_only:
@@ -195,7 +199,7 @@ class MakeCommand:
 
     def _infer_timestamp(self, target, info):
         recipe = info.get("recipe")
-        path = pathlib.Path(target)
+        path = self._file_path(target)
         if recipe is None:
             return path.stat().st_mtime
         if recipe.phony:
