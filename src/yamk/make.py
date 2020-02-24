@@ -11,10 +11,12 @@ from yamk import lib
 
 class Recipe:
     def __init__(self, target, raw_recipe):
+        self._specified = False
+        self.vars = lib.Variables()
         self.target = target
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
-        self.vars = raw_recipe.get("vars", [])
+        self.variable_list = raw_recipe.get("vars", [])
         self.commands = raw_recipe.get("commands", [])
         self.echo = raw_recipe.get("echo", False)
         self.regex = raw_recipe.get("regex", False)
@@ -29,6 +31,9 @@ class Recipe:
             self.recursive = raw_recipe.get("recursive", False)
 
     def specify(self, target, globs):
+        if self._specified:
+            return
+        self._specified = True
         if self.regex:
             groups = re.fullmatch(self.target, target).groupdict()
             self.target = target
@@ -40,7 +45,7 @@ class Recipe:
 
     def _update_variables(self, globs, groups):
         extra_vars = [groups, {"target": self.target}]
-        self.vars = globs.add_batch(self.vars).add_batch(extra_vars)
+        self.vars = globs.add_batch(self.variable_list).add_batch(extra_vars)
 
     def _update_requirements(self):
         self.requires = lib.substitute_vars(self.requires, self.vars)
