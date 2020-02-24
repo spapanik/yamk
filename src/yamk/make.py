@@ -124,9 +124,6 @@ class MakeCommand:
             if recipe.echo or "echo" in options:
                 print(command)
             result = subprocess.run(command, shell=True)
-            if not result.returncode and recipe.phony and recipe.keep_ts:
-                path = self._phony_path(recipe.target)
-                path.touch()
             if (
                 result.returncode
                 and not recipe.allow_failures
