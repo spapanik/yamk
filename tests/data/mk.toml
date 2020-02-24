@@ -8,6 +8,12 @@ vars = [
 [phony]
 phony = true
 
+[missing_requirement]
+phony = true
+requires = [
+    "missing_target",
+]
+
 [two_commands]
 phony = true
 commands = [
@@ -68,3 +74,51 @@ regex = true
 commands = [
     "echo ${number}",
 ]
+
+[phony_requirement]
+phony = true
+commands = [
+    "ls",
+]
+
+[requires]
+phony = true
+requires = [
+    "/",
+    "phony_requirement",
+]
+commands = [
+    "true",
+]
+
+[implicit_vars]
+phony = true
+requires = [
+    "/",
+    "phony",
+]
+commands = [
+    "echo ${target}",
+    "echo ${requirements}",
+]
+
+[keep_ts]
+phony = true
+keep_ts = true
+requires = [
+    ".yamk",
+]
+commands = [
+    "ls",
+]
+
+[grandparent]
+phony = true
+
+[parent]
+phony = true
+requires = ["parent"]
+
+[dag_target]
+phony = true
+requires = ["parent", "grandparent"]

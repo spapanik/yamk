@@ -10,10 +10,18 @@ from tests.settings import TEST_MAKEFILE
 
 class TestMakeCommand:
     @staticmethod
-    @mock.patch("yamk.make.open", new_callable=mock.mock_open, read_data="")
-    def test_make_raises_on_missing_target(_mock_obj):
+    def test_make_raises_on_missing_target():
         args = mock.MagicMock()
         args.target = "missing_target"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        with pytest.raises(ValueError):
+            make_command.make()
+
+    @staticmethod
+    def test_make_raises_on_missing_requirement():
+        args = mock.MagicMock()
+        args.target = "missing_requirement"
         args.makefile = TEST_MAKEFILE
         make_command = make.MakeCommand(args)
         with pytest.raises(ValueError):
@@ -128,3 +136,54 @@ class TestMakeCommand:
         make_command = make.MakeCommand(args)
         make_command.make()
         runner.assert_called_once_with("echo 42", shell=True)
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_requirements(runner):
+        args = mock.MagicMock()
+        args.target = "requires"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.make()
+        assert runner.call_count == 2
+        calls = [mock.call("ls", shell=True), mock.call("true", shell=True)]
+        runner.assert_has_calls(calls)
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_implicit_variables(runner):
+        args = mock.MagicMock()
+        args.target = "implicit_vars"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.make()
+        assert runner.call_count == 2
+        calls = [
+            mock.call("echo implicit_vars", shell=True),
+            mock.call("echo / phony", shell=True),
+        ]
+        runner.assert_has_calls(calls)
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_phony_and_keep_ts(runner):
+        args = mock.MagicMock()
+        args.target = "keep_ts"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.phony_dir.mkdir(exist_ok=True)
+        make_command.phony_dir.joinpath("keep_ts").touch()
+        os.utime(make_command.phony_dir, times=(1, 3))
+        os.utime(make_command.phony_dir.joinpath("keep_ts"), times=(1, 2))
+        make_command.make()
+        runner.assert_called_once_with("ls", shell=True)
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_dag_target(runner):
+        args = mock.MagicMock()
+        args.target = "dag_target"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.make()
+        # runner.assert_called_once_with("ls", shell=True)
