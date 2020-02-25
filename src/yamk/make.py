@@ -130,7 +130,7 @@ class MakeCommand:
             command, options = lib.extract_options(command)
             if recipe.echo or "echo" in options:
                 print(command)
-            result = subprocess.run(command, shell=True)
+            result = subprocess.run(command, shell=True, cwd=self.base_dir)
             if (
                 result.returncode
                 and not recipe.allow_failures

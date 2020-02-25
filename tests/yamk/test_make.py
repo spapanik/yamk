@@ -90,7 +90,9 @@ class TestMakeCommand:
         make_command = make.MakeCommand(args)
         make_command.make()
         runner.assert_called_once_with(
-            "echo /path/to/local/conf/local.service.d/service.conf", shell=True
+            "echo /path/to/local/conf/local.service.d/service.conf",
+            shell=True,
+            cwd=TEST_MAKEFILE.parent,
         )
 
     @staticmethod
@@ -135,7 +137,7 @@ class TestMakeCommand:
         args.makefile = TEST_MAKEFILE
         make_command = make.MakeCommand(args)
         make_command.make()
-        runner.assert_called_once_with("echo 42", shell=True)
+        runner.assert_called_once_with("echo 42", shell=True, cwd=TEST_MAKEFILE.parent)
 
     @staticmethod
     @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
@@ -146,7 +148,10 @@ class TestMakeCommand:
         make_command = make.MakeCommand(args)
         make_command.make()
         assert runner.call_count == 2
-        calls = [mock.call("ls", shell=True), mock.call("true", shell=True)]
+        calls = [
+            mock.call("ls", shell=True, cwd=TEST_MAKEFILE.parent),
+            mock.call("true", shell=True, cwd=TEST_MAKEFILE.parent),
+        ]
         runner.assert_has_calls(calls)
 
     @staticmethod
@@ -159,8 +164,8 @@ class TestMakeCommand:
         make_command.make()
         assert runner.call_count == 2
         calls = [
-            mock.call("echo implicit_vars", shell=True),
-            mock.call("echo / phony", shell=True),
+            mock.call("echo implicit_vars", shell=True, cwd=TEST_MAKEFILE.parent),
+            mock.call("echo / phony", shell=True, cwd=TEST_MAKEFILE.parent),
         ]
         runner.assert_has_calls(calls)
 
@@ -176,7 +181,7 @@ class TestMakeCommand:
         os.utime(make_command.phony_dir, times=(1, 3))
         os.utime(make_command.phony_dir.joinpath("keep_ts"), times=(1, 2))
         make_command.make()
-        runner.assert_called_once_with("ls", shell=True)
+        runner.assert_called_once_with("ls", shell=True, cwd=TEST_MAKEFILE.parent)
 
     @staticmethod
     @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
@@ -202,7 +207,7 @@ class TestMakeCommand:
         make_command.phony_dir.mkdir(exist_ok=True)
         make_command.phony_dir.joinpath("keep_ts").unlink(missing_ok=True)
         make_command.make()
-        runner.assert_called_once_with("ls", shell=True)
+        runner.assert_called_once_with("ls", shell=True, cwd=TEST_MAKEFILE.parent)
 
     @staticmethod
     @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
@@ -212,7 +217,7 @@ class TestMakeCommand:
         args.makefile = TEST_MAKEFILE
         make_command = make.MakeCommand(args)
         make_command.make()
-        runner.assert_called_once_with("ls", shell=True)
+        runner.assert_called_once_with("ls", shell=True, cwd=TEST_MAKEFILE.parent)
 
     @staticmethod
     @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
@@ -234,7 +239,7 @@ class TestMakeCommand:
         make_command = make.MakeCommand(args)
         make_command.base_dir.joinpath(args.target).unlink(missing_ok=True)
         make_command.make()
-        runner.assert_called_once_with("ls", shell=True)
+        runner.assert_called_once_with("ls", shell=True, cwd=TEST_MAKEFILE.parent)
 
     @staticmethod
     @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
@@ -247,7 +252,10 @@ class TestMakeCommand:
         make_command.base_dir.joinpath(args.target).touch()
         make_command.make()
         assert runner.call_count == 2
-        calls = [mock.call("ls", shell=True), mock.call("echo 42", shell=True)]
+        calls = [
+            mock.call("ls", shell=True, cwd=TEST_MAKEFILE.parent),
+            mock.call("echo 42", shell=True, cwd=TEST_MAKEFILE.parent),
+        ]
         runner.assert_has_calls(calls)
 
     @staticmethod
@@ -263,4 +271,4 @@ class TestMakeCommand:
         os.utime(recursive_dir, times=(1, 2))
         os.utime(recursive_dir.joinpath("file_in_dir"), times=(1, 4))
         make_command.make()
-        runner.assert_called_once_with("ls", shell=True)
+        runner.assert_called_once_with("ls", shell=True, cwd=TEST_MAKEFILE.parent)
