@@ -8,6 +8,9 @@ vars = [
 ]
 
 [all]
+alias = "install"
+
+[install]
 phony = true
 requires = ["requirements.txt"]
 commands = [
