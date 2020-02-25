@@ -238,7 +238,11 @@ class TestMakeCommand:
         args.makefile = TEST_MAKEFILE
         make_command = make.MakeCommand(args)
         make_command.phony_dir.mkdir(exist_ok=True)
-        make_command.phony_dir.joinpath("keep_ts").unlink(missing_ok=True)
+        try:
+            make_command.phony_dir.joinpath("keep_ts").unlink()
+        except FileNotFoundError:
+            # python 3.8: add missing_ok
+            pass
         make_command.make()
         assert runner.call_count == 1
         calls = [mock.call("ls", **self.default_kwargs)]
@@ -272,7 +276,11 @@ class TestMakeCommand:
         args.target = "exists_only"
         args.makefile = TEST_MAKEFILE
         make_command = make.MakeCommand(args)
-        make_command.base_dir.joinpath(args.target).unlink(missing_ok=True)
+        try:
+            make_command.base_dir.joinpath(args.target).unlink()
+        except FileNotFoundError:
+            # python 3.8: add missing_ok
+            pass
         make_command.make()
         assert runner.call_count == 1
         calls = [mock.call("ls", **self.default_kwargs)]
@@ -284,7 +292,11 @@ class TestMakeCommand:
         args.target = "requires_build"
         args.makefile = TEST_MAKEFILE
         make_command = make.MakeCommand(args)
-        make_command.phony_dir.joinpath("keep_ts").unlink(missing_ok=True)
+        try:
+            make_command.phony_dir.joinpath("keep_ts").unlink()
+        except FileNotFoundError:
+            # python 3.8: add missing_ok
+            pass
         make_command.base_dir.joinpath(args.target).touch()
         make_command.make()
         assert runner.call_count == 2
