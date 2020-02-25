@@ -166,7 +166,7 @@ class TestMakeCommand:
 
     @staticmethod
     @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-    def test_make_with_phony_and_keep_ts(runner):
+    def test_make_with_phony_and_keep_ts_newer_requirement(runner):
         args = mock.MagicMock()
         args.target = "keep_ts"
         args.makefile = TEST_MAKEFILE
@@ -180,10 +180,87 @@ class TestMakeCommand:
 
     @staticmethod
     @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_phony_and_keep_ts_older_requirement(runner):
+        args = mock.MagicMock()
+        args.target = "keep_ts"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.phony_dir.mkdir(exist_ok=True)
+        make_command.phony_dir.joinpath("keep_ts").touch()
+        os.utime(make_command.phony_dir, times=(2, 3))
+        os.utime(make_command.phony_dir.joinpath("keep_ts"), times=(1, 5))
+        make_command.make()
+        runner.assert_not_called()
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_phony_and_keep_ts_missing_ts(runner):
+        args = mock.MagicMock()
+        args.target = "keep_ts"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.phony_dir.mkdir(exist_ok=True)
+        make_command.phony_dir.joinpath("keep_ts").unlink(missing_ok=True)
+        make_command.make()
+        runner.assert_called_once_with("ls", shell=True)
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
     def test_make_with_dag_target(runner):
         args = mock.MagicMock()
         args.target = "dag_target"
         args.makefile = TEST_MAKEFILE
         make_command = make.MakeCommand(args)
+        make_command.make()
+        runner.assert_called_once_with("ls", shell=True)
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_exists_only_target_existing(runner):
+        args = mock.MagicMock()
+        args.target = "exists_only"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.base_dir.joinpath(args.target).touch()
+        make_command.make()
+        runner.assert_not_called()
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_exists_only_target_missing(runner):
+        args = mock.MagicMock()
+        args.target = "exists_only"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.base_dir.joinpath(args.target).unlink(missing_ok=True)
+        make_command.make()
+        runner.assert_called_once_with("ls", shell=True)
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_build_due_to_requirement(runner):
+        args = mock.MagicMock()
+        args.target = "requires_build"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        make_command.phony_dir.joinpath("keep_ts").unlink(missing_ok=True)
+        make_command.base_dir.joinpath(args.target).touch()
+        make_command.make()
+        assert runner.call_count == 2
+        calls = [mock.call("ls", shell=True), mock.call("echo 42", shell=True)]
+        runner.assert_has_calls(calls)
+
+    @staticmethod
+    @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+    def test_make_with_recursive_requirement(runner):
+        args = mock.MagicMock()
+        args.target = "recursive_requirement"
+        args.makefile = TEST_MAKEFILE
+        make_command = make.MakeCommand(args)
+        recursive_dir = make_command.base_dir.joinpath("dir")
+        recursive_dir.mkdir(exist_ok=True)
+        recursive_dir.joinpath("file_in_dir").touch()
+        os.utime(recursive_dir, times=(1, 2))
+        os.utime(recursive_dir.joinpath("file_in_dir"), times=(1, 4))
         make_command.make()
         runner.assert_called_once_with("ls", shell=True)

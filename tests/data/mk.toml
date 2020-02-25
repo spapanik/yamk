@@ -125,3 +125,29 @@ requires = ["parent"]
 [dag_target]
 phony = true
 requires = ["parent", "grandparent"]
+
+[exists_only]
+exists_only = true
+commands = [
+    "ls",
+]
+
+[requires_build]
+requires = [
+    "keep_ts",
+]
+commands = [
+    "echo 42",
+]
+
+[dir]
+exists_only = true
+recursive = true
+
+[recursive_requirement]
+requires = [
+    "dir",
+]
+commands = [
+    "ls",
+]
