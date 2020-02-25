@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix crashing bug when having lists or dicts as variable values
+- Fix crashing bug when specifying recursive targets
 
 ## [0.5.0] - 2020-02-20
 ### Added

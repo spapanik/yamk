@@ -1,3 +1,4 @@
+import itertools
 import os
 import pathlib
 import re
@@ -216,6 +217,7 @@ class MakeCommand:
             return 0
         if path.exists():
             if recipe.recursive:
-                return max(p.stat().st_mtime for p in path)
+                descendants = itertools.chain([path], path.rglob("*"))
+                return max(p.stat().st_mtime for p in descendants)
             return path.stat().st_mtime
         return float("inf")
