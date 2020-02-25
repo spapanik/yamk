@@ -114,6 +114,9 @@ commands = [
 
 [grandparent]
 phony = true
+commands = [
+    "ls",
+]
 
 [parent]
 phony = true

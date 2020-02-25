@@ -186,4 +186,4 @@ class TestMakeCommand:
         args.makefile = TEST_MAKEFILE
         make_command = make.MakeCommand(args)
         make_command.make()
-        # runner.assert_called_once_with("ls", shell=True)
+        runner.assert_called_once_with("ls", shell=True)
