@@ -213,11 +213,11 @@ class MakeCommand:
             if recipe.keep_ts and path.exists():
                 return path.stat().st_mtime
             return float("inf")
-        if recipe.exists_only:
-            return 0
         if path.exists():
             if recipe.recursive:
                 descendants = itertools.chain([path], path.rglob("*"))
                 return max(p.stat().st_mtime for p in descendants)
+            if recipe.exists_only:
+                return 0
             return path.stat().st_mtime
         return float("inf")
