@@ -31,6 +31,11 @@ class Recipe:
             self.exists_only = raw_recipe.get("exists_only", False)
             self.recursive = raw_recipe.get("recursive", False)
 
+    def __str__(self):
+        if self._specified:
+            return f"Specified recipe for {self.target}"
+        return f"Generic recipe for {self.target}"
+
     def specify(self, target, globs):
         if self._specified:
             return
