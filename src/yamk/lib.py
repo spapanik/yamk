@@ -1,7 +1,7 @@
 import os
 import re
 
-VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>\w+(:\w+)?)}")
+VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+(:[a-zA-Z0-9_.]+)?)}")
 OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
 
 

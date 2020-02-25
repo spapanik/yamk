@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ${target} and ${requirements} as implicit variables
 - Allow aliases for targets
 
+### Changed
+- Allow only [a-zA-Z0-9\_.] for variable names
+
 ### Fixed
 - Fix crashing bug when having lists or dicts as variable values
 - Fix crashing bug when specifying recursive targets
