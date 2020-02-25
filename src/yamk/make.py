@@ -11,10 +11,10 @@ from yamk import lib
 
 
 class Recipe:
-    def __init__(self, target, raw_recipe):
+    def __init__(self, target, raw_recipe, base_dir):
         self._specified = False
+        self.base_dir = base_dir
         self.vars: lib.Variables
-        self.target = target
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
         self.variable_list = raw_recipe.get("vars", [])
@@ -22,6 +22,7 @@ class Recipe:
         self.echo = raw_recipe.get("echo", False)
         self.regex = raw_recipe.get("regex", False)
         self.allow_failures = raw_recipe.get("allow_failures", False)
+        self.target = self._target(target)
         if self.phony:
             self.keep_ts = raw_recipe.get("keep_ts", False)
             self.exists_only = False
@@ -61,6 +62,13 @@ class Recipe:
         self.vars = self.vars.add_batch(extra_vars)
         self.commands = lib.substitute_vars(self.commands, self.vars)
 
+    def _target(self, target):
+        if not self.phony:
+            target = self.base_dir.joinpath(target).as_posix()
+        if self.regex:
+            target = re.compile(target)
+        return target
+
 
 class MakeCommand:
     def __init__(self, args):
@@ -69,7 +77,7 @@ class MakeCommand:
         self.aliases = {}
         self.target = args.target
         makefile = args.makefile
-        self.base_dir = pathlib.Path(makefile).parent
+        self.base_dir = pathlib.Path(makefile).parent.absolute()
         self.phony_dir = self.base_dir.joinpath(".yamk")
         with open(makefile) as file:
             parsed_toml = toml.load(file)
@@ -89,13 +97,12 @@ class MakeCommand:
         for target, raw_recipe in parsed_toml.items():
             if raw_recipe.get("alias"):
                 self.aliases[target] = raw_recipe["alias"]
-            if raw_recipe.get("regex"):
-                compiled_target = re.compile(target)
-                self.regex_recipes[compiled_target] = Recipe(
-                    compiled_target, raw_recipe
-                )
+            recipe = Recipe(target, raw_recipe, self.base_dir)
+
+            if recipe.regex:
+                self.regex_recipes[recipe.target] = recipe
             else:
-                self.static_recipes[target] = Recipe(target, raw_recipe)
+                self.static_recipes[recipe.target] = recipe
 
     def _preprocess_target(self):
         recipe = self._extract_recipe(self.target)
@@ -151,11 +158,16 @@ class MakeCommand:
         if target in self.aliases:
             target = self.aliases[target]
 
-        try:
+        absolute_path_target = self.base_dir.joinpath(target).as_posix()
+        if target in self.static_recipes:
             recipe = self.static_recipes[target]
-        except KeyError:
+        elif absolute_path_target in self.static_recipes:
+            recipe = self.static_recipes[absolute_path_target]
+        else:
             for regex, recipe in self.regex_recipes.items():  # noqa: B007
-                if re.fullmatch(regex, target):
+                if re.fullmatch(regex, target) or re.fullmatch(
+                    regex, absolute_path_target
+                ):
                     break
             else:
                 return None

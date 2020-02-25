@@ -1,4 +1,5 @@
 import os
+import pathlib
 from unittest import mock
 
 import pytest
@@ -11,7 +12,7 @@ from tests.settings import TEST_MAKEFILE
 class TestRecipe:
     @staticmethod
     def test_str():
-        recipe = make.Recipe("target", {})
+        recipe = make.Recipe("target", {}, pathlib.Path("."))
         assert str(recipe) == "Generic recipe for target"
         recipe.specify("target", lib.Variables())
         assert str(recipe) == "Specified recipe for target"
