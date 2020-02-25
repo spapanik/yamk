@@ -13,7 +13,7 @@ from yamk import lib
 class Recipe:
     def __init__(self, target, raw_recipe):
         self._specified = False
-        self.vars = lib.Variables()
+        self.vars: lib.Variables
         self.target = target
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
