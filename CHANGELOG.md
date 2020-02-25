@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
-- Add ${target} and ${requirements} as implicit variables
+- Add ${.target} and ${.requirements} as implicit variables
 - Allow aliases for targets
 
 ### Changed

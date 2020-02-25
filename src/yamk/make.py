@@ -45,14 +45,14 @@ class Recipe:
         self._update_commands()
 
     def _update_variables(self, globs, groups):
-        extra_vars = [groups, {"target": self.target}]
+        extra_vars = [groups, {".target": self.target}]
         self.vars = globs.add_batch(self.variable_list).add_batch(extra_vars)
 
     def _update_requirements(self):
         self.requires = lib.substitute_vars(self.requires, self.vars)
 
     def _update_commands(self):
-        extra_vars = [{"requirements": self.requires}]
+        extra_vars = [{".requirements": self.requires}]
         self.vars = self.vars.add_batch(extra_vars)
         self.commands = lib.substitute_vars(self.commands, self.vars)
 

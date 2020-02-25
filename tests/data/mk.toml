@@ -98,8 +98,8 @@ requires = [
     "phony",
 ]
 commands = [
-    "echo ${target}",
-    "echo ${requirements}",
+    "echo ${.target}",
+    "echo ${.requirements}",
 ]
 
 [keep_ts]
