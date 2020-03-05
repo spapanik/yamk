@@ -68,7 +68,7 @@ commands = [
 alias = "two_commands"
 
 
-["regex[-_](?P<number>[^.]\d+)"]
+['regex[-_](?P<number>[^.]\d+)']
 phony = true
 regex = true
 commands = [

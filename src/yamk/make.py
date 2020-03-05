@@ -5,7 +5,7 @@ import re
 import subprocess
 import sys
 
-import toml
+import tomlkit
 
 from yamk import lib
 
@@ -80,7 +80,7 @@ class MakeCommand:
         self.base_dir = pathlib.Path(makefile).parent.absolute()
         self.phony_dir = self.base_dir.joinpath(".yamk")
         with open(makefile) as file:
-            parsed_toml = toml.load(file)
+            parsed_toml = tomlkit.parse(file.read())
         file_vars = parsed_toml.pop("$globals", {})
         self._parse_recipes(parsed_toml)
         self.vars = lib.Variables(**os.environ).add_batch(file_vars.get("vars", []))

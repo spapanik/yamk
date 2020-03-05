@@ -43,7 +43,7 @@ yam = "yamk.main:main"
 [tool.poetry.dependencies]
 python = "^3.6.0"
 
-toml = "^0.10.0"
+tomlkit = "^0.5.11"
 
 [tool.poetry.dev-dependencies]
 black = {version = "*", allow-prereleases = true}
