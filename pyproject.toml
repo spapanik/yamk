@@ -14,7 +14,7 @@ sections = ["STDLIB", "THIRDPARTY", "FIRSTPARTY", "TESTS"]
 
 [tool.poetry]
 name = "yamk"
-version = "0.6.1"
+version = "0.7.0"
 description = "Yet another make"
 authors = [
     "Stephanos Kuma <spapanik21@gmail.com>",
