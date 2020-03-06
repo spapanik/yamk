@@ -1,8 +1,18 @@
 import os
+import pathlib
 
 import pytest
 
 from yamk import lib
+
+
+class TestRecipe:
+    @staticmethod
+    def test_str():
+        recipe = lib.Recipe("target", {}, pathlib.Path("."))
+        assert str(recipe) == "Generic recipe for target"
+        recipe.specify("target", lib.Variables())
+        assert str(recipe) == "Specified recipe for target"
 
 
 @pytest.mark.parametrize(

@@ -5,6 +5,66 @@ VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+(:[a-zA-Z0-9_.]+)
 OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
 
 
+class Recipe:
+    def __init__(self, target, raw_recipe, base_dir):
+        self._specified = False
+        self.base_dir = base_dir
+        self.vars: Variables
+        self.phony = raw_recipe.get("phony", False)
+        self.requires = raw_recipe.get("requires", [])
+        self.variable_list = raw_recipe.get("vars", [])
+        self.commands = raw_recipe.get("commands", [])
+        self.echo = raw_recipe.get("echo", False)
+        self.regex = raw_recipe.get("regex", False)
+        self.allow_failures = raw_recipe.get("allow_failures", False)
+        self.target = self._target(target)
+        if self.phony:
+            self.keep_ts = raw_recipe.get("keep_ts", False)
+            self.exists_only = False
+            self.recursive = False
+        else:
+            self.keep_ts = False
+            self.exists_only = raw_recipe.get("exists_only", False)
+            self.recursive = raw_recipe.get("recursive", False)
+
+    def __str__(self):
+        if self._specified:
+            return f"Specified recipe for {self.target}"
+        return f"Generic recipe for {self.target}"
+
+    def specify(self, target, globs):
+        if self._specified:
+            return
+        self._specified = True
+        if self.regex:
+            groups = re.fullmatch(self.target, target).groupdict()
+            self.target = target
+        else:
+            groups = {}
+        self._update_variables(globs, groups)
+        self._update_requirements()
+        self._update_commands()
+
+    def _update_variables(self, globs, groups):
+        extra_vars = [groups, {".target": self.target}]
+        self.vars = globs.add_batch(self.variable_list).add_batch(extra_vars)
+
+    def _update_requirements(self):
+        self.requires = substitute_vars(self.requires, self.vars)
+
+    def _update_commands(self):
+        extra_vars = [{".requirements": self.requires}]
+        self.vars = self.vars.add_batch(extra_vars)
+        self.commands = substitute_vars(self.commands, self.vars)
+
+    def _target(self, target):
+        if not self.phony:
+            target = self.base_dir.joinpath(target).as_posix()
+        if self.regex:
+            target = re.compile(target)
+        return target
+
+
 class Variables(dict):
     def add_batch(self, batch):
         new_vars = self.__class__(**self)

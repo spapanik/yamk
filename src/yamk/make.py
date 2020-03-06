@@ -10,66 +10,6 @@ import tomlkit
 from yamk import lib
 
 
-class Recipe:
-    def __init__(self, target, raw_recipe, base_dir):
-        self._specified = False
-        self.base_dir = base_dir
-        self.vars: lib.Variables
-        self.phony = raw_recipe.get("phony", False)
-        self.requires = raw_recipe.get("requires", [])
-        self.variable_list = raw_recipe.get("vars", [])
-        self.commands = raw_recipe.get("commands", [])
-        self.echo = raw_recipe.get("echo", False)
-        self.regex = raw_recipe.get("regex", False)
-        self.allow_failures = raw_recipe.get("allow_failures", False)
-        self.target = self._target(target)
-        if self.phony:
-            self.keep_ts = raw_recipe.get("keep_ts", False)
-            self.exists_only = False
-            self.recursive = False
-        else:
-            self.keep_ts = False
-            self.exists_only = raw_recipe.get("exists_only", False)
-            self.recursive = raw_recipe.get("recursive", False)
-
-    def __str__(self):
-        if self._specified:
-            return f"Specified recipe for {self.target}"
-        return f"Generic recipe for {self.target}"
-
-    def specify(self, target, globs):
-        if self._specified:
-            return
-        self._specified = True
-        if self.regex:
-            groups = re.fullmatch(self.target, target).groupdict()
-            self.target = target
-        else:
-            groups = {}
-        self._update_variables(globs, groups)
-        self._update_requirements()
-        self._update_commands()
-
-    def _update_variables(self, globs, groups):
-        extra_vars = [groups, {".target": self.target}]
-        self.vars = globs.add_batch(self.variable_list).add_batch(extra_vars)
-
-    def _update_requirements(self):
-        self.requires = lib.substitute_vars(self.requires, self.vars)
-
-    def _update_commands(self):
-        extra_vars = [{".requirements": self.requires}]
-        self.vars = self.vars.add_batch(extra_vars)
-        self.commands = lib.substitute_vars(self.commands, self.vars)
-
-    def _target(self, target):
-        if not self.phony:
-            target = self.base_dir.joinpath(target).as_posix()
-        if self.regex:
-            target = re.compile(target)
-        return target
-
-
 class MakeCommand:
     def __init__(self, args):
         self.regex_recipes = {}
@@ -97,7 +37,7 @@ class MakeCommand:
         for target, raw_recipe in parsed_toml.items():
             if raw_recipe.get("alias"):
                 self.aliases[target] = raw_recipe["alias"]
-            recipe = Recipe(target, raw_recipe, self.base_dir)
+            recipe = lib.Recipe(target, raw_recipe, self.base_dir)
 
             if recipe.regex:
                 self.regex_recipes[recipe.target] = recipe
