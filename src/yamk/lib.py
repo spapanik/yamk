@@ -1,4 +1,3 @@
-import os
 import re
 
 VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+(:[a-zA-Z0-9_.]+)?)}")
@@ -6,10 +5,11 @@ OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
 
 
 class Recipe:
-    def __init__(self, target, raw_recipe, base_dir):
+    def __init__(self, target, raw_recipe, base_dir, arg_vars):
         self._specified = False
         self.base_dir = base_dir
         self.vars: Variables
+        self.arg_vars = arg_vars
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
         self.variable_list = raw_recipe.get("vars", [])
@@ -46,7 +46,7 @@ class Recipe:
         self._update_commands()
 
     def _update_variables(self, globs, groups):
-        extra_vars = [groups, {".target": self.target}]
+        extra_vars = [groups, *self.arg_vars, {".target": self.target}]
         self.vars = globs.add_batch(self.variable_list).add_batch(extra_vars)
 
     def _update_requirements(self):
@@ -72,7 +72,7 @@ class Variables(dict):
             for key, value in var_block.items():
                 key = substitute_vars(key, new_vars)
                 key, options = extract_options(key)
-                if key in os.environ and "strong" not in options:
+                if "weak" in options:
                     continue
                 value = substitute_vars(value, new_vars)
                 new_vars[key] = value

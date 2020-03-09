@@ -122,10 +122,13 @@ The options are completely optional, and they are comma separated.
 
 ### Variable types
 
-There are five types of variables: environment variables, implicit, global, regex, and local ones. With an increasing strength order:
+There are six types of variables: environment variables, argument, global, local, regex and implicit ones. With an increasing strength order:
+
+##### Environment
+All the environment variables gathered at the beginning of the execution of `yamk` are gathered into variables. They are the weakest variables.
 
 ##### Global
-A global variable is a variable specified in the `$global` meta-target. They are the weakest variables.
+A global variable is a variable specified in the `$global` meta-target.
 
 ##### Local
 A local variable is a variable specified by the `vars` key inside a target.
@@ -133,11 +136,11 @@ A local variable is a variable specified by the `vars` key inside a target.
 ##### Regex
 In the case of a regex target, any named group is a regex variable, which has the value of the matched text.
 
-##### Environment
-All the environment variables gathered at the beginning of the execution of `yamk` are gathered into variables.
+##### Argument
+An argument variable is a variable defined with the --variable option when `yamk` was invoked.
 
 ##### Implicit
-The implicit variables are variables created by the target itself, implicitly. They are guarded against overriding, as they start with a dot. At the moment, the following two implicit variables exist:
+The implicit variables are variables created by the target itself, implicitly. They are guarded against overriding, as they start with a dot. This dot acts as a safeguard so they cannot mix with environment and regex ones. At the moment, the following two implicit variables exist:
 * `.target`: the name of the target. In case of a file target, it's the absolute path to the file, regardless of they way it was defined.
 * `.requirements`: the array of the requirements. All the file requirements are given as their absolute paths.
 All the implicit variables, they are specific to the target that it's being built, i.e. if the file target is specified as a regular expression, the absolute path to the specific file, not the regex path.

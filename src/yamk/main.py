@@ -19,7 +19,21 @@ def parse_args():
         help="Print the version and exit",
     )
     parser.add_argument(
-        "-m", "--makefile", default="make.toml", help="The path to makefile",
+        "-m",
+        "--makefile",
+        metavar="Makefile",
+        default="make.toml",
+        help="The path to makefile",
+    )
+    parser.add_argument(
+        "-x",
+        "--variable",
+        action="append",
+        metavar="KEY=value",
+        dest="variables",
+        default=[],
+        help="A list of variables to override the ones set in the makefile. "
+        "They should be in the form <variable>=<value>",
     )
     parser.add_argument(
         "target", nargs="?", default="all", help="The target for yamk",

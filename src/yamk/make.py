@@ -17,13 +17,23 @@ class MakeCommand:
         self.aliases = {}
         self.target = args.target
         makefile = args.makefile
+        self.arg_vars = [
+            {key: value}
+            for key, value in map(
+                lambda var: var.split("=", maxsplit=1), args.variables
+            )
+        ]
         self.base_dir = pathlib.Path(makefile).parent.absolute()
         self.phony_dir = self.base_dir.joinpath(".yamk")
         with open(makefile) as file:
             parsed_toml = tomlkit.parse(file.read())
         file_vars = parsed_toml.pop("$globals", {})
         self._parse_recipes(parsed_toml)
-        self.vars = lib.Variables(**os.environ).add_batch(file_vars.get("vars", []))
+        self.vars = (
+            lib.Variables(**os.environ)
+            .add_batch(self.arg_vars)
+            .add_batch(file_vars.get("vars", []))
+        )
 
     def make(self):
         preprocessed = self._preprocess_target()
@@ -37,7 +47,7 @@ class MakeCommand:
         for target, raw_recipe in parsed_toml.items():
             if raw_recipe.get("alias"):
                 self.aliases[target] = raw_recipe["alias"]
-            recipe = lib.Recipe(target, raw_recipe, self.base_dir)
+            recipe = lib.Recipe(target, raw_recipe, self.base_dir, self.arg_vars)
 
             if recipe.regex:
                 self.regex_recipes[recipe.target] = recipe

@@ -1,8 +1,9 @@
 ["$globals"]
 vars = [
+    {"[weak]prefix" = "/home/user/.config/"},
     {dir = "/etc"},
-    {"[strong]conf_dir" = "local.service.d"},
-    {filename = "local.service.conf"},
+    {conf_dir = "service.d"},
+    {filename = "generic.conf"},
 ]
 
 [phony]
@@ -24,10 +25,11 @@ commands = [
 [variables]
 phony = true
 vars = [
-    {dir = "/path/to/local/conf"},
+    {"[weak]conf_dir" = "/path/to/local/conf"},
+    {filename = "service.conf"}
 ]
 commands = [
-    "echo ${dir}/${conf_dir}/${filename}",
+    "echo ${prefix}${dir}/${conf_dir}/${filename}",
 ]
 
 [failure]
@@ -71,6 +73,9 @@ alias = "two_commands"
 ['regex[-_](?P<number>[^.]\d+)']
 phony = true
 regex = true
+vars = [
+    {number = "1024"},
+]
 commands = [
     "echo ${number}",
 ]

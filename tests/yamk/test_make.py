@@ -93,8 +93,8 @@ class TestMakeCommand:
 
     @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
     def test_make_extra_vars(self, runner):
-        os.environ["filename"] = "service.conf"
-        os.environ["conf_dir"] = "service.d"
+        os.environ["prefix"] = ""
+        os.environ["dir"] = "generic.d"
         args = mock.MagicMock()
         args.target = "variables"
         args.makefile = TEST_MAKEFILE
@@ -103,7 +103,7 @@ class TestMakeCommand:
         assert runner.call_count == 1
         calls = [
             mock.call(
-                "echo /path/to/local/conf/local.service.d/service.conf",
+                "echo /etc/service.d/service.conf",
                 **self.default_kwargs,
             )
         ]

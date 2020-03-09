@@ -1,4 +1,3 @@
-import os
 import pathlib
 
 import pytest
@@ -9,7 +8,7 @@ from yamk import lib
 class TestRecipe:
     @staticmethod
     def test_str():
-        recipe = lib.Recipe("target", {}, pathlib.Path("."))
+        recipe = lib.Recipe("target", {}, pathlib.Path("."), [{}])
         assert str(recipe) == "Generic recipe for target"
         recipe.specify("target", lib.Variables())
         assert str(recipe) == "Specified recipe for target"
@@ -22,12 +21,11 @@ class TestRecipe:
         [{}, [{"x": "1"}, {"y": "2"}], {"x": "1", "y": "2"}],
         [{}, [{"x": "1", "y": "0"}, {"y": "2"}], {"x": "1", "y": "2"}],
         [{"x": "0"}, [{"x": "1"}], {"x": "1"}],
-        [{"TEST_VAR": "test"}, [{"TEST_VAR": "1"}], {"TEST_VAR": "test"}],
-        [{"TEST_VAR": "test"}, [{"[strong]TEST_VAR": "1"}], {"TEST_VAR": "1"}],
+        [{"TEST_VAR": "test"}, [{"TEST_VAR": "1"}], {"TEST_VAR": "1"}],
+        [{"TEST_VAR": "test"}, [{"[weak]TEST_VAR": "1"}], {"TEST_VAR": "test"}],
     ],
 )
 def test_add_batch_to_variables(initial, batch, expected):
-    os.environ["TEST_VAR"] = "test"
     variables = lib.Variables(**initial)
     assert variables.add_batch(batch) == expected
 
