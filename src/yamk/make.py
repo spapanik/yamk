@@ -12,6 +12,11 @@ from yamk import lib
 
 class MakeCommand:
     def __init__(self, args):
+        self.verbosity = args.verbose
+        if self.verbosity:
+            if self.verbosity > 1:
+                print(args)
+            sys.tracebacklimit = 9999
         self.regex_recipes = {}
         self.static_recipes = {}
         self.aliases = {}
@@ -34,6 +39,7 @@ class MakeCommand:
             .add_batch(self.arg_vars)
             .add_batch(file_vars.get("vars", []))
         )
+        self.subprocess_kwargs = {"shell": True, "cwd": self.base_dir}
 
     def make(self):
         preprocessed = self._preprocess_target()
@@ -92,7 +98,7 @@ class MakeCommand:
             command, options = lib.extract_options(command)
             if recipe.echo or "echo" in options:
                 print(command)
-            result = subprocess.run(command, shell=True, cwd=self.base_dir)
+            result = subprocess.run(command, **self.subprocess_kwargs)
             if (
                 result.returncode
                 and not recipe.allow_failures

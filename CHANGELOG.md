@@ -6,12 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Allow increasing verbosity
+
 ## [0.8.0] - 2020-03-09
 ### Added
 - Allow adding variables by passing the -x/--variable argument
 
 ### Changed
-- Environment vaitables are now the weakest variables
+- Environment variables are now the weakest variables
 - A variable can now become weaker, not stronger
 
 ## [0.7.0] - 2020-03-05

@@ -57,7 +57,7 @@ commands = [
 phony = true
 echo = true
 commands = [
-    "ls",
+    "ls -l",
 ]
 
 [echo_in_command]

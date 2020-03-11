@@ -19,6 +19,13 @@ def parse_args():
         help="Print the version and exit",
     )
     parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Increae the level of verbosity",
+    )
+    parser.add_argument(
         "-m",
         "--makefile",
         metavar="Makefile",
