@@ -45,8 +45,9 @@ def test_add_batch_to_variables(initial, batch, expected):
         ],
     ],
 )
-def test_substitute_vars(obj, variables, expected):
-    assert lib.substitute_vars(obj, variables) == expected
+def test_parser_evaluation(obj, variables, expected):
+    parser = lib.Parser(variables)
+    assert parser.evaluate(obj) == expected
 
 
 @pytest.mark.parametrize(

@@ -50,12 +50,14 @@ class Recipe:
         self.vars = globs.add_batch(self.variable_list).add_batch(extra_vars)
 
     def _update_requirements(self):
-        self.requires = substitute_vars(self.requires, self.vars)
+        parser = Parser(self.vars)
+        self.requires = parser.evaluate(self.requires)
 
     def _update_commands(self):
         extra_vars = [{".requirements": self.requires}]
         self.vars = self.vars.add_batch(extra_vars)
-        self.commands = substitute_vars(self.commands, self.vars)
+        parser = Parser(self.vars)
+        self.commands = parser.evaluate(self.commands)
 
     def _target(self, target):
         if not self.phony:
@@ -69,45 +71,51 @@ class Variables(dict):
     def add_batch(self, batch):
         new_vars = self.__class__(**self)
         for var_block in batch:
+            parser = Parser(new_vars)
             for key, value in var_block.items():
-                key = substitute_vars(key, new_vars)
+                key = parser.evaluate(key)
                 key, options = extract_options(key)
                 if "weak" in options:
                     continue
-                value = substitute_vars(value, new_vars)
+                value = parser.evaluate(value)
                 new_vars[key] = value
         return new_vars
+
+
+class Parser:
+    def __init__(self, variables):
+        self.vars = variables
+
+    def evaluate(self, obj):
+        def repl(matchobj):
+            dollars = matchobj.group("dollars")
+            variable = matchobj.group("variable")
+            if len(dollars) % 2:
+                key = None
+                if ":" in variable:
+                    variable, key = variable.split(":")
+                value = self.vars[variable]
+                if key is None:
+                    return _stringify(value)
+                if isinstance(value, list):
+                    key = int(key)
+                return _stringify(value[key])
+            return f"{'$'*(len(dollars)//2)}{{{variable}}}"
+
+        if isinstance(obj, str):
+            return re.sub(VAR, repl, obj)
+        if isinstance(obj, list):
+            return [re.sub(VAR, repl, string) for string in obj]
+        return {
+            re.sub(VAR, repl, key): re.sub(VAR, repl, value)
+            for key, value in obj.items()
+        }
 
 
 def _stringify(value):
     if isinstance(value, list):
         return " ".join(value)
     return str(value)
-
-
-def substitute_vars(obj, variables):
-    def repl(matchobj):
-        dollars = matchobj.group("dollars")
-        variable = matchobj.group("variable")
-        if len(dollars) % 2:
-            key = None
-            if ":" in variable:
-                variable, key = variable.split(":")
-            value = variables[variable]
-            if key is None:
-                return _stringify(value)
-            if isinstance(value, list):
-                key = int(key)
-            return _stringify(value[key])
-        return f"{'$'*(len(dollars)//2)}{{{variable}}}"
-
-    if isinstance(obj, str):
-        return re.sub(VAR, repl, obj)
-    if isinstance(obj, list):
-        return [re.sub(VAR, repl, string) for string in obj]
-    return {
-        re.sub(VAR, repl, key): re.sub(VAR, repl, value) for key, value in obj.items()
-    }
 
 
 def extract_options(string):
