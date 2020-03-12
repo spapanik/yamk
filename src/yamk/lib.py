@@ -86,36 +86,40 @@ class Parser:
     def __init__(self, variables):
         self.vars = variables
 
+    @staticmethod
+    def _stringify(value):
+        if isinstance(value, list):
+            return " ".join(value)
+        return str(value)
+
+    def repl(self, matchobj):
+        dollars = matchobj.group("dollars")
+        variable = matchobj.group("variable")
+        if len(dollars) % 2:
+            key = None
+            if ":" in variable:
+                variable, key = variable.split(":")
+            value = self.vars[variable]
+            if key is None:
+                return self._stringify(value)
+            if isinstance(value, list):
+                key = int(key)
+            return self._stringify(value[key])
+        return f"{'$'*(len(dollars)//2)}{{{variable}}}"
+
+    def substitute(self, string):
+        return re.sub(VAR, self.repl, string)
+
     def evaluate(self, obj):
-        def repl(matchobj):
-            dollars = matchobj.group("dollars")
-            variable = matchobj.group("variable")
-            if len(dollars) % 2:
-                key = None
-                if ":" in variable:
-                    variable, key = variable.split(":")
-                value = self.vars[variable]
-                if key is None:
-                    return _stringify(value)
-                if isinstance(value, list):
-                    key = int(key)
-                return _stringify(value[key])
-            return f"{'$'*(len(dollars)//2)}{{{variable}}}"
-
         if isinstance(obj, str):
-            return re.sub(VAR, repl, obj)
+            return self.substitute(obj)
         if isinstance(obj, list):
-            return [re.sub(VAR, repl, string) for string in obj]
-        return {
-            re.sub(VAR, repl, key): re.sub(VAR, repl, value)
-            for key, value in obj.items()
-        }
-
-
-def _stringify(value):
-    if isinstance(value, list):
-        return " ".join(value)
-    return str(value)
+            return [self.evaluate(string) for string in obj]
+        if isinstance(obj, dict):
+            return {
+                self.evaluate(key): self.evaluate(value) for key, value in obj.items()
+            }
+        raise TypeError(f"{obj.__class__.__name__} is not supported for evaluation")
 
 
 def extract_options(string):
@@ -129,11 +133,3 @@ def extract_options(string):
         string,
         set(map(lambda s: s.strip(), options.split(","))),
     )
-
-
-def extract_regex_vars(regex, sample):
-    match = re.fullmatch(regex, sample)
-    if match is None:
-        return {}
-
-    return match.groupdict()

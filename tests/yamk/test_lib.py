@@ -28,6 +28,12 @@ def test_add_batch_to_variables(initial, batch, expected):
     assert variables.add_batch(batch) == expected
 
 
+@pytest.mark.parametrize("obj", [1, ("string in a tuple",), {"nested integer": 1}])
+def test_parser_evaluation_raises(obj):
+    parser = lib.Parser({})
+    assert pytest.raises(TypeError, parser.evaluate, obj)
+
+
 @pytest.mark.parametrize(
     ["obj", "variables", "expected"],
     [
@@ -48,22 +54,6 @@ def test_add_batch_to_variables(initial, batch, expected):
 def test_parser_evaluation(obj, variables, expected):
     parser = lib.Parser(variables)
     assert parser.evaluate(obj) == expected
-
-
-@pytest.mark.parametrize(
-    ["regex", "sample", "variables"],
-    [
-        [r"./path/to/(?P<daemon>\w+).conf", "./path/not/to/sqld.conf", {}],
-        [r"./path/to/(?P<daemon>\w+).conf", "./path/to/sqld.conf", {"daemon": "sqld"}],
-        [
-            r"(.+)/path/to/(?P<daemon>\w+).conf",
-            "./path/to/sqld.conf",
-            {"daemon": "sqld"},
-        ],
-    ],
-)
-def test_extract_regex_vars(regex, sample, variables):
-    assert lib.extract_regex_vars(regex, sample) == variables
 
 
 @pytest.mark.parametrize(
