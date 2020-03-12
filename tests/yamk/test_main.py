@@ -13,5 +13,5 @@ def test_parse_args():
 @mock.patch("yamk.main.MakeCommand")
 def test_main(mock_make):
     main.main()
-    mock_make.assert_called()
-    mock_make().make.assert_called()
+    assert mock_make.call_count == 1
+    assert mock_make().make.call_count == 1

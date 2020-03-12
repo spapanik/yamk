@@ -9,15 +9,13 @@ from yamk import make
 def test_make_raises_on_missing_target(mock_args):
     mock_args.target = "missing_target"
     make_command = make.MakeCommand(mock_args)
-    with pytest.raises(ValueError):
-        make_command.make()
+    assert pytest.raises(ValueError, make_command.make)
 
 
 def test_make_raises_on_missing_requirement(mock_args):
     mock_args.target = "missing_requirement"
     make_command = make.MakeCommand(mock_args)
-    with pytest.raises(ValueError):
-        make_command.make()
+    assert pytest.raises(ValueError, make_command.make)
 
 
 @mock.patch("yamk.make.subprocess.run")
@@ -56,9 +54,9 @@ def test_make_builds_with_two_commands(runner, mock_args):
 def test_make_builds_wrong_command_breaks(runner, mock_args):
     mock_args.target = "failure"
     make_command = make.MakeCommand(mock_args)
-    with pytest.raises(SystemExit) as exc:
-        make_command.make()
-    assert exc.value.code == 42
+    error = pytest.raises(SystemExit, make_command.make)
+    assert error
+    assert error.value.code == 42
     assert runner.call_count == 1
     calls = [mock.call("false", **make_command.subprocess_kwargs)]
     assert runner.call_args_list == calls
