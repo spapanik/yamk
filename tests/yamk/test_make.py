@@ -284,3 +284,25 @@ def test_make_with_recursive_requirement(runner, mock_args):
     assert runner.call_count == 1
     calls = [mock.call("ls", **make_command.subprocess_kwargs)]
     assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_make_sort_variable(runner, mock_args):
+    mock_args.target = "sort_variable"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    path = make_command.base_dir.joinpath("mk.toml").as_posix()
+    calls = [mock.call(f"echo {path}", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_make_sort_function(runner, mock_args):
+    mock_args.target = "sort_function"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    path = make_command.base_dir.joinpath("mk.toml").as_posix()
+    calls = [mock.call(f"echo {path}", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls

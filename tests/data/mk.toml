@@ -156,3 +156,22 @@ requires = [
 commands = [
     "ls",
 ]
+
+[sort_variable]
+phony = true
+vars = [
+    {toml_files = "$((glob ./*.toml))"},
+    {sorted_files = "$((sort '${toml_files}'))"}
+]
+commands = [
+    "echo ${sorted_files}"
+]
+
+[sort_function]
+phony = true
+vars = [
+    {sorted_files = "$((sort '$((glob ./*.toml))'))"}
+]
+commands = [
+    "echo ${sorted_files}"
+]

@@ -35,7 +35,7 @@ class MakeCommand:
         file_vars = parsed_toml.pop("$globals", {})
         self._parse_recipes(parsed_toml)
         self.vars = (
-            lib.Variables(**os.environ)
+            lib.Variables(self.base_dir, **os.environ)
             .add_batch(self.arg_vars)
             .add_batch(file_vars.get("vars", []))
         )

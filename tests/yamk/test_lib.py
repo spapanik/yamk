@@ -4,11 +4,13 @@ import pytest
 
 from yamk import lib
 
+PATH = pathlib.Path(__file__)
+
 
 def test_recipe_to_str():
     recipe = lib.Recipe("target", {}, pathlib.Path("."), [{}])
     assert str(recipe) == "Generic recipe for target"
-    recipe.specify("target", lib.Variables())
+    recipe.specify("target", lib.Variables(PATH))
     assert str(recipe) == "Specified recipe for target"
 
 
@@ -24,13 +26,13 @@ def test_recipe_to_str():
     ],
 )
 def test_add_batch_to_variables(initial, batch, expected):
-    variables = lib.Variables(**initial)
+    variables = lib.Variables(PATH, **initial)
     assert variables.add_batch(batch) == expected
 
 
 @pytest.mark.parametrize("obj", [1, ("string in a tuple",), {"nested integer": 1}])
 def test_parser_evaluation_raises(obj):
-    parser = lib.Parser({})
+    parser = lib.Parser({}, PATH)
     assert pytest.raises(TypeError, parser.evaluate, obj)
 
 
@@ -49,10 +51,11 @@ def test_parser_evaluation_raises(obj):
             {"key": 1, "value": 2},
             {"string_1": "string_2"},
         ],
+        ["$((sort ${x}))", {"x": [3, 1, 2]}, [1, 2, 3]]
     ],
 )
 def test_parser_evaluation(obj, variables, expected):
-    parser = lib.Parser(variables)
+    parser = lib.Parser(variables, PATH)
     assert parser.evaluate(obj) == expected
 
 
@@ -73,3 +76,11 @@ def test_extract_options(string, expected_options, expected_string):
     string, options = lib.extract_options(string)
     assert string == expected_string
     assert options == expected_options
+
+
+def test_glob():
+    assert PATH in list(lib.Glob(PATH.parent)("*"))
+
+
+def test_sort():
+    assert lib.Sort(PATH)([3, 1, 2]) == [1, 2, 3]
