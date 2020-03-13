@@ -51,7 +51,7 @@ def test_parser_evaluation_raises(obj):
             {"key": 1, "value": 2},
             {"string_1": "string_2"},
         ],
-        ["$((sort ${x}))", {"x": [3, 1, 2]}, [1, 2, 3]]
+        ["$((sort ${x}))", {"x": [3, 1, 2]}, [1, 2, 3]],
     ],
 )
 def test_parser_evaluation(obj, variables, expected):
@@ -76,11 +76,3 @@ def test_extract_options(string, expected_options, expected_string):
     string, options = lib.extract_options(string)
     assert string == expected_string
     assert options == expected_options
-
-
-def test_glob():
-    assert PATH in list(lib.Glob(PATH.parent)("*"))
-
-
-def test_sort():
-    assert lib.Sort(PATH)([3, 1, 2]) == [1, 2, 3]

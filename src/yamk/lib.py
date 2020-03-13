@@ -1,6 +1,8 @@
 import re
 import shlex
 
+from yamk.functions import functions
+
 VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+(:[a-zA-Z0-9_.]+)?)}")
 OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
 FUNCTION = re.compile(r"\$\(\((?P<name>\w+) +(?P<args>.+)\)\)")
@@ -88,39 +90,6 @@ class Variables(dict):
         return new_vars
 
 
-class FunctionMeta(type):
-    functions = {}
-
-    def __new__(mcs, name, bases, class_dict):
-        x = super().__new__(mcs, name, bases, class_dict)
-        if getattr(x, "name", None) is not None:
-            mcs.functions[x.name] = x
-        return x
-
-    @classmethod
-    def get(mcs, item):
-        return mcs.functions[item]
-
-
-class Function(metaclass=FunctionMeta):
-    def __init__(self, base_dir):
-        self.base_dir = base_dir
-
-
-class Glob(Function):
-    name = "glob"
-
-    def __call__(self, *args):
-        return self.base_dir.glob(args[0])
-
-
-class Sort(Function):
-    name = "sort"
-
-    def __call__(self, *args):
-        return sorted(*args)
-
-
 class Parser:
     def __init__(self, variables, base_dir):
         self.vars = variables
@@ -136,7 +105,7 @@ class Parser:
         args = shlex.split(args)
         for i, arg in enumerate(args):
             args[i] = self.evaluate(arg, literal_eval=True)
-        function = FunctionMeta.get(name)(self.base_dir)
+        function = functions.get(name)(self.base_dir)
         return function(*args)
 
     def repl(self, matchobj):
