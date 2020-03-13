@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Allow increasing verbosity
+- Add functions to sort an array and get all the files with a glob
 
 ## [0.8.0] - 2020-03-09
 ### Added
@@ -19,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.7.0] - 2020-03-05
 ### Changed
-- Fixed toml parsing issues
+- Fix toml parsing issues
 
 ## [0.6.1] - 2020-02-25
 ### Fixed
