@@ -309,6 +309,17 @@ def test_make_sort_function(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_make_pwd(runner, mock_args):
+    mock_args.target = "pwd"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    path = make_command.base_dir.as_posix()
+    calls = [mock.call(f"echo {path}", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_make_ternary_if_true(runner, mock_args):
     mock_args.target = "ternary_if_true"
     make_command = make.MakeCommand(mock_args)

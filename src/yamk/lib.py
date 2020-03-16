@@ -5,7 +5,7 @@ from yamk.functions import functions
 
 VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+(:[a-zA-Z0-9_.]+)?)}")
 OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
-FUNCTION = re.compile(r"\$\(\((?P<name>\w+) +(?P<args>.+)\)\)")
+FUNCTION = re.compile(r"\$\(\((?P<name>\w+) *(?P<args>.*)\)\)")
 
 
 class Recipe:

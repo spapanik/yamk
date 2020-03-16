@@ -34,6 +34,13 @@ class Exists(Function):
         return self.base_dir.joinpath(args[0]).exists()
 
 
+class PWD(Function):
+    name = "pwd"
+
+    def __call__(self, *_args):
+        return self.base_dir
+
+
 class TernaryIf(Function):
     name = "ternary_if"
 

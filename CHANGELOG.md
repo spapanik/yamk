@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - wildcard expansion
   - ternary if
   - existence of a file
+  - get the working directory
 
 
 ## [0.8.0] - 2020-03-09

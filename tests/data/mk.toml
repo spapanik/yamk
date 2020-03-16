@@ -204,3 +204,12 @@ vars = [
 commands = [
     "echo ${number}"
 ]
+
+[pwd]
+phony = true
+vars = [
+    {pwd = "$((pwd))"},
+]
+commands = [
+    "echo ${pwd}"
+]
