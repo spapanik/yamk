@@ -27,4 +27,18 @@ class Sort(Function):
         return sorted(*args)
 
 
+class Exists(Function):
+    name = "exists"
+
+    def __call__(self, *args):
+        return self.base_dir.joinpath(args[0]).exists()
+
+
+class TernaryIf(Function):
+    name = "ternary_if"
+
+    def __call__(self, *args):
+        return args[1] if args[0] else args[2]
+
+
 functions = FunctionMeta.functions

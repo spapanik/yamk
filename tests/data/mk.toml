@@ -175,3 +175,32 @@ vars = [
 commands = [
     "echo ${sorted_files}"
 ]
+
+[ternary_if_true]
+phony = true
+vars = [
+    {make_exists = "$((exists ./mk.toml))"},
+    {number = "$((ternary_if '${make_exists}' 42 1024))"},
+]
+commands = [
+    "echo ${number}"
+]
+
+[ternary_if_false]
+phony = true
+vars = [
+    {make_exists = "$((exists ./mk.yaml))"},
+    {number = "$((ternary_if '${make_exists}' 42 1024))"},
+]
+commands = [
+    "echo ${number}"
+]
+
+[ternary_if_function]
+phony = true
+vars = [
+    {number = "$((ternary_if '$((exists ./mk.toml))' 42 1024))"},
+]
+commands = [
+    "echo ${number}"
+]

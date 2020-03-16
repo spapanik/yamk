@@ -8,7 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Allow increasing verbosity
-- Add functions to sort an array and get all the files with a glob
+- Add the following functions:
+  - sort an array
+  - wildcard expansion
+  - ternary if
+  - existence of a file
+
 
 ## [0.8.0] - 2020-03-09
 ### Added
