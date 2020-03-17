@@ -17,7 +17,7 @@ class Glob(Function):
     name = "glob"
 
     def __call__(self, *args):
-        return self.base_dir.glob(args[0])
+        return list(self.base_dir.glob(args[0]))
 
 
 class Sort(Function):
