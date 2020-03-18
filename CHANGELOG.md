@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Allow increasing verbosity
+- Variables are evaluated literally unless a `:` is after them
 - Add the following functions:
   - sort an array
   - wildcard expansion

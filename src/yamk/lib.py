@@ -3,7 +3,9 @@ import shlex
 
 from yamk.functions import functions
 
-VAR = re.compile(r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+(:[a-zA-Z0-9_.]+)?)}")
+VAR = re.compile(
+    r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+)(?P<sep>:)?(?P<key>[a-zA-Z0-9_.]+)?}"
+)
 OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
 FUNCTION = re.compile(r"\$\(\((?P<name>\w+) *(?P<args>.*)\)\)")
 
@@ -104,17 +106,15 @@ class Parser:
     def expand_function(self, name, args):
         args = shlex.split(args)
         for i, arg in enumerate(args):
-            args[i] = self.evaluate(arg, literal_eval=True)
+            args[i] = self.evaluate(arg)
         function = functions.get(name)(self.base_dir)
         return function(*args)
 
     def repl(self, matchobj):
         dollars = matchobj.group("dollars")
         variable = matchobj.group("variable")
+        key = matchobj.group("key")
         if len(dollars) % 2:
-            key = None
-            if ":" in variable:
-                variable, key = variable.split(":")
             value = self.vars[variable]
             if key is None:
                 return self._stringify(value)
@@ -123,30 +123,29 @@ class Parser:
             return self._stringify(value[key])
         return f"{'$'*(len(dollars)//2)}{{{variable}}}"
 
-    def substitute(self, string, literal_eval):
+    def substitute(self, string):
         function = re.fullmatch(FUNCTION, string)
         if function is not None:
             return self.expand_function(**function.groupdict())
 
         if (
-            literal_eval
-            and string.startswith("$")
+            string.startswith("$")
             and not string.startswith("$$")
             and re.fullmatch(VAR, string)
         ):
             match = re.fullmatch(VAR, string)
-            return self.vars[match.group("variable")]
+            if match.group("sep") is None:
+                return self.vars[match.group("variable")]
         return re.sub(VAR, self.repl, string)
 
-    def evaluate(self, obj, literal_eval=False):
+    def evaluate(self, obj):
         if isinstance(obj, str):
-            return self.substitute(obj, literal_eval)
+            return self.substitute(obj)
         if isinstance(obj, list):
-            return [self.evaluate(string, literal_eval) for string in obj]
+            return [self.evaluate(string) for string in obj]
         if isinstance(obj, dict):
             return {
-                self.evaluate(key, literal_eval): self.evaluate(value, literal_eval)
-                for key, value in obj.items()
+                self.evaluate(key): self.evaluate(value) for key, value in obj.items()
             }
         raise TypeError(f"{obj.__class__.__name__} is not supported for evaluation")
 
