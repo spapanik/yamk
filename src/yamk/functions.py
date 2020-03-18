@@ -17,7 +17,7 @@ class Glob(Function):
     name = "glob"
 
     def __call__(self, *args):
-        return list(self.base_dir.glob(args[0]))
+        return [path.as_posix() for path in self.base_dir.glob(args[0])]
 
 
 class Sort(Function):
@@ -38,7 +38,7 @@ class PWD(Function):
     name = "pwd"
 
     def __call__(self, *_args):
-        return self.base_dir
+        return self.base_dir.as_posix()
 
 
 class TernaryIf(Function):

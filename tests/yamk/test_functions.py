@@ -6,7 +6,7 @@ PATH = pathlib.Path(__file__)
 
 
 def test_glob():
-    assert PATH in list(functions.Glob(PATH.parent)("*"))
+    assert PATH.as_posix() in list(functions.Glob(PATH.parent)("*"))
 
 
 def test_sort():
