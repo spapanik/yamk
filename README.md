@@ -110,15 +110,16 @@ A variable is defined in the key `vars`. The variables are parsed in order, so a
 ```toml
 [target_name]
 vars = [
-    {"[variable_options]var_1": "value_1"},
-    {"[variable_options]var_2": "value_2"},
+    {"[variable_options]var_1": <value_1>},
+    {"[variable_options]var_2": <value_2>},
     ...
-    {"[variable_options]var_n": "value_n"},
+    {"[variable_options]var_n": <value_n>},
 ]
 ```
 
 The options are completely optional, and they are comma separated.
 
+A variable that resolves to a list or a dictionary will be treated as such. If it should be treated as a string instead instead of "${variable}", the form "${variable:}" should be used. If a variable is a part of a string, it will always be transformed into a string first. A key can be passed to pick up a specific value from a list or a dictionary, for example, "${list_var:0}" or "${dict_var:key}".
 
 ### Variable types
 
@@ -147,10 +148,10 @@ All the implicit variables, they are specific to the target that it's being buil
 
 ### Variable options
 
-The only option at the moment is `strong`.
+The only option at the moment is `weak`.
 
-##### Strong
-Strong can be used to make the variable stronger than environment variables.
+##### Weak
+Weak can be used to make the variable keep its value if it's not unset
 
 ## Commands
 
