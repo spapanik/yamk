@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Fix bug when a variable evaluates to a list
+
 ### Added
 - Allow increasing verbosity
 - Variables are evaluated literally unless a `:` is after them

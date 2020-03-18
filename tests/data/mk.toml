@@ -213,3 +213,24 @@ vars = [
 commands = [
     "echo ${pwd}"
 ]
+
+[inner_one]
+phony = true
+commands = [
+    "echo one"
+]
+
+[inner_two]
+phony = true
+commands = [
+    "echo two"
+]
+
+[nested_requires]
+phony = true
+vars = [
+    {requirements = ["inner_one", "inner_two"]},
+]
+requires = [
+    "${requirements}",
+]

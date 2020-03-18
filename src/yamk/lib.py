@@ -142,7 +142,14 @@ class Parser:
         if isinstance(obj, str):
             return self.substitute(obj)
         if isinstance(obj, list):
-            return [self.evaluate(string) for string in obj]
+            out = []
+            for string in obj:
+                evaluated = self.evaluate(string)
+                if isinstance(evaluated, list):
+                    out.extend(evaluated)
+                else:
+                    out.append(evaluated)
+            return out
         if isinstance(obj, dict):
             return {
                 self.evaluate(key): self.evaluate(value) for key, value in obj.items()

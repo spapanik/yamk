@@ -287,6 +287,19 @@ def test_make_with_recursive_requirement(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_make_nested_requires(runner, mock_args):
+    mock_args.target = "nested_requires"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 2
+    calls = [
+        mock.call("echo one", **make_command.subprocess_kwargs),
+        mock.call("echo two", **make_command.subprocess_kwargs),
+    ]
+    assert sorted(runner.call_args_list) == sorted(calls)
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_make_sort_variable(runner, mock_args):
     mock_args.target = "sort_variable"
     make_command = make.MakeCommand(mock_args)
@@ -325,7 +338,7 @@ def test_make_ternary_if_true(runner, mock_args):
     make_command = make.MakeCommand(mock_args)
     make_command.make()
     assert runner.call_count == 1
-    calls = [mock.call(f"echo 42", **make_command.subprocess_kwargs)]
+    calls = [mock.call("echo 42", **make_command.subprocess_kwargs)]
     assert runner.call_args_list == calls
 
 
@@ -335,7 +348,7 @@ def test_make_ternary_if_false(runner, mock_args):
     make_command = make.MakeCommand(mock_args)
     make_command.make()
     assert runner.call_count == 1
-    calls = [mock.call(f"echo 1024", **make_command.subprocess_kwargs)]
+    calls = [mock.call("echo 1024", **make_command.subprocess_kwargs)]
     assert runner.call_args_list == calls
 
 
@@ -345,5 +358,5 @@ def test_make_ternary_if_function(runner, mock_args):
     make_command = make.MakeCommand(mock_args)
     make_command.make()
     assert runner.call_count == 1
-    calls = [mock.call(f"echo 42", **make_command.subprocess_kwargs)]
+    calls = [mock.call("echo 42", **make_command.subprocess_kwargs)]
     assert runner.call_args_list == calls

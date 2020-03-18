@@ -48,6 +48,7 @@ def test_parser_evaluation_raises(obj):
         ["${list:}", {"list": ["spam", "eggs"]}, "spam eggs"],
         ["${dict}", {"dict": {"key": "value"}}, {"key": "value"}],
         ["${list}", {"list": ["spam", "eggs"]}, ["spam", "eggs"]],
+        [["${nested}"], {"nested": ["spam"]}, ["spam"]],
         [["string_${x}"], {"x": 1}, ["string_1"]],
         [
             {"string_${key}": "string_${value}"},
