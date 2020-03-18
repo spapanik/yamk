@@ -214,6 +214,15 @@ commands = [
     "echo ${pwd}"
 ]
 
+[substitute]
+phony = true
+vars = [
+    {text = "$((sub old new 'the old version'))"}
+]
+commands = [
+    "echo ${text}"
+]
+
 [inner_one]
 phony = true
 commands = [

@@ -48,4 +48,11 @@ class TernaryIf(Function):
         return args[1] if args[0] else args[2]
 
 
+class Substitute(Function):
+    name = "sub"
+
+    def __call__(self, *args):
+        return args[2].replace(args[0], args[1])
+
+
 functions = FunctionMeta.functions

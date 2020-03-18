@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ternary if
   - existence of a file
   - get the working directory
+  - replace parts of a string
 
 
 ## [0.8.0] - 2020-03-09
