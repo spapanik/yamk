@@ -22,6 +22,10 @@ pip install --user yamk
 
 Please make sure that the correct directory is added to your path. This depends on the OS.
 
+## CHANGELOG
+
+Changelog is kept [here](https://github.com/spapanik/yamk/blob/master/CHANGELOG.md).
+
 ## Usage
 `yamk`'s behaviour is defined in a toml file. The expected name is `make.toml`, but you can specify a different file if you want.
 

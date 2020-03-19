@@ -22,7 +22,6 @@ authors = [
 
 license = "LGPLv3"
 readme = "README.md"
-include = ["CHANGELOG.md"]
 
 repository = "https://github.com/spapanik/yamk"
 
