@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Allow substituting a list of strings
+
 ## [0.9.0] - 2020-03-18
 ### Fixed
 - Fix bug when a variable evaluates to a list

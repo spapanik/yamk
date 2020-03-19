@@ -52,7 +52,10 @@ class Substitute(Function):
     name = "sub"
 
     def __call__(self, *args):
-        return args[2].replace(args[0], args[1])
+        old, new, obj, *_ = args
+        if isinstance(obj, list):
+            return [self(old, new, string) for string in obj]
+        return obj.replace(old, new)
 
 
 functions = FunctionMeta.functions
