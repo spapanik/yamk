@@ -1,10 +1,18 @@
 import argparse
+import pathlib
 import sys
 
-from yamk import __version__
+import tomlkit
 from yamk.make import MakeCommand
 
 sys.tracebacklimit = 0
+
+
+def get_version():
+    pyproject = pathlib.Path(__file__).parents[2].joinpath("pyproject.toml")
+    with open(pyproject) as toml_file:
+        conf = tomlkit.parse(toml_file.read())
+    return conf["tool"]["poetry"]["version"]
 
 
 def parse_args():
@@ -15,7 +23,7 @@ def parse_args():
         "-V",
         "--version",
         action="version",
-        version=f"%(prog)s {__version__}",
+        version=f"%(prog)s {get_version()}",
         help="Print the version and exit",
     )
     parser.add_argument(
