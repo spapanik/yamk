@@ -128,8 +128,7 @@ class MakeCommand:
             else:
                 return None
 
-        recipe.specify(target, self.vars)
-        return recipe
+        return recipe.for_target(target, self.vars)
 
     def _mark_unchanged(self, preprocessed):
         for target, info in sorted(

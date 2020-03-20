@@ -11,8 +11,9 @@ FUNCTION = re.compile(r"\$\(\((?P<name>\w+) *(?P<args>.*)\)\)")
 
 
 class Recipe:
-    def __init__(self, target, raw_recipe, base_dir, arg_vars):
-        self._specified = False
+    def __init__(self, target, raw_recipe, base_dir, arg_vars, *, specified=False):
+        self._specified = specified
+        self._raw_recipe = raw_recipe
         self.base_dir = base_dir
         self.vars: Variables
         self.arg_vars = arg_vars
@@ -38,18 +39,21 @@ class Recipe:
             return f"Specified recipe for {self.target}"
         return f"Generic recipe for {self.target}"
 
-    def specify(self, target, globs):
+    def for_target(self, target, globs):
         if self._specified:
-            return
-        self._specified = True
-        if self.regex:
-            groups = re.fullmatch(self.target, target).groupdict()
-            self.target = target
+            return self
+        new_recipe = self.__class__(
+            self.target, self._raw_recipe, self.base_dir, self.arg_vars, specified=True
+        )
+        if new_recipe.regex:
+            groups = re.fullmatch(new_recipe.target, target).groupdict()
+            new_recipe.target = target
         else:
             groups = {}
-        self._update_variables(globs, groups)
-        self._update_requirements()
-        self._update_commands()
+        new_recipe._update_variables(globs, groups)
+        new_recipe._update_requirements()
+        new_recipe._update_commands()
+        return new_recipe
 
     def _update_variables(self, globs, groups):
         extra_vars = [groups, *self.arg_vars, {".target": self.target}]

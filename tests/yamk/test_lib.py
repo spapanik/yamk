@@ -10,8 +10,16 @@ PATH = pathlib.Path(__file__)
 def test_recipe_to_str():
     recipe = lib.Recipe("target", {}, pathlib.Path("."), [{}])
     assert str(recipe) == "Generic recipe for target"
-    recipe.specify("target", lib.Variables(PATH))
+    recipe = recipe.for_target("target", lib.Variables(PATH))
     assert str(recipe) == "Specified recipe for target"
+
+
+def test_recipe_for_target():
+    recipe = lib.Recipe("target", {}, pathlib.Path("."), [{}])
+    recipe_specified = recipe.for_target("target", lib.Variables(PATH))
+    recipe_specified_again = recipe_specified.for_target("target", lib.Variables(PATH))
+    assert recipe is not recipe_specified
+    assert recipe_specified is recipe_specified_again
 
 
 @pytest.mark.parametrize(

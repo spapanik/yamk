@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Fix bug with multiple targets for the same regex
+
 ## [0.9.1] - 2020-03-19
 ### Added
 - Allow substituting a list of strings
