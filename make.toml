@@ -39,7 +39,7 @@ commands = [
 ["poetry.lock"]
 requires = ["pyproject.toml"]
 commands = [
-    "poetry lock",
+    "poetry lock && touch poetry.lock",
 ]
 
 ["requirements.txt"]
