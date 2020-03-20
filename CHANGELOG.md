@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.9.3] - 2020-03-20
 ### Fixed
 - Fix bug with multiple targets for the same regex
 
