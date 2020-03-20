@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Add two more verbosity levels
+
 ### Fixed
 - Fix the issue that was preventing regex file targets
 

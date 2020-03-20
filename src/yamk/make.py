@@ -91,12 +91,22 @@ class MakeCommand:
                     raise ValueError(f"No recipe to build {requirement}")
 
         self._mark_unchanged(preprocessed)
+        if self.verbosity > 3:
+            print("=== all target ===")
+            for target, options in preprocessed.items():
+                print(f"- {target}:")
+                print(f"    priority: {options['priority']}")
+                print(f"    timestamp: {lib.timestamp_to_dt(options['timestamp'])}")
+                print(f"    should_build: {options['should_build']}")
         return preprocessed
 
     def _make_target(self, recipe):
+        if self.verbosity > 1:
+            print(f"=== target: {recipe.target} ===")
+
         for command in recipe.commands:
             command, options = lib.extract_options(command)
-            if recipe.echo or "echo" in options:
+            if recipe.echo or "echo" in options or self.verbosity > 2:
                 print(command)
             result = subprocess.run(command, **self.subprocess_kwargs)
             if (

@@ -1,3 +1,5 @@
+import datetime
+import math
 import re
 import shlex
 
@@ -171,3 +173,9 @@ def extract_options(string):
         string,
         set(map(lambda s: s.strip(), options.split(","))),
     )
+
+
+def timestamp_to_dt(timestamp):
+    if math.isinf(timestamp):
+        return datetime.datetime.max
+    return datetime.datetime.utcfromtimestamp(timestamp)

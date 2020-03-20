@@ -29,11 +29,19 @@ def test_make_builds_with_no_commands(runner, mock_args):
 @mock.patch("yamk.make.print", new_callable=mock.MagicMock)
 def test_make_verbosity(mock_print, mock_args):
     mock_args.target = "phony"
-    mock_args.verbose = 2
+    mock_args.verbose = 4
     make_command = make.MakeCommand(mock_args)
     make_command.make()
-    assert mock_print.call_count == 1
-    calls = [mock.call(mock_args)]
+    assert mock_print.call_count == 7
+    calls = [
+        mock.call(mock_args),
+        mock.call("=== all target ==="),
+        mock.call("- phony:"),
+        mock.call("    priority: 0"),
+        mock.call("    timestamp: 9999-12-31 23:59:59.999999"),
+        mock.call("    should_build: True"),
+        mock.call("=== target: phony ==="),
+    ]
     assert mock_print.call_args_list == calls
 
 
