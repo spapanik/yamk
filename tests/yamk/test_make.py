@@ -141,13 +141,36 @@ def test_make_alias(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_regex_target(runner, mock_args):
+def test_regex_phony_target(runner, mock_args):
     mock_args.target = "regex_42"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
     assert runner.call_count == 1
     calls = [mock.call("echo 42", **make_command.subprocess_kwargs)]
     assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_regex_file_target(runner, mock_args):
+    mock_args.target = "file_1024.txt"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    calls = [mock.call("ls", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_multiple_regex_targets(runner, mock_args):
+    mock_args.target = "multiple_regex"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 2
+    calls = [
+        mock.call("echo 42", **make_command.subprocess_kwargs),
+        mock.call("echo 1024", **make_command.subprocess_kwargs),
+    ]
+    assert sorted(runner.call_args_list) == sorted(calls)
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))

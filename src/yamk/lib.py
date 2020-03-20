@@ -43,11 +43,10 @@ class Recipe:
         if self._specified:
             return self
         new_recipe = self.__class__(
-            self.target, self._raw_recipe, self.base_dir, self.arg_vars, specified=True
+            target, self._raw_recipe, self.base_dir, self.arg_vars, specified=True
         )
         if new_recipe.regex:
-            groups = re.fullmatch(new_recipe.target, target).groupdict()
-            new_recipe.target = target
+            groups = re.fullmatch(self.target, new_recipe.target).groupdict()
         else:
             groups = {}
         new_recipe._update_variables(globs, groups)
@@ -72,7 +71,7 @@ class Recipe:
     def _target(self, target):
         if not self.phony:
             target = self.base_dir.joinpath(target).as_posix()
-        if self.regex:
+        if self.regex and not self._specified:
             target = re.compile(target)
         return target
 
