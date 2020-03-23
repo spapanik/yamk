@@ -251,12 +251,18 @@ def test_make_with_phony_and_keep_ts_missing_ts(runner, mock_args):
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_make_with_dag_target(runner, mock_args):
-    mock_args.target = "dag_target"
+    mock_args.target = "dag_target_1"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
-    assert runner.call_count == 1
-    calls = [mock.call("ls", **make_command.subprocess_kwargs)]
-    assert runner.call_args_list == calls
+    assert runner.call_count == 5
+    calls = [
+        mock.call("echo dag_target_3", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_5", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_2", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_4", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_1", **make_command.subprocess_kwargs),
+    ]
+    assert sorted(runner.call_args_list) == sorted(calls)
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
