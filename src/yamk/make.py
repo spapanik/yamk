@@ -65,30 +65,41 @@ class MakeCommand:
         if recipe is None:
             raise ValueError(f"No recipe to build {self.target}")
 
-        unprocessed = {self.target: {"recipe": recipe, "priority": 0}}
+        unprocessed = {recipe.target: {"recipe": recipe, "priority": 0}}
         preprocessed = {}
         while unprocessed:
             target, info = unprocessed.popitem()
             priority = info["priority"] + 1
             target_recipe = info["recipe"]
-            preprocessed[target] = info
-            for requirement in target_recipe.requires:
-                recipe = self._extract_recipe(requirement)
-                path = self._file_path(requirement)
+            preprocessed[target_recipe.target] = info
+            for index, raw_requirement in enumerate(target_recipe.requires):
+                recipe = self._extract_recipe(raw_requirement)
+                if recipe is None:
+                    requirement_path = self._file_path(raw_requirement)
+                    requirement = requirement_path.as_posix()
+                    if not requirement_path.exists():
+                        raise ValueError(f"No recipe to build {requirement}")
+                else:
+                    requirement = recipe.target
+                target_recipe.requires[index] = requirement
+
                 if requirement in preprocessed:
                     current_priority = preprocessed[requirement]["priority"]
                     preprocessed[requirement]["priority"] = max(
                         priority, current_priority
                     )
-                elif recipe is not None:
+                if requirement in unprocessed:
+                    current_priority = unprocessed[requirement]["priority"]
+                    unprocessed[requirement]["priority"] = max(
+                        priority, current_priority
+                    )
+                elif recipe is None:
+                    preprocessed[requirement] = {"priority": priority}
+                else:
                     unprocessed[requirement] = {
                         "recipe": recipe,
                         "priority": priority,
                     }
-                elif path.exists():
-                    preprocessed[requirement] = {"priority": priority}
-                else:
-                    raise ValueError(f"No recipe to build {requirement}")
 
         self._mark_unchanged(preprocessed)
         if self.verbosity > 3:

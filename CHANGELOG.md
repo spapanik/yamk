@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Fix issue with conflicting absolute and relative requirement names
+
 ## [0.10.0] - 2020-03-23
 ### Added
 - Add two more verbosity levels
