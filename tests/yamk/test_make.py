@@ -35,7 +35,7 @@ def test_make_verbosity(mock_print, mock_args):
     assert mock_print.call_count == 7
     calls = [
         mock.call(mock_args),
-        mock.call("=== all target ==="),
+        mock.call("=== all targets ==="),
         mock.call("- phony:"),
         mock.call("    priority: 0"),
         mock.call("    timestamp: 9999-12-31 23:59:59.999999"),

@@ -92,7 +92,7 @@ class MakeCommand:
 
         self._mark_unchanged(preprocessed)
         if self.verbosity > 3:
-            print("=== all target ===")
+            print("=== all targets ===")
             for target, options in preprocessed.items():
                 print(f"- {target}:")
                 print(f"    priority: {options['priority']}")
