@@ -70,9 +70,9 @@ class MakeCommand:
         while unprocessed:
             target, info = unprocessed.popitem()
             priority = info["priority"] + 1
-            recipe = info["recipe"]
+            target_recipe = info["recipe"]
             preprocessed[target] = info
-            for requirement in recipe.requires:
+            for requirement in target_recipe.requires:
                 recipe = self._extract_recipe(requirement)
                 path = self._file_path(requirement)
                 if requirement in preprocessed:
