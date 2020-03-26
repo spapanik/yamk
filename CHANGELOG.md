@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add function to merge lists together
 
+### Fixed
+- Fix if-clause
+
 ## [0.10.1] - 2020-03-26
 ### Fixed
 - Fix issue with conflicting absolute and relative requirement names

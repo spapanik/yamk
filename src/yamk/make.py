@@ -88,7 +88,7 @@ class MakeCommand:
                     preprocessed[requirement]["priority"] = max(
                         priority, current_priority
                     )
-                if requirement in unprocessed:
+                elif requirement in unprocessed:
                     current_priority = unprocessed[requirement]["priority"]
                     unprocessed[requirement]["priority"] = max(
                         priority, current_priority
