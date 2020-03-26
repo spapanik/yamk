@@ -1,3 +1,6 @@
+from functools import reduce
+
+
 class FunctionMeta(type):
     functions = {}
 
@@ -56,6 +59,17 @@ class Substitute(Function):
         if isinstance(obj, list):
             return [self(old, new, string) for string in obj]
         return obj.replace(old, new)
+
+
+class Merge(Function):
+    name = "merge"
+
+    @staticmethod
+    def _as_list(obj):
+        return obj if isinstance(obj, list) else [obj]
+
+    def __call__(self, *args):
+        return reduce(lambda x, y: self._as_list(x) + self._as_list(y), args)
 
 
 functions = FunctionMeta.functions

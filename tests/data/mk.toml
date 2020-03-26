@@ -265,3 +265,15 @@ vars = [
 requires = [
     "${requirements}",
 ]
+
+[merge]
+phony = true
+vars = [
+    {first = ["one", "two"]},
+    {second = ["three"]},
+    {third = "four"},
+    {all = "$((merge ${first} ${second} ${third}))"},
+]
+commands = [
+    "echo ${all}"
+]

@@ -48,3 +48,17 @@ def test_ternary_if(condition, true_value, false_value, expected):
 )
 def test_substitute(old, new, obj, expected):
     assert functions.Substitute(PATH)(old, new, obj) == expected
+
+
+@pytest.mark.parametrize(
+    ["arguments", "expected"],
+    [
+        [[0, 1, 2], [0, 1, 2]],
+        [[0, [1, 2]], [0, 1, 2]],
+        [[[0], [1, 2]], [0, 1, 2]],
+        [[0, [1], 2], [0, 1, 2]],
+        [[[0], 1, [2]], [0, 1, 2]],
+    ],
+)
+def test_merge(arguments, expected):
+    assert functions.Merge(PATH)(*arguments) == expected
