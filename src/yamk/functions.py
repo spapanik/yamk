@@ -44,6 +44,13 @@ class Stem(Function):
         return self.base_dir.joinpath(path).stem
 
 
+class Parent(Function):
+    name = "parent"
+
+    def __call__(self, path):
+        return self.base_dir.joinpath(path).parent
+
+
 class PWD(Function):
     name = "pwd"
 

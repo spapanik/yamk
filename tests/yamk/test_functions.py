@@ -29,6 +29,13 @@ def test_stem(path, stem):
     assert functions.Stem(PATH)(path) == stem
 
 
+@pytest.mark.parametrize(
+    "path", ["make.toml", "random_name.extension", "directory/"]
+)
+def test_parent(path):
+    assert functions.Parent(PATH)(path) == PATH
+
+
 def test_pwd():
     assert functions.PWD(PATH)() == PATH.as_posix()
 
