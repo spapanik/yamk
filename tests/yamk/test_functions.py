@@ -22,6 +22,13 @@ def test_exists(path, exists):
     assert functions.Exists(PATH)(path) is exists
 
 
+@pytest.mark.parametrize(
+    ["path", "stem"], [["make.toml", "make"], ["random_name.extension", "random_name"]]
+)
+def test_stem(path, stem):
+    assert functions.Stem(PATH)(path) == stem
+
+
 def test_pwd():
     assert functions.PWD(PATH)() == PATH.as_posix()
 

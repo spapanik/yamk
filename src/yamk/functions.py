@@ -37,6 +37,13 @@ class Exists(Function):
         return self.base_dir.joinpath(path).exists()
 
 
+class Stem(Function):
+    name = "stem"
+
+    def __call__(self, path):
+        return self.base_dir.joinpath(path).stem
+
+
 class PWD(Function):
     name = "pwd"
 
