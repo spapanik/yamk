@@ -19,8 +19,8 @@ class Function(metaclass=FunctionMeta):
 class Glob(Function):
     name = "glob"
 
-    def __call__(self, *args):
-        return [path.as_posix() for path in self.base_dir.glob(args[0])]
+    def __call__(self, pattern):
+        return [path.as_posix() for path in self.base_dir.glob(pattern)]
 
 
 class Sort(Function):
@@ -33,29 +33,28 @@ class Sort(Function):
 class Exists(Function):
     name = "exists"
 
-    def __call__(self, *args):
-        return self.base_dir.joinpath(args[0]).exists()
+    def __call__(self, path):
+        return self.base_dir.joinpath(path).exists()
 
 
 class PWD(Function):
     name = "pwd"
 
-    def __call__(self, *_args):
+    def __call__(self):
         return self.base_dir.as_posix()
 
 
 class TernaryIf(Function):
     name = "ternary_if"
 
-    def __call__(self, *args):
-        return args[1] if args[0] else args[2]
+    def __call__(self, condition, if_true, if_false):
+        return if_true if condition else if_false
 
 
 class Substitute(Function):
     name = "sub"
 
-    def __call__(self, *args):
-        old, new, obj, *_ = args
+    def __call__(self, old, new, obj):
         if isinstance(obj, list):
             return [self(old, new, string) for string in obj]
         return obj.replace(old, new)
