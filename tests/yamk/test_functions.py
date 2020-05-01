@@ -16,24 +16,40 @@ def test_sort():
 
 
 @pytest.mark.parametrize(
-    ["path", "exists"], [[PATH, True], ["random_name.extension", False]]
+    ["path", "exists"],
+    [
+        [PATH, True],
+        ["random_name.extension", False],
+        [[PATH, "random.rnd"], [True, False]],
+    ],
 )
 def test_exists(path, exists):
-    assert functions.Exists(PATH)(path) is exists
+    assert functions.Exists(PATH)(path) == exists
 
 
 @pytest.mark.parametrize(
-    ["path", "stem"], [["make.toml", "make"], ["random_name.extension", "random_name"]]
+    ["path", "stem"],
+    [
+        ["make.toml", "make"],
+        ["path/random_name.extension", "random_name"],
+        [["make.toml", "path/to/file.txt"], ["make", "file"]],
+    ],
 )
 def test_stem(path, stem):
     assert functions.Stem(PATH)(path) == stem
 
 
 @pytest.mark.parametrize(
-    "path", ["make.toml", "random_name.extension", "directory/"]
+    ["path", "parent"],
+    [
+        ["make.toml", PATH],
+        ["random_name.extension", PATH],
+        ["directory/", PATH],
+        [["file.txt", "dir/"], [PATH, PATH]],
+    ],
 )
-def test_parent(path):
-    assert functions.Parent(PATH)(path) == PATH
+def test_parent(path, parent):
+    assert functions.Parent(PATH)(path) == parent
 
 
 def test_pwd():
