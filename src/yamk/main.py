@@ -23,7 +23,7 @@ def parse_args():
         "--verbose",
         action="count",
         default=0,
-        help="Increae the level of verbosity",
+        help="Increase the level of verbosity",
     )
     parser.add_argument(
         "-m",
