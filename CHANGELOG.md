@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.13.0] - 2020-05-02
 ### Fixed
 - Allow expansion of variables in targets
 
