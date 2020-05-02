@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Allow expansion of variables in targets
+
 ## [0.12.0] - 2020-05-01
 ### Added
 - Add function to get the name of a stem of a file

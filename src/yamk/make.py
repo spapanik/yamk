@@ -22,7 +22,7 @@ class MakeCommand:
         self.aliases = {}
         self.target = args.target
         makefile = args.makefile
-        self.arg_vars = [
+        arg_vars = [
             {key: value}
             for key, value in map(
                 lambda var: var.split("=", maxsplit=1), args.variables
@@ -33,12 +33,12 @@ class MakeCommand:
         with open(makefile) as file:
             parsed_toml = tomlkit.parse(file.read())
         file_vars = parsed_toml.pop("$globals", {})
-        self._parse_recipes(parsed_toml)
         self.vars = (
             lib.Variables(self.base_dir, **os.environ)
-            .add_batch(self.arg_vars)
+            .add_batch(arg_vars)
             .add_batch(file_vars.get("vars", []))
         )
+        self._parse_recipes(parsed_toml)
         self.subprocess_kwargs = {"shell": True, "cwd": self.base_dir}
 
     def make(self):
@@ -51,11 +51,11 @@ class MakeCommand:
 
     def _parse_recipes(self, parsed_toml):
         for target, raw_recipe in parsed_toml.items():
-            if raw_recipe.get("alias"):
-                self.aliases[target] = raw_recipe["alias"]
-            recipe = lib.Recipe(target, raw_recipe, self.base_dir, self.arg_vars)
+            recipe = lib.Recipe(target, raw_recipe, self.base_dir, self.vars)
 
-            if recipe.regex:
+            if recipe.alias:
+                self.aliases[recipe.target] = recipe.alias
+            elif recipe.regex:
                 self.regex_recipes[recipe.target] = recipe
             else:
                 self.static_recipes[recipe.target] = recipe
@@ -149,7 +149,7 @@ class MakeCommand:
             else:
                 return None
 
-        return recipe.for_target(target, self.vars)
+        return recipe.for_target(target)
 
     def _mark_unchanged(self, preprocessed):
         for target, info in sorted(

@@ -13,12 +13,13 @@ FUNCTION = re.compile(r"\$\(\((?P<name>\w+) *(?P<args>.*)\)\)")
 
 
 class Recipe:
-    def __init__(self, target, raw_recipe, base_dir, arg_vars, *, specified=False):
+    def __init__(self, target, raw_recipe, base_dir, glob_vars, *, specified=False):
         self._specified = specified
         self._raw_recipe = raw_recipe
         self.base_dir = base_dir
         self.vars: Variables
-        self.arg_vars = arg_vars
+        self.glob_vars = glob_vars
+        self.alias = raw_recipe.get("alias", False)
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
         self.variable_list = raw_recipe.get("vars", [])
@@ -41,24 +42,29 @@ class Recipe:
             return f"Specified recipe for {self.target}"
         return f"Generic recipe for {self.target}"
 
-    def for_target(self, target, globs):
+    def for_target(self, target):
         if self._specified:
             return self
         new_recipe = self.__class__(
-            target, self._raw_recipe, self.base_dir, self.arg_vars, specified=True
+            target, self._raw_recipe, self.base_dir, self.glob_vars, specified=True
         )
         if new_recipe.regex:
             groups = re.fullmatch(self.target, new_recipe.target).groupdict()
         else:
             groups = {}
-        new_recipe._update_variables(globs, groups)
+        new_recipe._update_variables(groups)
         new_recipe._update_requirements()
         new_recipe._update_commands()
         return new_recipe
 
-    def _update_variables(self, globs, groups):
-        extra_vars = [groups, *self.arg_vars, {".target": self.target}]
-        self.vars = globs.add_batch(self.variable_list).add_batch(extra_vars)
+    def _update_variables(self, groups):
+        extra_vars = [groups, {".target": self.target}]
+        self.vars = (
+            Variables(self.base_dir)
+            .add_batch([self.glob_vars])
+            .add_batch(self.variable_list)
+            .add_batch(extra_vars)
+        )
 
     def _update_requirements(self):
         parser = Parser(self.vars, self.base_dir)
@@ -71,7 +77,10 @@ class Recipe:
         self.commands = parser.evaluate(self.commands)
 
     def _target(self, target):
-        if not self.phony:
+        if not self._specified:
+            parser = Parser(self.glob_vars, self.base_dir)
+            target = parser.evaluate(target)
+        if not self.phony and not self.alias:
             target = self.base_dir.joinpath(target).as_posix()
         if self.regex and not self._specified:
             target = re.compile(target)

@@ -4,6 +4,7 @@ vars = [
     {dir = "/etc"},
     {conf_dir = "service.d"},
     {filename = "generic.conf"},
+    {name = "call"},
 ]
 
 [phony]
@@ -69,6 +70,8 @@ commands = [
 [alias]
 alias = "two_commands"
 
+["${name}"]
+alias = "two_commands"
 
 ['regex[-_](?P<number>[^.]\d+)']
 phony = true
