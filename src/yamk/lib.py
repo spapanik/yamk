@@ -19,7 +19,7 @@ class Recipe:
         self.base_dir = base_dir
         self.vars: Variables
         self.glob_vars = glob_vars
-        self.alias = raw_recipe.get("alias", False)
+        self.alias = self._alias(raw_recipe.get("alias", False))
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
         self.variable_list = raw_recipe.get("vars", [])
@@ -75,6 +75,12 @@ class Recipe:
         self.vars = self.vars.add_batch(extra_vars)
         parser = Parser(self.vars, self.base_dir)
         self.commands = parser.evaluate(self.commands)
+
+    def _alias(self, alias):
+        if alias is False:
+            return alias
+        parser = Parser(self.glob_vars, self.base_dir)
+        return parser.evaluate(alias)
 
     def _target(self, target):
         if not self._specified:
