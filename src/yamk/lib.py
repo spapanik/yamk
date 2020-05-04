@@ -1,5 +1,6 @@
 import datetime
 import math
+import os
 import re
 import shlex
 
@@ -13,16 +14,22 @@ FUNCTION = re.compile(r"\$\(\((?P<name>\w+) *(?P<args>.*)\)\)")
 
 
 class Recipe:
-    def __init__(self, target, raw_recipe, base_dir, glob_vars, *, specified=False):
+    def __init__(self, target, raw_recipe, base_dir, variables, *, specified=False):
         self._specified = specified
         self._raw_recipe = raw_recipe
         self.base_dir = base_dir
-        self.vars: Variables
-        self.glob_vars = glob_vars
+        self.file_vars = variables["file_vars"]
+        self.arg_vars = variables["arg_vars"]
+        self.local_vars = raw_recipe.get("vars", [])
+        self.vars = (
+            Variables(self.base_dir, **os.environ)
+            .add_batch(self.file_vars)
+            .add_batch(self.local_vars)
+            .add_batch(self.arg_vars)
+        )
         self.alias = self._alias(raw_recipe.get("alias", False))
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
-        self.variable_list = raw_recipe.get("vars", [])
         self.commands = raw_recipe.get("commands", [])
         self.echo = raw_recipe.get("echo", False)
         self.regex = raw_recipe.get("regex", False)
@@ -45,8 +52,9 @@ class Recipe:
     def for_target(self, target):
         if self._specified:
             return self
+        variables = {"file_vars": self.file_vars, "arg_vars": self.arg_vars}
         new_recipe = self.__class__(
-            target, self._raw_recipe, self.base_dir, self.glob_vars, specified=True
+            target, self._raw_recipe, self.base_dir, variables, specified=True
         )
         if new_recipe.regex:
             groups = re.fullmatch(self.target, new_recipe.target).groupdict()
@@ -58,13 +66,7 @@ class Recipe:
         return new_recipe
 
     def _update_variables(self, groups):
-        extra_vars = [groups, {".target": self.target}]
-        self.vars = (
-            Variables(self.base_dir)
-            .add_batch([self.glob_vars])
-            .add_batch(self.variable_list)
-            .add_batch(extra_vars)
-        )
+        self.vars = self.vars.add_batch([groups, {".target": self.target}])
 
     def _update_requirements(self):
         parser = Parser(self.vars, self.base_dir)
@@ -79,12 +81,12 @@ class Recipe:
     def _alias(self, alias):
         if alias is False:
             return alias
-        parser = Parser(self.glob_vars, self.base_dir)
+        parser = Parser(self.vars, self.base_dir)
         return parser.evaluate(alias)
 
     def _target(self, target):
         if not self._specified:
-            parser = Parser(self.glob_vars, self.base_dir)
+            parser = Parser(self.vars, self.base_dir)
             target = parser.evaluate(target)
         if not self.phony and not self.alias:
             target = self.base_dir.joinpath(target).as_posix()

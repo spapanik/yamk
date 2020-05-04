@@ -9,14 +9,16 @@ PATH = pathlib.Path(__file__)
 
 
 def test_recipe_to_str():
-    recipe = lib.Recipe("target", {}, pathlib.Path("."), lib.Variables(PATH))
+    variables = {"file_vars": [], "arg_vars": []}
+    recipe = lib.Recipe("target", {}, pathlib.Path("."), variables)
     assert str(recipe) == "Generic recipe for target"
     recipe = recipe.for_target("target")
     assert str(recipe) == "Specified recipe for target"
 
 
 def test_recipe_for_target():
-    recipe = lib.Recipe("target", {}, pathlib.Path("."), lib.Variables(PATH))
+    variables = {"file_vars": [], "arg_vars": []}
+    recipe = lib.Recipe("target", {}, pathlib.Path("."), variables)
     recipe_specified = recipe.for_target("target")
     recipe_specified_again = recipe_specified.for_target("target")
     assert recipe is not recipe_specified

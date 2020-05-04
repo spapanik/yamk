@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add function to change the suffix of a file
 - Add function to change the parent of a file
 
+### Fixed
+- Fix strength of variables
+
 ## [0.13.1] - 2020-05-04
 ### Fixed
 - Allow expansion of variables in aliases

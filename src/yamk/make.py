@@ -1,5 +1,4 @@
 import itertools
-import os
 import pathlib
 import re
 import subprocess
@@ -22,7 +21,7 @@ class MakeCommand:
         self.aliases = {}
         self.target = args.target
         makefile = args.makefile
-        arg_vars = [
+        self.arg_vars = [
             {key: value}
             for key, value in map(
                 lambda var: var.split("=", maxsplit=1), args.variables
@@ -32,12 +31,7 @@ class MakeCommand:
         self.phony_dir = self.base_dir.joinpath(".yamk")
         with open(makefile) as file:
             parsed_toml = tomlkit.parse(file.read())
-        file_vars = parsed_toml.pop("$globals", {})
-        self.vars = (
-            lib.Variables(self.base_dir, **os.environ)
-            .add_batch(arg_vars)
-            .add_batch(file_vars.get("vars", []))
-        )
+        self.globals = parsed_toml.pop("$globals", {})
         self._parse_recipes(parsed_toml)
         self.subprocess_kwargs = {"shell": True, "cwd": self.base_dir}
 
@@ -51,7 +45,12 @@ class MakeCommand:
 
     def _parse_recipes(self, parsed_toml):
         for target, raw_recipe in parsed_toml.items():
-            recipe = lib.Recipe(target, raw_recipe, self.base_dir, self.vars)
+            recipe = lib.Recipe(
+                target,
+                raw_recipe,
+                self.base_dir,
+                {"file_vars": self.globals.get("vars", []), "arg_vars": self.arg_vars},
+            )
 
             if recipe.alias:
                 self.aliases[recipe.target] = recipe.alias
