@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Add function to get the name of a file
+
 ## [0.13.1] - 2020-05-04
 ### Fixed
 - Allow expansion of variables in aliases
