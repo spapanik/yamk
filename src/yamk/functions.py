@@ -57,6 +57,15 @@ class Stem(Function):
         return self.base_dir.joinpath(path).stem
 
 
+class Suffix(Function):
+    name = "suffix"
+
+    def __call__(self, path):
+        if isinstance(path, list):
+            return [self(file) for file in path]
+        return self.base_dir.joinpath(path).suffix
+
+
 class Parent(Function):
     name = "parent"
 
