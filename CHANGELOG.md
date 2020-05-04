@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add function to get the name of a file
 - Add function to get the suffix of a file
+- Add function to change the suffix of a file
 
 ## [0.13.1] - 2020-05-04
 ### Fixed

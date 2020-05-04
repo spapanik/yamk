@@ -75,6 +75,15 @@ class Parent(Function):
         return self.base_dir.joinpath(path).parent
 
 
+class ChangeSuffix(Function):
+    name = "change_suffix"
+
+    def __call__(self, path, suffix):
+        if isinstance(path, list):
+            return [self(file, suffix) for file in path]
+        return self.base_dir.joinpath(path).with_suffix(suffix)
+
+
 class PWD(Function):
     name = "pwd"
 
