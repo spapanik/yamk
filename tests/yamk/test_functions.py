@@ -5,14 +5,15 @@ import pytest
 from yamk import functions
 
 PATH = pathlib.Path(__file__)
+BASE_DIR = PATH.parent
 
 
 def test_glob():
-    assert PATH.as_posix() in list(functions.Glob(PATH.parent)("*"))
+    assert PATH.as_posix() in list(functions.Glob(BASE_DIR)("*"))
 
 
 def test_sort():
-    assert functions.Sort(PATH)([3, 1, 2]) == [1, 2, 3]
+    assert functions.Sort(BASE_DIR)([3, 1, 2]) == [1, 2, 3]
 
 
 @pytest.mark.parametrize(
@@ -24,7 +25,7 @@ def test_sort():
     ],
 )
 def test_exists(path, exists):
-    assert functions.Exists(PATH)(path) == exists
+    assert functions.Exists(BASE_DIR)(path) == exists
 
 
 @pytest.mark.parametrize(
@@ -36,24 +37,24 @@ def test_exists(path, exists):
     ],
 )
 def test_stem(path, stem):
-    assert functions.Stem(PATH)(path) == stem
+    assert functions.Stem(BASE_DIR)(path) == stem
 
 
 @pytest.mark.parametrize(
     ["path", "parent"],
     [
-        ["make.toml", PATH],
-        ["random_name.extension", PATH],
-        ["directory/", PATH],
-        [["file.txt", "dir/"], [PATH, PATH]],
+        ["make.toml", BASE_DIR],
+        ["random_name.extension", BASE_DIR],
+        ["directory/", BASE_DIR],
+        [["file.txt", "dir/"], [BASE_DIR, BASE_DIR]],
     ],
 )
 def test_parent(path, parent):
-    assert functions.Parent(PATH)(path) == parent
+    assert functions.Parent(BASE_DIR)(path) == parent
 
 
 def test_pwd():
-    assert functions.PWD(PATH)() == PATH.as_posix()
+    assert functions.PWD(BASE_DIR)() == BASE_DIR.as_posix()
 
 
 @pytest.mark.parametrize(
@@ -61,7 +62,7 @@ def test_pwd():
     [[True, 42, 1024, 42], [False, 42, 1024, 1024]],
 )
 def test_ternary_if(condition, true_value, false_value, expected):
-    assert functions.TernaryIf(PATH)(condition, true_value, false_value) == expected
+    assert functions.TernaryIf(BASE_DIR)(condition, true_value, false_value) == expected
 
 
 @pytest.mark.parametrize(
@@ -77,7 +78,7 @@ def test_ternary_if(condition, true_value, false_value, expected):
     ],
 )
 def test_substitute(old, new, obj, expected):
-    assert functions.Substitute(PATH)(old, new, obj) == expected
+    assert functions.Substitute(BASE_DIR)(old, new, obj) == expected
 
 
 @pytest.mark.parametrize(
@@ -91,4 +92,4 @@ def test_substitute(old, new, obj, expected):
     ],
 )
 def test_merge(arguments, expected):
-    assert functions.Merge(PATH)(*arguments) == expected
+    assert functions.Merge(BASE_DIR)(*arguments) == expected
