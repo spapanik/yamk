@@ -41,6 +41,71 @@ def test_stem(path, stem):
 
 
 @pytest.mark.parametrize(
+    ["path", "suffix"],
+    [
+        ["make.toml", ".toml"],
+        ["path/random_name.extension", ".extension"],
+        [["make.toml", "path/to/file.txt"], [".toml", ".txt"]],
+    ],
+)
+def test_suffix(path, suffix):
+    assert functions.Suffix(BASE_DIR)(path) == suffix
+
+
+@pytest.mark.parametrize(
+    ["path", "name"],
+    [
+        ["make.toml", "make.toml"],
+        ["path/random_name.extension", "random_name.extension"],
+        [["make.toml", "path/to/file.txt"], ["make.toml", "file.txt"]],
+    ],
+)
+def test_name(path, name):
+    assert functions.Name(BASE_DIR)(path) == name
+
+
+@pytest.mark.parametrize(
+    ["path", "new_parent", "new_path"],
+    [
+        ["make.toml", "/etc", pathlib.Path("/etc").joinpath("make.toml")],
+        [
+            "path/random_name.extension",
+            "dir/",
+            BASE_DIR.joinpath("dir", "random_name.extension"),
+        ],
+        [
+            ["make.toml", "path/to/file.txt"],
+            "",
+            [BASE_DIR.joinpath("make.toml"), BASE_DIR.joinpath("file.txt")],
+        ],
+    ],
+)
+def test_change_parent(path, new_parent, new_path):
+    assert functions.ChangeParent(BASE_DIR)(path, new_parent) == new_path
+
+
+@pytest.mark.parametrize(
+    ["path", "new_suffix", "new_path"],
+    [
+        ["make.toml", ".py", BASE_DIR.joinpath("make.py")],
+        ["make.toml", "", BASE_DIR.joinpath("make")],
+        [
+            "path/random_name.extension",
+            ".cpp",
+            BASE_DIR.joinpath("path/random_name.cpp"),
+        ],
+        [
+            ["make.toml", "path/to/file.txt"],
+            ".o",
+            [BASE_DIR.joinpath("make.o"), BASE_DIR.joinpath("path/to/file.o")],
+        ],
+    ],
+)
+def test_change_suffix(path, new_suffix, new_path):
+    assert functions.ChangeSuffix(BASE_DIR)(path, new_suffix) == new_path
+
+
+@pytest.mark.parametrize(
     ["path", "parent"],
     [
         ["make.toml", BASE_DIR],
