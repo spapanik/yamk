@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
-- Add function to get the name of a file
-- Add function to get the suffix of a file
-- Add function to change the suffix of a file
-- Add function to change the parent of a file
+- Add the following functions:
+  - get the name of a file
+  - get the suffix of a file
+  - change the suffix of a file
+  - change the parent of a file
 
 ### Fixed
 - Fix strength of variables
