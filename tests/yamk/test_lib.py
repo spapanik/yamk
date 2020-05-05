@@ -96,7 +96,7 @@ def test_extract_options(string, expected_options, expected_string):
 @pytest.mark.parametrize(
     ["timestamp", "dt"],
     [
-        [0, datetime(1970, 1, 1, 0, 0)],
+        [0, datetime(1970, 1, 1)],
         [1584704491.4541745, datetime(2020, 3, 20, 11, 41, 31, 454175)],
         [float("inf"), datetime(9999, 12, 31, 23, 59, 59, 999999)],
     ],
