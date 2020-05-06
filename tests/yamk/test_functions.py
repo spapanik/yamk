@@ -67,16 +67,19 @@ def test_name(path, name):
 @pytest.mark.parametrize(
     ["path", "new_parent", "new_path"],
     [
-        ["make.toml", "/etc", pathlib.Path("/etc").joinpath("make.toml")],
+        ["make.toml", "/etc", "/etc/make.toml"],
         [
             "path/random_name.extension",
             "dir/",
-            BASE_DIR.joinpath("dir", "random_name.extension"),
+            BASE_DIR.joinpath("dir", "random_name.extension").as_posix(),
         ],
         [
             ["make.toml", "path/to/file.txt"],
             "",
-            [BASE_DIR.joinpath("make.toml"), BASE_DIR.joinpath("file.txt")],
+            [
+                BASE_DIR.joinpath("make.toml").as_posix(),
+                BASE_DIR.joinpath("file.txt").as_posix(),
+            ],
         ],
     ],
 )
@@ -87,17 +90,20 @@ def test_change_parent(path, new_parent, new_path):
 @pytest.mark.parametrize(
     ["path", "new_suffix", "new_path"],
     [
-        ["make.toml", ".py", BASE_DIR.joinpath("make.py")],
-        ["make.toml", "", BASE_DIR.joinpath("make")],
+        ["make.toml", ".py", BASE_DIR.joinpath("make.py").as_posix()],
+        ["make.toml", "", BASE_DIR.joinpath("make").as_posix()],
         [
             "path/random_name.extension",
             ".cpp",
-            BASE_DIR.joinpath("path/random_name.cpp"),
+            BASE_DIR.joinpath("path/random_name.cpp").as_posix(),
         ],
         [
             ["make.toml", "path/to/file.txt"],
             ".o",
-            [BASE_DIR.joinpath("make.o"), BASE_DIR.joinpath("path/to/file.o")],
+            [
+                BASE_DIR.joinpath("make.o").as_posix(),
+                BASE_DIR.joinpath("path/to/file.o").as_posix(),
+            ],
         ],
     ],
 )
@@ -108,10 +114,10 @@ def test_change_suffix(path, new_suffix, new_path):
 @pytest.mark.parametrize(
     ["path", "parent"],
     [
-        ["make.toml", BASE_DIR],
-        ["random_name.extension", BASE_DIR],
-        ["directory/", BASE_DIR],
-        [["file.txt", "dir/"], [BASE_DIR, BASE_DIR]],
+        ["make.toml", BASE_DIR.as_posix()],
+        ["random_name.extension", BASE_DIR.as_posix()],
+        ["directory/", BASE_DIR.as_posix()],
+        [["file.txt", "dir/"], [BASE_DIR.as_posix(), BASE_DIR.as_posix()]],
     ],
 )
 def test_parent(path, parent):

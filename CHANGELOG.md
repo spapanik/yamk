@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Regex variables are now weaker than local ones
 
+### Fixed
+- Fix return type of functions
+
 ## [0.14.0] - 2020-05-05
 ### Added
 - Add the following functions:

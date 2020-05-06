@@ -72,7 +72,7 @@ class Parent(Function):
     def __call__(self, path):
         if isinstance(path, list):
             return [self(file) for file in path]
-        return self.base_dir.joinpath(path).parent
+        return self.base_dir.joinpath(path).parent.as_posix()
 
 
 class ChangeSuffix(Function):
@@ -81,7 +81,7 @@ class ChangeSuffix(Function):
     def __call__(self, path, suffix):
         if isinstance(path, list):
             return [self(file, suffix) for file in path]
-        return self.base_dir.joinpath(path).with_suffix(suffix)
+        return self.base_dir.joinpath(path).with_suffix(suffix).as_posix()
 
 
 class ChangeParent(Function):
@@ -91,7 +91,7 @@ class ChangeParent(Function):
         if isinstance(path, list):
             return [self(file, parent) for file in path]
         name = self.base_dir.joinpath(path).name
-        return self.base_dir.joinpath(parent, name)
+        return self.base_dir.joinpath(parent, name).as_posix()
 
 
 class PWD(Function):
