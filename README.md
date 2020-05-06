@@ -135,11 +135,11 @@ All the environment variables gathered at the beginning of the execution of `yam
 ##### Global
 A global variable is a variable specified in the `$global` meta-target.
 
-##### Local
-A local variable is a variable specified by the `vars` key inside a target.
-
 ##### Regex
 In the case of a regex target, any named group is a regex variable, which has the value of the matched text.
+
+##### Local
+A local variable is a variable specified by the `vars` key inside a target.
 
 ##### Argument
 An argument variable is a variable defined with the --variable option when `yamk` was invoked.

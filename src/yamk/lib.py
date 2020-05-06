@@ -24,7 +24,6 @@ class Recipe:
         self.vars = (
             Variables(self.base_dir, **os.environ)
             .add_batch(self.file_vars)
-            .add_batch(self.local_vars)
             .add_batch(self.arg_vars)
         )
         self.alias = self._alias(raw_recipe.get("alias", False))
@@ -66,7 +65,8 @@ class Recipe:
         return new_recipe
 
     def _update_variables(self, groups):
-        self.vars = self.vars.add_batch([groups, {".target": self.target}])
+        extra_vars = [groups, *self.local_vars, {".target": self.target}]
+        self.vars = self.vars.add_batch(extra_vars)
 
     def _update_requirements(self):
         parser = Parser(self.vars, self.base_dir)

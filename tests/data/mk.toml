@@ -76,9 +76,6 @@ alias = "two_commands"
 ['regex[-_](?P<number>[^.]\d+)']
 phony = true
 regex = true
-vars = [
-    {number = "1024"},
-]
 commands = [
     "echo ${number}",
 ]
