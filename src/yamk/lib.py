@@ -64,30 +64,30 @@ class Recipe:
         new_recipe._update_commands()
         return new_recipe
 
+    def _evaluate(self, obj):
+        parser = Parser(self.vars, self.base_dir)
+        return parser.evaluate(obj)
+
     def _update_variables(self, groups):
         extra_vars = [groups, *self.local_vars, {".target": self.target}]
         self.vars = self.vars.add_batch(extra_vars)
 
     def _update_requirements(self):
-        parser = Parser(self.vars, self.base_dir)
-        self.requires = parser.evaluate(self.requires)
+        self.requires = self._evaluate(self.requires)
 
     def _update_commands(self):
         extra_vars = [{".requirements": self.requires}]
         self.vars = self.vars.add_batch(extra_vars)
-        parser = Parser(self.vars, self.base_dir)
-        self.commands = parser.evaluate(self.commands)
+        self.commands = self._evaluate(self.commands)
 
     def _alias(self, alias):
         if alias is False:
             return alias
-        parser = Parser(self.vars, self.base_dir)
-        return parser.evaluate(alias)
+        return self._evaluate(alias)
 
     def _target(self, target):
         if not self._specified:
-            parser = Parser(self.vars, self.base_dir)
-            target = parser.evaluate(target)
+            target = self._evaluate(target)
         if not self.phony and not self.alias:
             target = self.base_dir.joinpath(target).as_posix()
         if self.regex and not self._specified:
