@@ -11,6 +11,26 @@ def parse_args():
     parser = argparse.ArgumentParser(
         prog="yamk", description="Yet another make command",
     )
+
+    # positional arguments
+    parser.add_argument(
+        "target", nargs="?", default="all", help="the target for yamk",
+    )
+
+    # optional arguments
+    parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="rebuild all dependencies and the target",
+    )
+    parser.add_argument(
+        "-m",
+        "--makefile",
+        metavar="Makefile",
+        default="make.toml",
+        help="the path to makefile",
+    )
     parser.add_argument(
         "-V",
         "--version",
@@ -26,19 +46,6 @@ def parse_args():
         help="increase the level of verbosity",
     )
     parser.add_argument(
-        "-f",
-        "--force",
-        action="store_true",
-        help="rebuild all dependencies and the target",
-    )
-    parser.add_argument(
-        "-m",
-        "--makefile",
-        metavar="Makefile",
-        default="make.toml",
-        help="the path to makefile",
-    )
-    parser.add_argument(
         "-x",
         "--variable",
         action="append",
@@ -47,9 +54,6 @@ def parse_args():
         default=[],
         help="a list of variables to override the ones set in the makefile, "
         "which should be in the form <variable>=<value>",
-    )
-    parser.add_argument(
-        "target", nargs="?", default="all", help="The target for yamk",
     )
 
     return parser.parse_args()
