@@ -16,27 +16,27 @@ def parse_args():
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
-        help="Print the version and exit",
+        help="print the version and exit",
     )
     parser.add_argument(
         "-v",
         "--verbose",
         action="count",
         default=0,
-        help="Increase the level of verbosity",
+        help="increase the level of verbosity",
     )
     parser.add_argument(
         "-f",
         "--force",
         action="store_true",
-        help="Rebuild all dependencies and the target",
+        help="rebuild all dependencies and the target",
     )
     parser.add_argument(
         "-m",
         "--makefile",
         metavar="Makefile",
         default="make.toml",
-        help="The path to makefile",
+        help="the path to makefile",
     )
     parser.add_argument(
         "-x",
@@ -45,8 +45,8 @@ def parse_args():
         metavar="KEY=value",
         dest="variables",
         default=[],
-        help="A list of variables to override the ones set in the makefile. "
-        "They should be in the form <variable>=<value>",
+        help="a list of variables to override the ones set in the makefile, "
+        "which should be in the form <variable>=<value>",
     )
     parser.add_argument(
         "target", nargs="?", default="all", help="The target for yamk",
