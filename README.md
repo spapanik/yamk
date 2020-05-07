@@ -30,12 +30,13 @@ Changelog is kept [here](https://github.com/spapanik/yamk/blob/master/CHANGELOG.
 `yamk`'s behaviour is defined in a toml file. The expected name is `make.toml`, but you can specify a different file if you want.
 
 `yamk` can be invoked by using the command `yamk`, which is also aliased to `yam`. `yamk` follows the GNU recommendations for command line interfaces, and offers:
-*  -h/--help                show this help message and exit
-*  -f/--force               rebuild all dependencies and the target
-*  -m/--makefile MAKEFILE   the path to makefile (defaults to `./make.toml`)
-*  -V/--version             print the version and exit
-*  -v/--verbose             increase the level of verbosity
-*  -x/--variable KEY=value  a list of variables to override the ones set in the makefile, which should be in the form <variable>=<value>
+*  -h/--help                  show this help message and exit
+*  -d/--directory  dir        the path to the directory that contains the makefile
+*  -f/--force                 rebuild all dependencies and the target
+*  -m/--makefile   MAKEFILE   the path to makefile (defaults to `./make.toml`)
+*  -V/--version               print the version and exit
+*  -v/--verbose               increase the level of verbosity
+*  -x/--variable   KEY=value  a list of variables to override the ones set in the makefile, which should be in the form <variable>=<value>
 
 ## Terminology
 

@@ -21,15 +21,15 @@ class MakeCommand:
         self.aliases = {}
         self.target = args.target
         self.force_make = args.force
-        makefile = args.makefile
+        makefile = pathlib.Path(args.directory).joinpath(args.makefile).absolute()
+        self.base_dir = makefile.parent
+        self.phony_dir = self.base_dir.joinpath(".yamk")
         self.arg_vars = [
             {key: value}
             for key, value in map(
                 lambda var: var.split("=", maxsplit=1), args.variables
             )
         ]
-        self.base_dir = pathlib.Path(makefile).parent.absolute()
-        self.phony_dir = self.base_dir.joinpath(".yamk")
         with open(makefile) as file:
             parsed_toml = tomlkit.parse(file.read())
         self.globals = parsed_toml.pop("$globals", {})

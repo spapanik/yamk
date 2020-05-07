@@ -19,6 +19,13 @@ def parse_args():
 
     # optional arguments
     parser.add_argument(
+        "-d",
+        "--directory",
+        metavar="dir",
+        default=".",
+        help="the path to the directory that contains the makefile",
+    )
+    parser.add_argument(
         "-f",
         "--force",
         action="store_true",
