@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Add the option to rebuild even if it's not needed
+
 ### Changed
 - Regex variables are now weaker than local ones
 

@@ -32,6 +32,7 @@ Changelog is kept [here](https://github.com/spapanik/yamk/blob/master/CHANGELOG.
 `yamk` can be invoked by using the command `yamk`, which is also aliased to `yam`. `yamk` follows the GNU recommendations for command line interfaces, and offers:
 *  -h/--help              show this help message and exit
 *  -V/--version           print the version and exit
+*  -f/--force             Rebuild all dependencies and the target
 *  -m/--makefile MAKEFILE the path to makefile (defaults to `./make.toml`)
 
 ## Terminology

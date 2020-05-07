@@ -20,6 +20,7 @@ class MakeCommand:
         self.static_recipes = {}
         self.aliases = {}
         self.target = args.target
+        self.force_make = args.force
         makefile = args.makefile
         self.arg_vars = [
             {key: value}
@@ -171,6 +172,8 @@ class MakeCommand:
         recipe = info.get("recipe")
         if recipe is None:
             return False
+        if self.force_make:
+            return True
         if recipe.phony:
             if not recipe.keep_ts:
                 return True

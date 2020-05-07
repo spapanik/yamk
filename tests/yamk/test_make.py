@@ -247,6 +247,21 @@ def test_make_with_phony_and_keep_ts_older_requirement(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_make_with_phony_and_keep_ts_older_requirement_and_force(runner, mock_args):
+    mock_args.target = "keep_ts"
+    mock_args.force = True
+    make_command = make.MakeCommand(mock_args)
+    make_command.phony_dir.mkdir(exist_ok=True)
+    make_command.phony_dir.joinpath("keep_ts").touch()
+    os.utime(make_command.phony_dir, times=(2, 3))
+    os.utime(make_command.phony_dir.joinpath("keep_ts"), times=(1, 5))
+    make_command.make()
+    assert runner.call_count == 1
+    calls = [mock.call("ls", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_make_with_phony_and_keep_ts_missing_ts(runner, mock_args):
     mock_args.target = "keep_ts"
     make_command = make.MakeCommand(mock_args)

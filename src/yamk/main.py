@@ -26,6 +26,12 @@ def parse_args():
         help="Increase the level of verbosity",
     )
     parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="Rebuild all dependencies and the target",
+    )
+    parser.add_argument(
         "-m",
         "--makefile",
         metavar="Makefile",

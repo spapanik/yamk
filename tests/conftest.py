@@ -13,4 +13,5 @@ def mock_args():
     args.target = "mock_target"
     args.makefile = TEST_MAKEFILE
     args.verbose = 0
+    args.force = False
     return args
