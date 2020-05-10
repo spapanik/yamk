@@ -39,10 +39,10 @@ class MakeCommand:
     def make(self):
         preprocessed = self._preprocess_target()
         for info in filter(
-            lambda x: x["should_build"],
-            sorted(preprocessed.values(), key=lambda x: x["priority"], reverse=True),
+            lambda x: x.should_build,
+            sorted(preprocessed.values(), key=lambda x: x.priority, reverse=True),
         ):
-            self._make_target(info["recipe"])
+            self._make_target(info.recipe)
 
     def _parse_recipes(self, parsed_toml):
         for target, raw_recipe in parsed_toml.items():
@@ -65,13 +65,16 @@ class MakeCommand:
         if recipe is None:
             raise ValueError(f"No recipe to build {self.target}")
 
-        unprocessed = {recipe.target: {"recipe": recipe, "priority": 0}}
+        root = lib.Node()
+        root.recipe = recipe
+        root.priority = 0
+        unprocessed = {recipe.target: root}
         preprocessed = {}
         while unprocessed:
-            target, info = unprocessed.popitem()
-            priority = info["priority"] + 1
-            target_recipe = info["recipe"]
-            preprocessed[target_recipe.target] = info
+            target, node = unprocessed.popitem()
+            priority = node.priority + 1
+            target_recipe = node.recipe
+            preprocessed[target_recipe.target] = node
             for index, raw_requirement in enumerate(target_recipe.requires):
                 recipe = self._extract_recipe(raw_requirement)
                 if recipe is None:
@@ -84,31 +87,28 @@ class MakeCommand:
                 target_recipe.requires[index] = requirement
 
                 if requirement in preprocessed:
-                    current_priority = preprocessed[requirement]["priority"]
-                    preprocessed[requirement]["priority"] = max(
-                        priority, current_priority
-                    )
+                    current_priority = preprocessed[requirement].priority
+                    preprocessed[requirement].priority = max(priority, current_priority)
                 elif requirement in unprocessed:
-                    current_priority = unprocessed[requirement]["priority"]
-                    unprocessed[requirement]["priority"] = max(
-                        priority, current_priority
-                    )
+                    current_priority = unprocessed[requirement].priority
+                    unprocessed[requirement].priority = max(priority, current_priority)
                 elif recipe is None:
-                    preprocessed[requirement] = {"priority": priority}
+                    preprocessed[requirement] = lib.Node()
+                    preprocessed[requirement].recipe = None
+                    preprocessed[requirement].priority = priority
                 else:
-                    unprocessed[requirement] = {
-                        "recipe": recipe,
-                        "priority": priority,
-                    }
+                    unprocessed[requirement] = lib.Node()
+                    unprocessed[requirement].recipe = recipe
+                    unprocessed[requirement].priority = priority
 
         self._mark_unchanged(preprocessed)
         if self.verbosity > 3:
             print("=== all targets ===")
-            for target, options in preprocessed.items():
+            for target, node in preprocessed.items():
                 print(f"- {target}:")
-                print(f"    priority: {options['priority']}")
-                print(f"    timestamp: {lib.timestamp_to_dt(options['timestamp'])}")
-                print(f"    should_build: {options['should_build']}")
+                print(f"    priority: {node.priority}")
+                print(f"    timestamp: {lib.timestamp_to_dt(node.timestamp)}")
+                print(f"    should_build: {node.should_build}")
         return preprocessed
 
     def _make_target(self, recipe):
@@ -152,13 +152,13 @@ class MakeCommand:
         return recipe.for_target(target)
 
     def _mark_unchanged(self, preprocessed):
-        for target, info in sorted(
-            preprocessed.items(), key=lambda x: x[1]["priority"], reverse=True
+        for target, node in sorted(
+            preprocessed.items(), key=lambda x: x[1].priority, reverse=True
         ):
-            ts = self._infer_timestamp(target, info)
-            info["timestamp"] = ts
+            ts = self._infer_timestamp(target, node)
+            node.timestamp = ts
             should_build = self._should_build(target, preprocessed)
-            info["should_build"] = should_build
+            node.should_build = should_build
 
     def _phony_path(self, target):
         encoded_target = target.replace(".", ".46").replace("/", ".47")
@@ -168,8 +168,8 @@ class MakeCommand:
         return self.base_dir.joinpath(target)
 
     def _should_build(self, target, preprocessed):
-        info = preprocessed[target]
-        recipe = info.get("recipe")
+        node = preprocessed[target]
+        recipe = node.recipe
         if recipe is None:
             return False
         if self.force_make:
@@ -188,18 +188,18 @@ class MakeCommand:
                 return False
 
         if any(
-            preprocessed[requirement]["should_build"] for requirement in recipe.requires
+            preprocessed[requirement].should_build for requirement in recipe.requires
         ):
             return True
 
-        ts = info["timestamp"]
+        ts = node.timestamp
         req_ts = max(
-            preprocessed[requirement]["timestamp"] for requirement in recipe.requires
+            preprocessed[requirement].timestamp for requirement in recipe.requires
         )
         return req_ts > ts
 
-    def _infer_timestamp(self, target, info):
-        recipe = info.get("recipe")
+    def _infer_timestamp(self, target, node):
+        recipe = node.recipe
         path = self._file_path(target)
         if recipe is None:
             return path.stat().st_mtime

@@ -179,6 +179,15 @@ class Parser:
         raise TypeError(f"{obj.__class__.__name__} is not supported for evaluation")
 
 
+class Node:
+    recipe: Recipe
+    timestamp: float
+    priority: int  # TODO: use topological sort instead
+    should_build: bool
+    required_by: set
+    requires: set
+
+
 def extract_options(string):
     match = re.fullmatch(OPTIONS, string)
     if match is None:
