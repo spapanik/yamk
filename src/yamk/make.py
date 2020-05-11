@@ -37,12 +37,9 @@ class MakeCommand:
         self.subprocess_kwargs = {"shell": True, "cwd": self.base_dir}
 
     def make(self):
-        preprocessed = self._preprocess_target()
-        for info in filter(
-            lambda x: x.should_build,
-            sorted(preprocessed.values(), key=lambda x: x.priority, reverse=True),
-        ):
-            self._make_target(info.recipe)
+        dag = self._preprocess_target()
+        for node in filter(lambda x: x.should_build, dag):
+            self._make_target(node.recipe)
 
     def _parse_recipes(self, parsed_toml):
         for target, raw_recipe in parsed_toml.items():
@@ -65,16 +62,14 @@ class MakeCommand:
         if recipe is None:
             raise ValueError(f"No recipe to build {self.target}")
 
-        root = lib.Node()
-        root.recipe = recipe
-        root.priority = 0
-        unprocessed = {recipe.target: root}
-        preprocessed = {}
+        root = lib.Node(recipe, 0)
+        unprocessed = {root.target: root}
+        dag = lib.DAG(root)
         while unprocessed:
-            target, node = unprocessed.popitem()
-            priority = node.priority + 1
-            target_recipe = node.recipe
-            preprocessed[target_recipe.target] = node
+            target, target_node = unprocessed.popitem()
+            dag.add_node(target_node)
+            priority = target_node.priority + 1
+            target_recipe = target_node.recipe
             for index, raw_requirement in enumerate(target_recipe.requires):
                 recipe = self._extract_recipe(raw_requirement)
                 if recipe is None:
@@ -86,30 +81,33 @@ class MakeCommand:
                     requirement = recipe.target
                 target_recipe.requires[index] = requirement
 
-                if requirement in preprocessed:
-                    current_priority = preprocessed[requirement].priority
-                    preprocessed[requirement].priority = max(priority, current_priority)
+                if requirement in dag:
+                    node = dag[requirement]
+                    node.priority = max(priority, node.priority)
                 elif requirement in unprocessed:
-                    current_priority = unprocessed[requirement].priority
-                    unprocessed[requirement].priority = max(priority, current_priority)
+                    node = unprocessed[requirement]
+                    node.priority = max(priority, node.priority)
                 elif recipe is None:
-                    preprocessed[requirement] = lib.Node()
-                    preprocessed[requirement].recipe = None
-                    preprocessed[requirement].priority = priority
+                    node = lib.Node(None, priority, target=requirement)
+                    dag.add_node(node)
                 else:
-                    unprocessed[requirement] = lib.Node()
-                    unprocessed[requirement].recipe = recipe
-                    unprocessed[requirement].priority = priority
+                    node = lib.Node(recipe, priority)
+                    unprocessed[requirement] = node
+                node.required_by.add(target_node)
+                target_node.requires.add(node)
 
-        self._mark_unchanged(preprocessed)
+        dag.sort()
+        self._mark_unchanged(dag)
         if self.verbosity > 3:
             print("=== all targets ===")
-            for target, node in preprocessed.items():
-                print(f"- {target}:")
+            for node in dag:
+                print(f"- {node.target}:")
                 print(f"    priority: {node.priority}")
                 print(f"    timestamp: {lib.timestamp_to_dt(node.timestamp)}")
                 print(f"    should_build: {node.should_build}")
-        return preprocessed
+                print(f"    requires: {node.requires}")
+                print(f"    required_by: {node.required_by}")
+        return dag
 
     def _make_target(self, recipe):
         if self.verbosity > 1:
@@ -151,14 +149,10 @@ class MakeCommand:
 
         return recipe.for_target(target)
 
-    def _mark_unchanged(self, preprocessed):
-        for target, node in sorted(
-            preprocessed.items(), key=lambda x: x[1].priority, reverse=True
-        ):
-            ts = self._infer_timestamp(target, node)
-            node.timestamp = ts
-            should_build = self._should_build(target, preprocessed)
-            node.should_build = should_build
+    def _mark_unchanged(self, dag):
+        for node in dag:
+            node.timestamp = self._infer_timestamp(node)
+            node.should_build = self._should_build(node, dag)
 
     def _phony_path(self, target):
         encoded_target = target.replace(".", ".46").replace("/", ".47")
@@ -167,8 +161,7 @@ class MakeCommand:
     def _file_path(self, target):
         return self.base_dir.joinpath(target)
 
-    def _should_build(self, target, preprocessed):
-        node = preprocessed[target]
+    def _should_build(self, node, dag):
         recipe = node.recipe
         if recipe is None:
             return False
@@ -177,34 +170,30 @@ class MakeCommand:
         if recipe.phony:
             if not recipe.keep_ts:
                 return True
-            path = self._phony_path(target)
+            path = self._phony_path(node.target)
             if not path.exists():
                 return True
         else:
-            path = self._file_path(target)
+            path = self._file_path(node.target)
             if not path.exists():
                 return True
             if recipe.exists_only:
                 return False
 
-        if any(
-            preprocessed[requirement].should_build for requirement in recipe.requires
-        ):
+        if any(dag[requirement].should_build for requirement in recipe.requires):
             return True
 
         ts = node.timestamp
-        req_ts = max(
-            preprocessed[requirement].timestamp for requirement in recipe.requires
-        )
+        req_ts = max(dag[requirement].timestamp for requirement in recipe.requires)
         return req_ts > ts
 
-    def _infer_timestamp(self, target, node):
+    def _infer_timestamp(self, node):
         recipe = node.recipe
-        path = self._file_path(target)
+        path = self._file_path(node.target)
         if recipe is None:
             return path.stat().st_mtime
         if recipe.phony:
-            path = self._phony_path(target)
+            path = self._phony_path(node.target)
             if recipe.keep_ts and path.exists():
                 return path.stat().st_mtime
             return float("inf")

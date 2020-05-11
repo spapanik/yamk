@@ -32,7 +32,7 @@ def test_make_verbosity(mock_print, mock_args):
     mock_args.verbose = 4
     make_command = make.MakeCommand(mock_args)
     make_command.make()
-    assert mock_print.call_count == 7
+    assert mock_print.call_count == 9
     calls = [
         mock.call(mock_args),
         mock.call("=== all targets ==="),
@@ -40,6 +40,8 @@ def test_make_verbosity(mock_print, mock_args):
         mock.call("    priority: 0"),
         mock.call("    timestamp: 9999-12-31 23:59:59.999999"),
         mock.call("    should_build: True"),
+        mock.call("    requires: set()"),
+        mock.call("    required_by: set()"),
         mock.call("=== target: phony ==="),
     ]
     assert mock_print.call_args_list == calls

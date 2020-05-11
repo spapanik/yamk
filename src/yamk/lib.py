@@ -188,6 +188,19 @@ class Node:
     required_by: set
     requires: set
 
+    def __init__(self, recipe, priority, *, target=None):
+        self.recipe = recipe
+        self.priority = priority
+        self.target = target if self.recipe is None else self.recipe.target
+        self.requires = set()
+        self.required_by = set()
+
+    def __str__(self):
+        return self.target
+
+    def __repr__(self):
+        return f"Node <{self}>"
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return NotImplemented
@@ -195,6 +208,35 @@ class Node:
 
     def __hash__(self):
         return hash(self.target)
+
+
+class DAG:
+    ordered: list
+
+    def __init__(self, root):
+        self.root = root
+        self.nodes = {root}
+        self._mapping = {root.target: root}
+
+    def __getitem__(self, item):
+        return self._mapping[item]
+
+    def __contains__(self, item):
+        return item in self._mapping
+
+    def __iter__(self):
+        if hasattr(self, "ordered"):
+            return iter(self.ordered)
+        return iter(self._mapping.values())
+
+    def sort(self):
+        if hasattr(self, "ordered"):
+            return
+        self.ordered = sorted(self, key=lambda x: x.priority, reverse=True)
+
+    def add_node(self, node):
+        self.nodes.add(node)
+        self._mapping[node.target] = node
 
 
 def extract_options(string):
