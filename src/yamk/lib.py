@@ -181,11 +181,20 @@ class Parser:
 
 class Node:
     recipe: Recipe
+    target: str
     timestamp: float
     priority: int  # TODO: use topological sort instead
     should_build: bool
     required_by: set
     requires: set
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return self.target == other.target
+
+    def __hash__(self):
+        return hash(self.target)
 
 
 def extract_options(string):
