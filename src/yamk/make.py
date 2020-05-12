@@ -62,13 +62,12 @@ class MakeCommand:
         if recipe is None:
             raise ValueError(f"No recipe to build {self.target}")
 
-        root = lib.Node(recipe, 0)
+        root = lib.Node(recipe)
         unprocessed = {root.target: root}
         dag = lib.DAG(root)
         while unprocessed:
             target, target_node = unprocessed.popitem()
             dag.add_node(target_node)
-            priority = target_node.priority + 1
             target_recipe = target_node.recipe
             for index, raw_requirement in enumerate(target_recipe.requires):
                 recipe = self._extract_recipe(raw_requirement)
@@ -83,15 +82,13 @@ class MakeCommand:
 
                 if requirement in dag:
                     node = dag[requirement]
-                    node.priority = max(priority, node.priority)
                 elif requirement in unprocessed:
                     node = unprocessed[requirement]
-                    node.priority = max(priority, node.priority)
                 elif recipe is None:
-                    node = lib.Node(None, priority, target=requirement)
+                    node = lib.Node(None, target=requirement)
                     dag.add_node(node)
                 else:
-                    node = lib.Node(recipe, priority)
+                    node = lib.Node(recipe)
                     unprocessed[requirement] = node
                 node.required_by.add(target_node)
                 target_node.requires.add(node)
@@ -102,7 +99,6 @@ class MakeCommand:
             print("=== all targets ===")
             for node in dag:
                 print(f"- {node.target}:")
-                print(f"    priority: {node.priority}")
                 print(f"    timestamp: {lib.timestamp_to_dt(node.timestamp)}")
                 print(f"    should_build: {node.should_build}")
                 print(f"    requires: {node.requires}")

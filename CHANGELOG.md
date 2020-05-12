@@ -6,10 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Fix the order of the requirements
+
 ## [0.15.0] - 2020-05-07
 ### Added
 - Add the option to rebuild even if it's not needed
-- Add the option to speciry the path to the directory
+- Add the option to specify the path to the directory
 
 ### Changed
 - Regex variables are now weaker than local ones

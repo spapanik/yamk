@@ -183,14 +183,12 @@ class Node:
     recipe: Recipe
     target: str
     timestamp: float
-    priority: int  # TODO: use topological sort instead
     should_build: bool
     required_by: set
     requires: set
 
-    def __init__(self, recipe, priority, *, target=None):
+    def __init__(self, recipe, *, target=None):
         self.recipe = recipe
-        self.priority = priority
         self.target = target if self.recipe is None else self.recipe.target
         self.requires = set()
         self.required_by = set()
@@ -232,7 +230,16 @@ class DAG:
     def sort(self):
         if hasattr(self, "ordered"):
             return
-        self.ordered = sorted(self, key=lambda x: x.priority, reverse=True)
+        self.ordered = []
+        unordered_nodes = self.nodes.copy()
+        while unordered_nodes:
+            for node in unordered_nodes:
+                if all((parent in self.ordered) for parent in node.requires):
+                    unordered_nodes.remove(node)
+                    break
+            else:
+                raise ValueError("Cyclic dependencies detected. Cowardly aborting...")
+            self.ordered.append(node)
 
     def add_node(self, node):
         self.nodes.add(node)
