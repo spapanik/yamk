@@ -90,8 +90,7 @@ class MakeCommand:
                 else:
                     node = lib.Node(recipe)
                     unprocessed[requirement] = node
-                node.required_by.add(target_node)
-                target_node.requires.add(node)
+                target_node.add_requirement(node)
 
         dag.sort()
         self._mark_unchanged(dag)

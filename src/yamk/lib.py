@@ -207,6 +207,10 @@ class Node:
     def __hash__(self):
         return hash(self.target)
 
+    def add_requirement(self, other):
+        self.requires.add(other)
+        other.required_by.add(self)
+
 
 class DAG:
     ordered: list

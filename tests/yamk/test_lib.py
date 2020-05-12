@@ -67,10 +67,8 @@ def test_missing_topological_sort():
 def test_topological_sort_detects_cycles():
     root = lib.Node(target="target")
     node = lib.Node(target="requirement")
-    root.requires.add(node)
-    root.required_by.add(node)
-    node.requires.add(root)
-    node.required_by.add(root)
+    root.add_requirement(node)
+    node.add_requirement(root)
     dag = lib.DAG(root)
     dag.add_node(node)
     assert pytest.raises(ValueError, dag.sort)
