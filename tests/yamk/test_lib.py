@@ -41,6 +41,41 @@ def test_add_batch_to_variables(initial, batch, expected):
     assert variables.add_batch(batch) == expected
 
 
+def test_node_to_str():
+    node = lib.Node(target="target")
+    assert str(node) == "target"
+    assert str([node]) == "[Node <target>]"
+
+
+def test_node_equals():
+    node = lib.Node(target="target")
+
+    class FakeNode:
+        target = "target"
+
+    other = FakeNode()
+    assert (node == other) is False
+    assert (other == node) is False
+
+
+def test_missing_topological_sort():
+    root = lib.Node(target="target")
+    dag = lib.DAG(root)
+    assert list(dag) == [root]
+
+
+def test_topological_sort_detects_cycles():
+    root = lib.Node(target="target")
+    node = lib.Node(target="requirement")
+    root.requires.add(node)
+    root.required_by.add(node)
+    node.requires.add(root)
+    node.required_by.add(root)
+    dag = lib.DAG(root)
+    dag.add_node(node)
+    assert pytest.raises(ValueError, dag.sort)
+
+
 @pytest.mark.parametrize("obj", [1, ("string in a tuple",), {"nested integer": 1}])
 def test_parser_evaluation_raises(obj):
     parser = lib.Parser({}, PATH)

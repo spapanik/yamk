@@ -228,8 +228,6 @@ class DAG:
         return iter(self._mapping.values())
 
     def sort(self):
-        if hasattr(self, "ordered"):
-            return
         self.ordered = []
         unordered_nodes = self.nodes.copy()
         while unordered_nodes:
