@@ -85,7 +85,7 @@ class MakeCommand:
                 elif requirement in unprocessed:
                     node = unprocessed[requirement]
                 elif recipe is None:
-                    node = lib.Node(None, target=requirement)
+                    node = lib.Node(target=requirement)
                     dag.add_node(node)
                 else:
                     node = lib.Node(recipe)

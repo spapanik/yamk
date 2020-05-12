@@ -187,7 +187,7 @@ class Node:
     required_by: set
     requires: set
 
-    def __init__(self, recipe, *, target=None):
+    def __init__(self, recipe=None, *, target=None):
         self.recipe = recipe
         self.target = target if self.recipe is None else self.recipe.target
         self.requires = set()
