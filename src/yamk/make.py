@@ -152,7 +152,7 @@ class MakeCommand:
     def _mark_unchanged(self, dag):
         for node in dag:
             node.timestamp = self._infer_timestamp(node)
-            node.should_build = self._should_build(node, dag)
+            node.should_build = self._should_build(node)
 
     def _phony_path(self, target):
         encoded_target = target.replace(".", ".46").replace("/", ".47")
@@ -161,7 +161,7 @@ class MakeCommand:
     def _file_path(self, target):
         return self.base_dir.joinpath(target)
 
-    def _should_build(self, node, dag):
+    def _should_build(self, node):
         recipe = node.recipe
         if recipe is None:
             return False
@@ -180,11 +180,11 @@ class MakeCommand:
             if recipe.exists_only:
                 return False
 
-        if any(dag[requirement].should_build for requirement in recipe.requires):
+        if any(child.should_build for child in node.requires):
             return True
 
         ts = node.timestamp
-        req_ts = max(dag[requirement].timestamp for requirement in recipe.requires)
+        req_ts = max(child.timestamp for child in node.requires)
         return req_ts > ts
 
     def _infer_timestamp(self, node):
