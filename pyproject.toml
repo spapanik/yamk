@@ -20,7 +20,7 @@ authors = [
     "Stephanos Kuma <spapanik21@gmail.com>",
 ]
 
-license = "LGPLv3"
+license = "LGPL-3.0+"
 readme = "README.md"
 
 repository = "https://github.com/spapanik/yamk"
