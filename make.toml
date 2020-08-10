@@ -18,7 +18,7 @@ commands = [
 [format]
 phony = true
 commands = [
-    "isort --recursive .",
+    "isort .",
     "black .",
 ]
 
@@ -26,7 +26,7 @@ commands = [
 phony = true
 commands = [
     "flake8 .",
-    "isort --check-only --recursive .",
+    "isort --check .",
     "black --check .",
 ]
 
