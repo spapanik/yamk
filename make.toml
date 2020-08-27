@@ -10,6 +10,7 @@ alias = "install"
 
 [install]
 phony = true
+keep_ts = true
 requires = ["requirements.txt"]
 commands = [
     "poetry install ${poetry_extra}",
@@ -17,6 +18,7 @@ commands = [
 
 [format]
 phony = true
+requires = ["install"]
 commands = [
     "isort .",
     "black .",
@@ -24,14 +26,16 @@ commands = [
 
 [lint]
 phony = true
+requires = ["install"]
 commands = [
-    "flake8 .",
+    "flake8",
     "isort --check .",
     "black --check .",
 ]
 
 [tests]
 phony = true
+requires = ["install"]
 commands = [
     "pytest ${pytest_args} ${pytest_path}",
 ]
@@ -39,12 +43,11 @@ commands = [
 ["poetry.lock"]
 requires = ["pyproject.toml"]
 commands = [
-    "poetry lock && touch poetry.lock",
+    "poetry lock && touch ${.target}",
 ]
 
 ["requirements.txt"]
 requires = ["poetry.lock"]
 commands = [
-    "poetry install ${poetry_extra}",
     "poetry export --without-hashes -f requirements.txt -o ${.target}",
 ]
