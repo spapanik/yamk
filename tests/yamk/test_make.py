@@ -103,7 +103,7 @@ def test_make_extra_vars(runner, mock_args):
     make_command.make()
     assert runner.call_count == 1
     calls = [
-        mock.call("echo /etc/service.d/service.conf", **make_command.subprocess_kwargs,)
+        mock.call("echo /etc/service.d/service.conf", **make_command.subprocess_kwargs)
     ]
     assert runner.call_args_list == calls
 

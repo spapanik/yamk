@@ -9,13 +9,11 @@ sys.tracebacklimit = 0
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        prog="yamk", description="Yet another make command",
+        prog="yamk", description="Yet another make command"
     )
 
     # positional arguments
-    parser.add_argument(
-        "target", nargs="?", default="all", help="the target for yamk",
-    )
+    parser.add_argument("target", nargs="?", default="all", help="the target for yamk")
 
     # optional arguments
     parser.add_argument(
