@@ -27,7 +27,7 @@ include = ["CHANGELOG.md"]
 repository = "https://github.com/spapanik/yamk"
 
 keywords = ["make", "build", "cli"]
-classifiers=[
+classifiers = [
     "Development Status :: 3 - Alpha",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
