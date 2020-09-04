@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][clog], and this project adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
+### Added
+- Add a filter-out function
 
 ## [0.16.0] - 2020-05-12
 ### Fixed

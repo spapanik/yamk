@@ -101,6 +101,13 @@ class PWD(Function):
         return self.base_dir.as_posix()
 
 
+class FilterOut(Function):
+    name = "filter_out"
+
+    def __call__(self, odd, obj):
+        return list(filter(lambda x: x != odd, obj))
+
+
 class TernaryIf(Function):
     name = "ternary_if"
 

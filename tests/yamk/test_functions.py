@@ -137,6 +137,13 @@ def test_ternary_if(condition, true_value, false_value, expected):
 
 
 @pytest.mark.parametrize(
+    ["odd", "obj", "expected"], [[1, [42, 1024], [42, 1024]], [1024, [42, 1024], [42]]]
+)
+def test_filter_out(odd, obj, expected):
+    assert functions.FilterOut(BASE_DIR)(odd, obj) == expected
+
+
+@pytest.mark.parametrize(
     ["old", "new", "obj", "expected"],
     [
         ["old", "new", "old string", "new string"],
