@@ -14,7 +14,7 @@ sections = ["STDLIB", "THIRDPARTY", "FIRSTPARTY", "TESTS"]
 
 [tool.poetry]
 name = "yamk"
-version = "0.16.0"
+version = "1.0.0"
 description = "Yet another make"
 authors = [
     "Stephanos Kuma <spapanik21@gmail.com>",
@@ -28,7 +28,7 @@ repository = "https://github.com/spapanik/yamk"
 
 keywords = ["make", "build", "cli"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Build Tools",

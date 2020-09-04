@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][clog], and this project adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
+
+## [1.0.0] - 2020-09-04
 ### Added
 - Add a filter-out function
 
@@ -154,7 +156,8 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 - Initial project structure
 
 
-[unreleased]: https://github.com/spapanik/yamk/compare/v0.16.0...master
+[unreleased]: https://github.com/spapanik/yamk/compare/v1.0.0...master
+[1.0.0]: https://github.com/spapanik/yamk/compare/v0.16.0...v1.0.0
 [0.16.0]: https://github.com/spapanik/yamk/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/spapanik/yamk/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/spapanik/yamk/compare/v0.13.1...v0.14.0
