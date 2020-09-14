@@ -17,7 +17,7 @@ name = "yamk"
 version = "1.0.0"
 description = "Yet another make"
 authors = [
-    "Stephanos Kuma <spapanik21@gmail.com>",
+    "Stephanos Kuma <stephanos@kuma.ai>",
 ]
 
 license = "LGPL-3.0+"
