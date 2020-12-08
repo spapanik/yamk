@@ -11,7 +11,6 @@ tests/data/requires_build
 
 # installation artifacts
 .yamk/
-requirements.txt
 
 # Distribution / packaging
 pip-wheel-metadata/
