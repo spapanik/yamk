@@ -11,6 +11,7 @@ tests/data/requires_build
 
 # installation artifacts
 .yamk/
+poetry.lock
 
 # Distribution / packaging
 pip-wheel-metadata/
