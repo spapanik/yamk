@@ -63,7 +63,7 @@ There are two groups of mutually exclusive types of targets: File/phony targets 
 A target starting with a single dollar sign is reserved by `yamk` itself, for meta-targets. If the target starts with more than one dollar sign, a single dollar sign is stripped, and it's a normal target or an alias. Currently the only meta-target is `$globals`, that has one valid key: `vars`. `vars` is the same as the key with the same name if static and regex targets, but weaker.
 
 ### Aliases
-An alias has a single key, named `alias`, and the value of the key is the name of the target it aliases. 
+An alias has a single key, named `alias`, and the value of the key is the name of the target it aliases.
 
 ### File targets
 A file target is a target who doesn't have the `phony` key, or that the `phony` key is specifically set to a false value. The path can be with its absolute path, or the path relative to the makefile. Absolute paths are discouraged, as they limit the users ability to choose.
