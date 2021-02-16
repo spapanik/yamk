@@ -156,7 +156,7 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 - Initial project structure
 
 
-[unreleased]: https://github.com/spapanik/yamk/compare/v1.0.0...master
+[unreleased]: https://github.com/spapanik/yamk/compare/v1.0.0...main
 [1.0.0]: https://github.com/spapanik/yamk/compare/v0.16.0...v1.0.0
 [0.16.0]: https://github.com/spapanik/yamk/compare/v0.15.0...v0.16.0
 [0.15.0]: https://github.com/spapanik/yamk/compare/v0.14.0...v0.15.0
