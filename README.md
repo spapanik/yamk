@@ -34,6 +34,7 @@ Changelog is kept [here](https://github.com/spapanik/yamk/blob/main/CHANGELOG.md
 *  -d/--directory  dir        the path to the directory that contains the makefile
 *  -f/--force                 rebuild all dependencies and the target
 *  -m/--makefile   MAKEFILE   the path to makefile (defaults to `./make.toml`)
+*  -s/--shell      shell      the path to the shell to execute the commands (defaults to `/bin/sh`)
 *  -V/--version               print the version and exit
 *  -v/--verbose               increase the level of verbosity
 *  -x/--variable   KEY=value  a list of variables to override the ones set in the makefile, which should be in the form <variable>=<value>
@@ -60,7 +61,7 @@ A recipe has the following format:
 There are two groups of mutually exclusive types of targets: File/phony targets and static/regex targets. There are also two more cases, but they are not targets: Aliases and meta-targets.
 
 ### Meta-targets
-A target starting with a single dollar sign is reserved by `yamk` itself, for meta-targets. If the target starts with more than one dollar sign, a single dollar sign is stripped, and it's a normal target or an alias. Currently the only meta-target is `$globals`, that has one valid key: `vars`. `vars` is the same as the key with the same name if static and regex targets, but weaker.
+A target starting with a single dollar sign is reserved by `yamk` itself, for meta-targets. If the target starts with more than one dollar sign, a single dollar sign is stripped, and it's a normal target or an alias. Currently the only meta-target is `$globals`, that has two valid keys: `vars`. `vars` is the same as the key with the same name if static and regex targets, but weaker. `shell` can override the default shell used to execute the commands, which is `/bin/sh`.
 
 ### Aliases
 An alias has a single key, named `alias`, and the value of the key is the name of the target it aliases.

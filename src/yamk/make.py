@@ -34,7 +34,11 @@ class MakeCommand:
             parsed_toml = tomlkit.parse(file.read())
         self.globals = parsed_toml.pop("$globals", {})
         self._parse_recipes(parsed_toml)
-        self.subprocess_kwargs = {"shell": True, "cwd": self.base_dir}
+        self.subprocess_kwargs = {
+            "shell": True,
+            "cwd": self.base_dir,
+            "executable": self.globals.get("shell") or args.shell,
+        }
 
     def make(self):
         dag = self._preprocess_target()

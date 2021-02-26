@@ -37,6 +37,12 @@ def parse_args():
         help="the path to makefile",
     )
     parser.add_argument(
+        "-s",
+        "--shell",
+        metavar="shell",
+        help="the path to the shell used to execute the commands",
+    )
+    parser.add_argument(
         "-V",
         "--version",
         action="version",

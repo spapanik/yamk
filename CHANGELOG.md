@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 
 ## [Unreleased]
 
+### Added
+- Add the ability to specify the shell
+
 ## [1.0.0] - 2020-09-04
 ### Added
 - Add a filter-out function
