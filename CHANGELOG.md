@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 
 ## [Unreleased]
 
+### Changed
+- Treat undefined variables as empty strings
+
 ## [1.1.0] - 2021-02-26
 ### Added
 - Add the ability to specify the shell

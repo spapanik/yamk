@@ -137,7 +137,7 @@ class Parser:
         variable = matchobj.group("variable")
         key = matchobj.group("key")
         if len(dollars) % 2:
-            value = self.vars[variable]
+            value = self.vars.get(variable, "")
             if key is None:
                 return self._stringify(value)
             if isinstance(value, list):
