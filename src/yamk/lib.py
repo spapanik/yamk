@@ -248,6 +248,16 @@ class DAG:
         self._mapping[node.target] = node
 
 
+def deep_merge(dict_1, dict_2):
+    output = dict_1.copy()
+    for key, value in dict_2.items():
+        if isinstance(dict_1.get(key), dict) and isinstance(value, dict):
+            output[key] = deep_merge(dict_1[key], value)
+        else:
+            output[key] = value
+    return output
+
+
 def extract_options(string):
     match = re.fullmatch(OPTIONS, string)
     if match is None:

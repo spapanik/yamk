@@ -1,0 +1,5 @@
+[".d_override"]
+phony = true
+commands = [
+    "echo head"
+]
