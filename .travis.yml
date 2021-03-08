@@ -12,8 +12,8 @@ install:
   - "yam"
 
 script:
-  - "yamk lint"
-  - "yamk tests"
+  - "yam lint"
+  - "yam tests"
 
 after_success:
   - coveralls
