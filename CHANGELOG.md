@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 
 ## [Unreleased]
 
+## [1.2.0] - 2021-03-08
 ### Changed
 - Treat undefined variables as empty strings
 - Allow specifying a make.toml.d/ for extra configuration files
@@ -164,7 +165,8 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 - Initial project structure
 
 
-[unreleased]: https://github.com/spapanik/yamk/compare/v1.1.0...main
+[unreleased]: https://github.com/spapanik/yamk/compare/v1.2.0...main
+[1.2.0]: https://github.com/spapanik/yamk/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/spapanik/yamk/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/spapanik/yamk/compare/v0.16.0...v1.0.0
 [0.16.0]: https://github.com/spapanik/yamk/compare/v0.15.0...v0.16.0
