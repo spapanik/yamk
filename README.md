@@ -27,7 +27,7 @@ Please make sure that the correct directory is added to your path. This depends 
 Changelog is kept [here](https://github.com/spapanik/yamk/blob/main/CHANGELOG.md).
 
 ## Usage
-`yamk`'s behaviour is defined in a toml file. The expected name is `make.toml`, but you can specify a different file if you want.
+`yamk`'s behaviour is defined in a toml file. The expected name is `make.toml`, but you can specify a different file if you want. Specifying a name `<name.toml>` will also parse all the `.toml` files in the directory named `<name.toml>.d`.
 
 `yamk` can be invoked by using the command `yamk`, which is also aliased to `yam`. `yamk` follows the GNU recommendations for command line interfaces, and offers:
 *  -h/--help                  show this help message and exit
@@ -132,7 +132,7 @@ A variable that resolves to a list or a dictionary will be treated as such. If i
 
 ### Variable types
 
-There are six types of variables: environment variables, argument, global, local, regex and implicit ones. With an increasing strength order:
+There are six types of variables: environment variables, argument, global, local, regex and implicit ones. If a variable is being used within a command and it's not set, it will be treated as the empty string. With an increasing strength order:
 
 ##### Environment
 All the environment variables gathered at the beginning of the execution of `yamk` are gathered into variables. They are the weakest variables.
