@@ -32,7 +32,8 @@ class MakeCommand:
         ]
         with open(makefile) as file:
             parsed_toml = tomlkit.parse(file.read())
-        for path in makefile.with_suffix(makefile.suffix + ".d").glob("*.toml"):
+        makefile_dir = makefile.with_suffix(makefile.suffix + ".d")
+        for path in sorted(makefile_dir.glob("*.toml")):
             with open(path) as file:
                 parsed_toml = lib.deep_merge(parsed_toml, tomlkit.parse(file.read()))
         self.globals = parsed_toml.pop("$globals", {})
