@@ -49,6 +49,10 @@ class MakeCommand:
         for node in filter(lambda x: x.should_build, dag):
             self._make_target(node.recipe)
 
+    def _run_command(self, command):
+        result = subprocess.run(command, **self.subprocess_kwargs)
+        return result.returncode
+
     def _parse_recipes(self, parsed_toml):
         for target, raw_recipe in parsed_toml.items():
             recipe = lib.Recipe(
@@ -120,13 +124,13 @@ class MakeCommand:
             command, options = lib.extract_options(command)
             if recipe.echo or "echo" in options or self.verbosity > 2:
                 print(command)
-            result = subprocess.run(command, **self.subprocess_kwargs)
+            return_code = self._run_command(command)
             if (
-                result.returncode
+                return_code
                 and not recipe.allow_failures
                 and "allow_failures" not in options
             ):
-                sys.exit(result.returncode)
+                sys.exit(return_code)
         if recipe.phony and recipe.keep_ts:
             path = self._phony_path(recipe.target)
             self.phony_dir.mkdir(exist_ok=True)
