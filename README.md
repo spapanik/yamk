@@ -100,7 +100,7 @@ The variables specific to this target.
 ##### keep_ts: boolean (phony targets)
 If set to true, this phony target will keep the timestamp when it was last built. In general, a phony target will be built every time, but a phony target with `keep_ts` set to true, will only be built if the kept timestamp is newer than the timestamp of the requirements.
 
-##### exists_only: boolean (file targets)
+##### exists_only: boolean (any)
 If set to true, this file will be built only if it doesn't exist. The check for the existence is happening before any make command is run and there is a de-duplication step, but some care should be taken into account if it's created as a side-effect of another target.
 
 ##### recursive: boolean (file targets)

@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 
 ## [Unreleased]
 
+### Added
+- Allow exists_only for phony targets
+
 ## [1.2.0] - 2021-03-08
 ### Changed
 - Treat undefined variables as empty strings

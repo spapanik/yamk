@@ -174,14 +174,19 @@ class MakeCommand:
             if not recipe.keep_ts:
                 return True
             path = self._phony_path(node.target)
-            if not path.exists():
-                return True
         else:
             path = self._file_path(node.target)
-            if not path.exists():
-                return True
-            if recipe.exists_only:
-                return False
+
+        if not path.exists():
+            return True
+        if recipe.exists_only:
+            return False
+
+        if not node.requires:
+            raise ValueError(
+                "This target already exists and has no requirements. "
+                "Consider marking it with exists_only"
+            )
 
         if any(child.should_build for child in node.requires):
             return True
@@ -198,6 +203,8 @@ class MakeCommand:
         if recipe.phony:
             path = self._phony_path(node.target)
             if recipe.keep_ts and path.exists():
+                if recipe.exists_only:
+                    return 0
                 return path.stat().st_mtime
             return float("inf")
         if path.exists():
