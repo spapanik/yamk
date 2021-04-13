@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 
 ### Added
 - Allow exists_only for phony targets
+- Allow checking existence with a custom command
 
 ## [1.2.0] - 2021-03-08
 ### Changed

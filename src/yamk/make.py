@@ -168,6 +168,24 @@ class MakeCommand:
     def _file_path(self, target):
         return self.base_dir.joinpath(target)
 
+    def _path(self, node):
+        recipe = node.recipe
+        if recipe is None or not recipe.phony:
+            return self._file_path(node.target)
+
+        return self._phony_path(node.target)
+
+    def _path_exists(self, node):
+        recipe = node.recipe
+        path = self._path(node)
+        if recipe is None or not recipe.phony:
+            return path.exists()
+
+        if recipe.existence_command:
+            return not self._run_command(recipe.existence_command)
+
+        return path.exists()
+
     def _should_build(self, node):
         recipe = node.recipe
         if recipe is None:
@@ -177,11 +195,8 @@ class MakeCommand:
         if recipe.phony:
             if not recipe.keep_ts:
                 return True
-            path = self._phony_path(node.target)
-        else:
-            path = self._file_path(node.target)
 
-        if not path.exists():
+        if not self._path_exists(node):
             return True
         if recipe.exists_only:
             return False
@@ -201,21 +216,25 @@ class MakeCommand:
 
     def _infer_timestamp(self, node):
         recipe = node.recipe
-        path = self._file_path(node.target)
+        path = self._path(node)
         if recipe is None:
             return path.stat().st_mtime
-        if recipe.phony:
-            path = self._phony_path(node.target)
-            if recipe.keep_ts and path.exists():
-                if recipe.exists_only:
-                    return 0
-                return path.stat().st_mtime
+
+        if not self._path_exists(node):
             return float("inf")
-        if path.exists():
+
+        if not recipe.phony:
             if recipe.recursive:
                 descendants = itertools.chain([path], path.rglob("*"))
                 return max(p.stat().st_mtime for p in descendants)
             if recipe.exists_only:
                 return 0
             return path.stat().st_mtime
-        return float("inf")
+
+        if recipe.exists_only:
+            return 0
+
+        if not recipe.keep_ts:
+            raise ValueError("Existence commands needs either exists_only or keep_ts")
+
+        return path.stat().st_mtime
