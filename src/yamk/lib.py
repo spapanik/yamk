@@ -75,6 +75,7 @@ class Recipe:
         extra_vars = [{".requirements": self.requires}]
         self.vars = self.vars.add_batch(extra_vars)
         self.commands = self._evaluate(self.commands)
+        self.existence_command = self._evaluate(self.existence_command)
 
     def _alias(self, alias):
         if alias is False:

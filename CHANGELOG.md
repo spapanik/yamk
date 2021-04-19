@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 
 ## [Unreleased]
 
+### Fixed
+- Existence commands are now evaluated
+
 ## [1.3.0] - 2021-04-14
 ### Added
 - Allow exists_only for phony targets
