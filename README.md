@@ -103,6 +103,9 @@ If set to true, this phony target will keep the timestamp when it was last built
 ##### exists_only: boolean (any)
 If set to true, this file will be built only if it doesn't exist. The check for the existence is happening before any make command is run and there is a de-duplication step, but some care should be taken into account if it's created as a side-effect of another target.
 
+##### existence_command: string (phony targets)
+If to a non-empty string, it will execute this command to check if the phony target already "exists". Upon an exit status of 0, the target is assumed to exist.
+
 ##### recursive: boolean (file targets)
 This makes sense only for directories. In this case, if it's set to true, the timestamp of the directory is taken to be the maximum of all the timestamps of all files, at any depth, inside it.
 
