@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 
 ## [Unreleased]
 
+## [1.3.1] - 2021-04-14
 ### Fixed
 - Existence commands are now evaluated
 
@@ -173,7 +174,8 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 - Initial project structure
 
 
-[unreleased]: https://github.com/spapanik/yamk/compare/v1.3.0...main
+[unreleased]: https://github.com/spapanik/yamk/compare/v1.3.1...main
+[1.3.0]: https://github.com/spapanik/yamk/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/spapanik/yamk/compare/v1.3.0...v1.3.0
 [1.2.0]: https://github.com/spapanik/yamk/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/spapanik/yamk/compare/v1.0.0...v1.1.0
