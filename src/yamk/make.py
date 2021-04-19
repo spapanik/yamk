@@ -178,10 +178,7 @@ class MakeCommand:
     def _path_exists(self, node):
         recipe = node.recipe
         path = self._path(node)
-        if recipe is None or not recipe.phony:
-            return path.exists()
-
-        if recipe.existence_command:
+        if recipe is not None and recipe.phony and recipe.existence_command:
             return not self._run_command(recipe.existence_command)
 
         return path.exists()
