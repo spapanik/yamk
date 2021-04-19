@@ -83,14 +83,14 @@ commands = [
 [multiple_regex]
 phony = true
 requires = [
-    "regex_42",
-    "regex_1024",
+    "file_42.txt",
+    "file_1024.txt",
 ]
 
 ['file_(?P<number>[^.]\d+).txt']
 regex = true
 commands = [
-    "ls",
+    "ls file_${number}.txt",
 ]
 
 [phony_requirement]
