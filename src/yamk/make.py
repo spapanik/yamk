@@ -189,10 +189,6 @@ class MakeCommand:
             return False
         if self.force_make:
             return True
-        if recipe.phony:
-            if not recipe.keep_ts:
-                return True
-
         if not self._path_exists(node):
             return True
         if recipe.exists_only:
