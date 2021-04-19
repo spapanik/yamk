@@ -35,14 +35,9 @@ class Recipe:
         self.allow_failures = raw_recipe.get("allow_failures", False)
         self.target = self._target(target)
         self.exists_only = raw_recipe.get("exists_only", False)
-        if self.phony:
-            self.keep_ts = raw_recipe.get("keep_ts", False)
-            self.existence_command = raw_recipe.get("existence_command", "")
-            self.recursive = False
-        else:
-            self.keep_ts = False
-            self.recursive = raw_recipe.get("recursive", False)
-            self.existence_command = ""
+        self.keep_ts = raw_recipe.get("keep_ts", False)
+        self.existence_command = raw_recipe.get("existence_command", "")
+        self.recursive = raw_recipe.get("recursive", False)
 
     def __str__(self):
         if self._specified:
