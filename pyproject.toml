@@ -43,15 +43,12 @@ yamk = "yamk.main:main"
 yam = "yamk.main:main"
 
 [tool.poetry.dependencies]
-python = "^3.6.0"
+python = "^3.6.2"
 
 tomlkit = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
-black = [
-    {version = "^20.8b1", python = "~3.6.0,<=3.6.1"},
-    {version = "^21.4b1", python = "^3.6.2"},
-]
+black = "^21.4b1"
 isort = "^5.8.0"
 
 pytest = "^6.2.0"
