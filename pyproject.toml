@@ -3,7 +3,7 @@ requires = ["poetry>=1.0.0"]
 build-backend = "poetry.masonry.api"
 
 [tool.black]
-target-version = ["py36", "py37", "py38"]
+target-version = ["py36", "py37", "py38", "py39"]
 
 [tool.isort]
 line_length = 88
@@ -47,8 +47,11 @@ python = "^3.6.0"
 tomlkit = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
-black = {version = "*", allow-prereleases = true}
-isort = "^5.7.0"
+black = [
+    {version = "^20.8b1", python = "~3.6.0,<=3.6.1"},
+    {version = "^21.4b1", python = "^3.6.2"},
+]
+isort = "^5.8.0"
 
 pytest = "^6.2.0"
 pytest-cov = "^2.11.0"
