@@ -1,4 +1,4 @@
-name: Test default branch
+name: build
 
 on:
   push:
