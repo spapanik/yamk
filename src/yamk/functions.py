@@ -1,8 +1,9 @@
 from functools import reduce
+from typing import Dict
 
 
 class FunctionMeta(type):
-    functions = {}
+    functions: Dict[str, "Function"] = {}
 
     def __new__(mcs, name, bases, class_dict):
         x = super().__new__(mcs, name, bases, class_dict)
