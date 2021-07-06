@@ -110,6 +110,15 @@ class Variables(dict):
                 new_vars[key] = value
         return new_vars
 
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+
+        if self.base_dir != other.base_dir:
+            return False
+
+        return super().__eq__(other)
+
 
 class Parser:
     def __init__(self, variables, base_dir):
