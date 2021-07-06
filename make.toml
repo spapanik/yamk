@@ -42,5 +42,5 @@ commands = [
 ["poetry.lock"]
 requires = ["pyproject.toml"]
 commands = [
-    "${runner} poetry lock && touch ${.target}",
+    "poetry lock && touch ${.target}",
 ]
