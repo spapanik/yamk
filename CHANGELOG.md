@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog][clog], and this project adheres to [Se
 
 ## [Unreleased]
 
+### Added
+- Added python310 support
+
 ## [1.3.1] - 2021-04-14
 ### Fixed
 - Existence commands are now evaluated
