@@ -1,4 +1,4 @@
-<p align="center">
+<p style="text-align:center">
 <a href="https://github.com/spapanik/yamk/actions/workflows/build.yml"><img alt="Build" src="https://github.com/spapanik/yamk/actions/workflows/build.yml/badge.svg"></a>
 <a href="https://lgtm.com/projects/g/spapanik/yamk/alerts/"><img alt="Total alerts" src="https://img.shields.io/lgtm/alerts/g/spapanik/yamk.svg"/></a>
 <a href="https://github.com/spapanik/yamk/blob/main/LICENSE.txt"><img alt="License" src="https://img.shields.io/github/license/spapanik/yamk"></a>

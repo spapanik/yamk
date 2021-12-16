@@ -1,5 +1,6 @@
 # cache
 __pycache__/
+.mypy_cache/
 .pytest_cache/
 
 # tests
@@ -12,6 +13,7 @@ tests/data/requires_build
 poetry.lock
 
 # Distribution / packaging
+docs/build/
 pip-wheel-metadata/
 dist/
 *.egg-info/
