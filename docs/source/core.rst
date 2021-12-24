@@ -24,7 +24,7 @@ depends on the OS.
 Usage
 ^^^^^
 
-``yam``'s behaviour is defined in a toml file, called a cookbook. The default name is `make.toml``,
+``yam``'s behaviour is defined in a toml file, called a cookbook. The default name is ``make.toml``,
 but you can specify a different file if you want. Specifying a name ``<name.toml>`` will also parse all the ``.toml``
 files in the directory named ``<name.toml>.d``.
 
