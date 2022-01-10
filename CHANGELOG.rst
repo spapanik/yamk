@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Removed
+^^^^^^^
+* Removed changelog from the published wheel
+
 Added
 ^^^^^
 * Upgraded TOML library to be compliant with TOML 1.0.0
