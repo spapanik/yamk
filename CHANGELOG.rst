@@ -9,6 +9,9 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+`2.1.0`_ - 2022-01-10
+---------------------
+
 Removed
 ^^^^^^^
 * Removed changelog from the published wheel
@@ -289,7 +292,8 @@ Added
 * Initial project structure
 
 
-.. _`unreleased`: https://github.com/spapanik/yamk/compare/v2.0.0...main
+.. _`unreleased`: https://github.com/spapanik/yamk/compare/v2.1.0...main
+.. _`2.1.0`: https://github.com/spapanik/yamk/compare/v2.0.0...v2.1.0
 .. _`2.0.0`: https://github.com/spapanik/yamk/compare/v1.3.0...v2.0.0
 .. _`1.3.1`: https://github.com/spapanik/yamk/compare/v1.3.0...v1.3.1
 .. _`1.3.0`: https://github.com/spapanik/yamk/compare/v1.3.0...v1.3.0
