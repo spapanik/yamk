@@ -55,6 +55,7 @@ python = "^3.7.0"
 
 # dependencies
 tomli = "^2.0.0"
+PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
@@ -73,3 +74,4 @@ ptpython = "^3.0.0"
 pytest = "^7.0.0"
 sphinx = "^4.3.0"
 sphinx-rtd-theme = "^1.0.0"
+types-PyYAML = "^6.0.0"

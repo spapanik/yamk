@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Allow using yaml for cookbooks
+
 Changed
 ^^^^^^^
 * The command line interface for passing a cookbook is now -c/--cookbook

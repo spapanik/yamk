@@ -4,8 +4,10 @@ import os
 import re
 import shlex
 from pathlib import Path
+from typing import Any, Dict, cast
 
 import tomli
+import yaml
 
 from yamk.functions import functions
 
@@ -268,6 +270,10 @@ class CookbookParser:
         if suffix == ".toml":
             with open(path, "rb") as binary_file:
                 return tomli.load(binary_file)
+
+        if suffix in (".yaml", ".yml"):
+            with open(path) as file:
+                return cast(Dict[str, Any], yaml.safe_load(file))
 
         raise ValueError(f"{suffix} is not a supported extension (yet)")
 
