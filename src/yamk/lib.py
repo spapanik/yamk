@@ -3,6 +3,9 @@ import math
 import os
 import re
 import shlex
+from pathlib import Path
+
+import tomli
 
 from yamk.functions import functions
 
@@ -252,6 +255,28 @@ class DAG:
     def add_node(self, node):
         self.nodes.add(node)
         self._mapping[node.target] = node
+
+
+class CookbookParser:
+    __slots__ = ["cookbook"]
+
+    def __init__(self, cookbook: Path):
+        self.cookbook = cookbook
+
+    def load(self, path: Path) -> dict:
+        suffix = self.cookbook.suffix
+        if suffix == ".toml":
+            with open(path, "rb") as binary_file:
+                return tomli.load(binary_file)
+
+        raise ValueError(f"{suffix} is not a supported extension (yet)")
+
+    def parse(self) -> dict:
+        parsed_cookbook = self.load(self.cookbook)
+        cookbook_dir = self.cookbook.with_suffix(self.cookbook.suffix + ".d")
+        for path in sorted(cookbook_dir.glob(f"*{self.cookbook.suffix}")):
+            parsed_cookbook = deep_merge(parsed_cookbook, self.load(path))
+        return parsed_cookbook
 
 
 def deep_merge(dict_1, dict_2):

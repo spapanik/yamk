@@ -4,8 +4,6 @@ import re
 import subprocess
 import sys
 
-import tomli
-
 from yamk import lib
 
 
@@ -30,14 +28,9 @@ class MakeCommand:
                 lambda var: var.split("=", maxsplit=1), args.variables
             )
         ]
-        with open(cookbook, "rb") as file:
-            parsed_toml = tomli.load(file)
-        cookbook_dir = cookbook.with_suffix(cookbook.suffix + ".d")
-        for path in sorted(cookbook_dir.glob("*.toml")):
-            with open(path, "rb") as file:
-                parsed_toml = lib.deep_merge(parsed_toml, tomli.load(file))
-        self.globals = parsed_toml.pop("$globals", {})
-        self._parse_recipes(parsed_toml)
+        parsed_cookbook = lib.CookbookParser(cookbook).parse()
+        self.globals = parsed_cookbook.pop("$globals", {})
+        self._parse_recipes(parsed_cookbook)
         self.subprocess_kwargs = {
             "shell": True,
             "cwd": self.base_dir,
@@ -53,8 +46,8 @@ class MakeCommand:
         result = subprocess.run(command, **self.subprocess_kwargs)
         return result.returncode
 
-    def _parse_recipes(self, parsed_toml):
-        for target, raw_recipe in parsed_toml.items():
+    def _parse_recipes(self, parsed_cookbook):
+        for target, raw_recipe in parsed_cookbook.items():
             recipe = lib.Recipe(
                 target,
                 raw_recipe,
