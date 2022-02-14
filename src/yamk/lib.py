@@ -1,4 +1,5 @@
 import datetime
+import json
 import math
 import os
 import re
@@ -274,6 +275,10 @@ class CookbookParser:
         if suffix in (".yaml", ".yml"):
             with open(path) as file:
                 return cast(Dict[str, Any], yaml.safe_load(file))
+
+        if suffix == ".json":
+            with open(path) as file:
+                return cast(Dict[str, Any], json.load(file))
 
         raise ValueError(f"{suffix} is not a supported extension (yet)")
 

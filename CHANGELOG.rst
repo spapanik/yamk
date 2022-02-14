@@ -12,6 +12,7 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Added
 ^^^^^
 * Allow using yaml for cookbooks
+* Allow using json for cookbooks
 
 Changed
 ^^^^^^^
