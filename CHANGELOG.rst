@@ -11,6 +11,7 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 
 Changed
 ^^^^^^^
+* The command line interface for passing a cookbook is now -c/--cookbook
 * Change toml parser to tomli
 
 `2.1.0`_ - 2022-01-10

@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 
 TESTS_ROOT = pathlib.Path(__file__).absolute().parent
-TEST_MAKEFILE = TESTS_ROOT.joinpath("data", "mk.toml")
+TEST_COOKBOOK = TESTS_ROOT.joinpath("data", "mk.toml")
 
 
 @pytest.fixture()
@@ -12,7 +12,7 @@ def mock_args():
     args = mock.MagicMock()
     args.target = "mock_target"
     args.directory = "."
-    args.makefile = TEST_MAKEFILE
+    args.cookbook = TEST_COOKBOOK
     args.verbose = 0
     args.force = False
     return args

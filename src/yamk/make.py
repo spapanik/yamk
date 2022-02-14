@@ -21,8 +21,8 @@ class MakeCommand:
         self.aliases = {}
         self.target = args.target
         self.force_make = args.force
-        makefile = pathlib.Path(args.directory).joinpath(args.makefile).absolute()
-        self.base_dir = makefile.parent
+        cookbook = pathlib.Path(args.directory).joinpath(args.cookbook).absolute()
+        self.base_dir = cookbook.parent
         self.phony_dir = self.base_dir.joinpath(".yamk")
         self.arg_vars = [
             {key: value}
@@ -30,10 +30,10 @@ class MakeCommand:
                 lambda var: var.split("=", maxsplit=1), args.variables
             )
         ]
-        with open(makefile, "rb") as file:
+        with open(cookbook, "rb") as file:
             parsed_toml = tomli.load(file)
-        makefile_dir = makefile.with_suffix(makefile.suffix + ".d")
-        for path in sorted(makefile_dir.glob("*.toml")):
+        cookbook_dir = cookbook.with_suffix(cookbook.suffix + ".d")
+        for path in sorted(cookbook_dir.glob("*.toml")):
             with open(path, "rb") as file:
                 parsed_toml = lib.deep_merge(parsed_toml, tomli.load(file))
         self.globals = parsed_toml.pop("$globals", {})

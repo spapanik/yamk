@@ -10,11 +10,13 @@ Usage
 -h/--help
     show this help message and exit
 -d/--directory  dir
-    the path to the directory that contains the makefile
+    the path to the directory that contains the cookbook
 -f/--force
     rebuild all dependencies and the target
--m/--makefile   MAKEFILE
-    the path to makefile (defaults to *./make.toml*)
+-m/--makefile   Makefile
+    the path to the makefile (defaults to *./make.toml*)
+-c/--cookbook   cookbook
+    the path to the cookbook (defaults to *./make.toml*)
 -s/--shell      shell
     the path to the shell to execute the commands (defaults to */bin/sh*)
 -V/--version
@@ -22,7 +24,7 @@ Usage
 -v/--verbose
     increase the level of verbosity
 -x/--variable   KEY=value
-    a list of variables to override the ones set in the makefile, which should be in the form <variable>=<value>
+    a list of variables to override the ones set in the cookbook, which should be in the form <variable>=<value>
 
 
 Recipes
@@ -49,7 +51,7 @@ Meta-targets
 Aliases
     An alias has a single key, named *alias*, and the value of the key is the name of the target it aliases.
 File targets
-    A file target is a target who doesn't have the *phony* key, or that the *phony* key is specifically set to a false value. The path can be with its absolute path, or the path relative to the makefile. Absolute paths are discouraged, as they limit the users ability to choose.
+    A file target is a target who doesn't have the *phony* key, or that the *phony* key is specifically set to a false value. The path can be with its absolute path, or the path relative to the cookbook. Absolute paths are discouraged, as they limit the users ability to choose.
 Phony targets
     A target that contains the *phony* key set to a true value, is a phony target.
 Static targets
@@ -83,7 +85,7 @@ recursive: boolean (file targets)
 echo: boolean (any)
     By default, the commands are not echoed before they are run. If set to true, they do.
 allow_failures: boolean (any)
-    By default, a failing command will halt the execution of the makefile. This will allow *yam* to try and recover from the error. Allow_failures doesn't guarantee that the execution will resume, because the nature of the failure may not allow that.
+    By default, a failing command will halt the execution of the recipe. This will allow *yam* to try and recover from the error. Allow_failures doesn't guarantee that the execution will resume, because the nature of the failure may not allow that.
 
 Variables
 ---------
