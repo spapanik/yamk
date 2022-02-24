@@ -3,13 +3,10 @@ import sys
 import warnings
 
 from yamk import __version__
+from yamk.lib import RemovedInYam3
 from yamk.make import MakeCommand
 
 sys.tracebacklimit = 0
-
-
-class RemovedInYam3(Warning):
-    pass
 
 
 def parse_args():
@@ -85,12 +82,10 @@ def main():
     args = parse_args()
     if args.makefile is not None:
         warnings.warn(
-            "Using -m/--makefile is deprecated, and will be removed in yamk 2.0. "
+            "Using -m/--makefile is deprecated, and will be removed in yamk 3.0. "
             "Use -c/--cookbook instead.",
             RemovedInYam3,
         )
         args.cookbook = args.makefile
         args.makefile = None
-    elif args.cookbook is None:
-        args.cookbook = "make.toml"
     MakeCommand(args).make()

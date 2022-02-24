@@ -19,6 +19,10 @@ OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
 FUNCTION = re.compile(r"\$\(\((?P<name>\w+) *(?P<args>.*)\)\)")
 
 
+class RemovedInYam3(Warning):
+    pass
+
+
 class Recipe:
     def __init__(self, target, raw_recipe, base_dir, variables, *, specified=False):
         self._specified = specified

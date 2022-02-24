@@ -3,8 +3,10 @@ import pathlib
 import re
 import subprocess
 import sys
+import warnings
 
 from yamk import lib
+from yamk.lib import RemovedInYam3
 
 
 class MakeCommand:
@@ -19,7 +21,7 @@ class MakeCommand:
         self.aliases = {}
         self.target = args.target
         self.force_make = args.force
-        cookbook = pathlib.Path(args.directory).joinpath(args.cookbook).absolute()
+        cookbook = self.find_cookbook(args)
         self.base_dir = cookbook.parent
         self.phony_dir = self.base_dir.joinpath(".yamk")
         self.arg_vars = [
@@ -36,6 +38,28 @@ class MakeCommand:
             "cwd": self.base_dir,
             "executable": self.globals.get("shell") or args.shell,
         }
+
+    @staticmethod
+    def find_cookbook(args) -> pathlib.Path:
+        if args.cookbook:
+            return pathlib.Path(args.directory).joinpath(args.cookbook).absolute()
+
+        # respect the old default for now, but warn:
+        cookbook = pathlib.Path(args.directory).joinpath("make.toml").absolute()
+        if cookbook.exists():
+            warnings.warn(
+                "Naming the cookbook make.toml is deprecated as a default. "
+                "You can keep using it by passing it to the -c/--cookbook flag, "
+                "or use the name cookbook.yml instead. "
+                "(use yam --change-default to update to the new default)",
+                RemovedInYam3,
+            )
+            return cookbook
+
+        cookbook = pathlib.Path(args.directory).joinpath("cookbook.yml").absolute()
+        if cookbook.exists():
+            return cookbook
+        raise FileNotFoundError(f"No candidate cookbook found in {args.directory}")
 
     def make(self):
         dag = self._preprocess_target()
