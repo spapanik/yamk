@@ -9,6 +9,13 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Added a method to update the make.toml to cookbook.yml
+Changed
+^^^^^^^
+* Deprecated the make.toml file as default in favour of cookbook.yml
+
 `2.2.0`_ - 2022-02-14
 ---------------------
 
