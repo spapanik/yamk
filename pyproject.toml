@@ -26,7 +26,7 @@ testpaths = "tests"
 
 [tool.poetry]
 name = "yamk"
-version = "2.2.0"
+version = "2.3.0"
 description = "Yet another make"
 authors = [
     "Stephanos Kuma <stephanos@kuma.ai>",
