@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Changed
+^^^^^^^
+* Use explicit start when auto creating a cookbook
+
 `2.3.0`_ - 2022-02-25
 ---------------------
 

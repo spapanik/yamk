@@ -332,6 +332,6 @@ def change_default(args):
     with open(old_cookbook, "rb") as old_file:
         data = tomli.load(old_file)
     with open(new_cookbook, "w") as new_file:
-        yaml.dump(data, new_file)
+        yaml.dump(data, new_file, explicit_start=True)
     print(f"{new_cookbook} is ready.")
     print("Comments are not transferred, so you need to manually add them back.")
