@@ -318,3 +318,20 @@ def timestamp_to_dt(timestamp):
     if math.isinf(timestamp):
         return datetime.datetime.max
     return datetime.datetime.utcfromtimestamp(timestamp)
+
+
+def change_default(args):
+    old_cookbook = Path(args.directory).joinpath("make.toml").absolute()
+    new_cookbook = Path(args.directory).joinpath("cookbook.yml").absolute()
+    if not os.access(old_cookbook, os.R_OK):
+        raise PermissionError(f"{old_cookbook} is not readable")
+    if not os.access(new_cookbook.parent, os.W_OK, dir_fd=True):
+        raise PermissionError(f"{new_cookbook} is not writeable")
+    if new_cookbook.exists():
+        raise PermissionError(f"{new_cookbook} already exists")
+    with open(old_cookbook, "rb") as old_file:
+        data = tomli.load(old_file)
+    with open(new_cookbook, "w") as new_file:
+        yaml.dump(data, new_file)
+    print(f"{new_cookbook} is ready.")
+    print("Comments are not transferred, so you need to manually add them back.")

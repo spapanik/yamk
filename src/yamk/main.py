@@ -3,7 +3,7 @@ import sys
 import warnings
 
 from yamk import __version__
-from yamk.lib import RemovedInYam3
+from yamk.lib import RemovedInYam3, change_default
 from yamk.make import MakeCommand
 
 sys.tracebacklimit = 0
@@ -30,6 +30,11 @@ def parse_args():
         "--force",
         action="store_true",
         help="rebuild all dependencies and the target",
+    )
+    parser.add_argument(
+        "--change-default",
+        action="store_true",
+        help="build a cookbook.yml out of make.toml and exit",
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -88,4 +93,7 @@ def main():
         )
         args.cookbook = args.makefile
         args.makefile = None
+    if args.change_default:
+        change_default(args)
+        return
     MakeCommand(args).make()
