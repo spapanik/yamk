@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^^^
+* Fix version when called with --version
+
 `2.3.1`_ - 2022-02-25
 ---------------------
 
