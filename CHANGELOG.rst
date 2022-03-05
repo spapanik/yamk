@@ -9,6 +9,9 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+`2.3.3`_ - 2022-03-05
+---------------------
+
 Fixed
 ^^^^^^^
 * Fixed parsing weak variables
@@ -333,7 +336,8 @@ Added
 * Initial project structure
 
 
-.. _`unreleased`: https://github.com/spapanik/yamk/compare/v2.3.2...main
+.. _`unreleased`: https://github.com/spapanik/yamk/compare/v2.3.3...main
+.. _`2.3.2`: https://github.com/spapanik/yamk/compare/v2.3.2...v2.3.3
 .. _`2.3.2`: https://github.com/spapanik/yamk/compare/v2.3.1...v2.3.2
 .. _`2.3.1`: https://github.com/spapanik/yamk/compare/v2.3.0...v2.3.1
 .. _`2.3.0`: https://github.com/spapanik/yamk/compare/v2.2.0...v2.3.0
