@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^^^
+* Fixed parsing weak variables
+
 `2.3.2`_ - 2022-02-28
 ---------------------
 

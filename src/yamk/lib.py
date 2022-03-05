@@ -114,7 +114,7 @@ class Variables(dict):
             for key, value in var_block.items():
                 key = parser.evaluate(key)
                 key, options = extract_options(key)
-                if "weak" in options:
+                if "weak" in options and key in self:
                     continue
                 value = parser.evaluate(value)
                 new_vars[key] = value
