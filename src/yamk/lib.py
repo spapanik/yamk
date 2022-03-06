@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import json
 import math
@@ -5,7 +6,7 @@ import os
 import re
 import shlex
 from pathlib import Path
-from typing import Any, Dict, cast
+from typing import Any, Dict, Set, cast
 
 import tomli
 import yaml
@@ -24,7 +25,15 @@ class RemovedInYam3(Warning):
 
 
 class Recipe:
-    def __init__(self, target, raw_recipe, base_dir, variables, *, specified=False):
+    def __init__(
+        self,
+        target: str,
+        raw_recipe,
+        base_dir: Path,
+        variables,
+        *,
+        specified: bool = False,
+    ):
         self._specified = specified
         self._raw_recipe = raw_recipe
         self.base_dir = base_dir
@@ -49,12 +58,12 @@ class Recipe:
         self.existence_command = raw_recipe.get("existence_command", "")
         self.recursive = raw_recipe.get("recursive", False)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self._specified:
             return f"Specified recipe for {self.target}"
         return f"Generic recipe for {self.target}"
 
-    def for_target(self, target):
+    def for_target(self, target: str) -> "Recipe":
         if self._specified:
             return self
         variables = {"file_vars": self.file_vars, "arg_vars": self.arg_vars}
@@ -200,8 +209,8 @@ class Node:
     target: str
     timestamp: float
     should_build: bool
-    required_by: set
-    requires: set
+    required_by: Set["Node"]
+    requires: Set["Node"]
 
     def __init__(self, recipe=None, *, target=None):
         self.recipe = recipe
@@ -304,7 +313,7 @@ def deep_merge(dict_1, dict_2):
     return output
 
 
-def extract_options(string):
+def extract_options(string: str):
     match = re.fullmatch(OPTIONS, string)
     if match is None:
         return string.strip(), set()
@@ -314,13 +323,13 @@ def extract_options(string):
     return string, set(map(lambda s: s.strip(), options.split(",")))
 
 
-def timestamp_to_dt(timestamp):
+def timestamp_to_dt(timestamp: float) -> datetime.datetime:
     if math.isinf(timestamp):
         return datetime.datetime.max
     return datetime.datetime.utcfromtimestamp(timestamp)
 
 
-def change_default(args):
+def change_default(args: argparse.Namespace) -> None:
     old_cookbook = Path(args.directory).joinpath("make.toml").absolute()
     new_cookbook = Path(args.directory).joinpath("cookbook.yml").absolute()
     if not os.access(old_cookbook, os.R_OK):

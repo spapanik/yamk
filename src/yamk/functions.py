@@ -1,3 +1,4 @@
+import pathlib
 from functools import reduce
 from typing import Dict
 
@@ -13,7 +14,7 @@ class FunctionMeta(type):
 
 
 class Function(metaclass=FunctionMeta):
-    def __init__(self, base_dir):
+    def __init__(self, base_dir: pathlib.Path):
         self.base_dir = base_dir
 
 

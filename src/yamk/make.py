@@ -1,24 +1,26 @@
+import argparse
 import itertools
 import pathlib
 import re
 import subprocess
 import sys
 import warnings
+from typing import Any, Dict, List
 
 from yamk import lib
 from yamk.lib import RemovedInYam3
 
 
 class MakeCommand:
-    def __init__(self, args):
+    def __init__(self, args: argparse.Namespace):
         self.verbosity = args.verbose
         if self.verbosity:
             if self.verbosity > 1:
                 print(args)
             sys.tracebacklimit = 9999
-        self.regex_recipes = {}
-        self.static_recipes = {}
-        self.aliases = {}
+        self.regex_recipes: Dict[str, lib.Recipe] = {}
+        self.static_recipes: Dict[str, lib.Recipe] = {}
+        self.aliases: Dict[str, str] = {}
         self.target = args.target
         self.force_make = args.force
         cookbook = self.find_cookbook(args)
@@ -27,7 +29,7 @@ class MakeCommand:
         self.arg_vars = [
             {key: value}
             for key, value in map(
-                lambda var: var.split("=", maxsplit=1), args.variables
+                lambda var: var.split("=", maxsplit=1), args.variables  # type: ignore
             )
         ]
         parsed_cookbook = lib.CookbookParser(cookbook).parse()
@@ -40,7 +42,7 @@ class MakeCommand:
         }
 
     @staticmethod
-    def find_cookbook(args) -> pathlib.Path:
+    def find_cookbook(args: argparse.Namespace) -> pathlib.Path:
         if args.cookbook:
             return pathlib.Path(args.directory).joinpath(args.cookbook).absolute()
 
@@ -61,16 +63,16 @@ class MakeCommand:
             return cookbook
         raise FileNotFoundError(f"No candidate cookbook found in {args.directory}")
 
-    def make(self):
+    def make(self) -> None:
         dag = self._preprocess_target()
         for node in filter(lambda x: x.should_build, dag):
             self._make_target(node.recipe)
 
-    def _run_command(self, command):
+    def _run_command(self, command: List[str]) -> int:
         result = subprocess.run(command, **self.subprocess_kwargs)
         return result.returncode
 
-    def _parse_recipes(self, parsed_cookbook):
+    def _parse_recipes(self, parsed_cookbook: Dict[str, Dict[str, Any]]) -> None:
         for target, raw_recipe in parsed_cookbook.items():
             recipe = lib.Recipe(
                 target,
@@ -86,7 +88,7 @@ class MakeCommand:
             else:
                 self.static_recipes[recipe.target] = recipe
 
-    def _preprocess_target(self):
+    def _preprocess_target(self) -> lib.DAG:
         recipe = self._extract_recipe(self.target)
         if recipe is None:
             raise ValueError(f"No recipe to build {self.target}")
@@ -133,7 +135,7 @@ class MakeCommand:
                 print(f"    required_by: {node.required_by}")
         return dag
 
-    def _make_target(self, recipe):
+    def _make_target(self, recipe: lib.Recipe) -> None:
         if self.verbosity > 1:
             print(f"=== target: {recipe.target} ===")
 
@@ -153,7 +155,7 @@ class MakeCommand:
             self.phony_dir.mkdir(exist_ok=True)
             path.touch()
 
-    def _extract_recipe(self, target):
+    def _extract_recipe(self, target: str) -> lib.Recipe:
         if target in self.aliases:
             target = self.aliases[target]
 
@@ -173,26 +175,26 @@ class MakeCommand:
 
         return recipe.for_target(target)
 
-    def _mark_unchanged(self, dag):
+    def _mark_unchanged(self, dag: lib.DAG) -> None:
         for node in dag:
             node.timestamp = self._infer_timestamp(node)
             node.should_build = self._should_build(node)
 
-    def _phony_path(self, target):
+    def _phony_path(self, target: str) -> pathlib.Path:
         encoded_target = target.replace(".", ".46").replace("/", ".47")
         return self.phony_dir.joinpath(encoded_target)
 
-    def _file_path(self, target):
+    def _file_path(self, target: str) -> pathlib.Path:
         return self.base_dir.joinpath(target)
 
-    def _path(self, node):
+    def _path(self, node: lib.Node) -> pathlib.Path:
         recipe = node.recipe
         if recipe is None or not recipe.phony:
             return self._file_path(node.target)
 
         return self._phony_path(node.target)
 
-    def _path_exists(self, node):
+    def _path_exists(self, node: lib.Node) -> bool:
         recipe = node.recipe
         path = self._path(node)
         if recipe is not None and recipe.phony and recipe.existence_command:
@@ -200,7 +202,7 @@ class MakeCommand:
 
         return path.exists()
 
-    def _should_build(self, node):
+    def _should_build(self, node: lib.Node) -> bool:
         recipe = node.recipe
         if recipe is None:
             return False
@@ -224,7 +226,7 @@ class MakeCommand:
         req_ts = max(child.timestamp for child in node.requires)
         return req_ts > ts
 
-    def _infer_timestamp(self, node):
+    def _infer_timestamp(self, node: lib.Node) -> float:
         recipe = node.recipe
         path = self._path(node)
         if recipe is None:
