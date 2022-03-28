@@ -61,7 +61,7 @@ class MakeCommand:
 
         cookbooks = map(
             lambda suffix: absolute_path.joinpath("cookbook").with_suffix(suffix),
-            [".toml", ".yml", ".yaml", ".json"],
+            [".toml", ".yml", ".yaml", ".json", ".conf", ".cfg", ".ini"],
         )
         for cookbook in cookbooks:
             if cookbook.exists():

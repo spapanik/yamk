@@ -1,15 +1,15 @@
 import argparse
 import datetime
-import json
 import math
 import os
 import re
 import shlex
 from pathlib import Path
-from typing import Any, Dict, Set, cast
+from typing import Set
 
 import tomli
 import yaml
+from dj_settings.utils import FileReader
 
 from yamk.functions import functions
 
@@ -279,27 +279,12 @@ class CookbookParser:
     def __init__(self, cookbook: Path):
         self.cookbook = cookbook
 
-    def load(self, path: Path) -> dict:
-        suffix = self.cookbook.suffix
-        if suffix == ".toml":
-            with open(path, "rb") as binary_file:
-                return tomli.load(binary_file)
-
-        if suffix in (".yaml", ".yml"):
-            with open(path) as file:
-                return cast(Dict[str, Any], yaml.safe_load(file))
-
-        if suffix == ".json":
-            with open(path) as file:
-                return cast(Dict[str, Any], json.load(file))
-
-        raise ValueError(f"{suffix} is not a supported extension (yet)")
-
     def parse(self) -> dict:
-        parsed_cookbook = self.load(self.cookbook)
-        cookbook_dir = self.cookbook.with_suffix(self.cookbook.suffix + ".d")
-        for path in sorted(cookbook_dir.glob(f"*{self.cookbook.suffix}")):
-            parsed_cookbook = deep_merge(parsed_cookbook, self.load(path))
+        parsed_cookbook = FileReader(self.cookbook).data
+        suffix = self.cookbook.suffix
+        cookbook_dir = self.cookbook.with_suffix(suffix + ".d")
+        for path in sorted(cookbook_dir.glob(f"*{suffix}")):
+            parsed_cookbook = deep_merge(parsed_cookbook, FileReader(path).data)
         return parsed_cookbook
 
 
