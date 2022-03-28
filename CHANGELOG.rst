@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* The default cookbook is can be named cookbook.suffix with any of the supported suffixes
+
 `2.3.3`_ - 2022-03-05
 ---------------------
 

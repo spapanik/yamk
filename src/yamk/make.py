@@ -43,11 +43,12 @@ class MakeCommand:
 
     @staticmethod
     def find_cookbook(args: argparse.Namespace) -> pathlib.Path:
+        absolute_path = pathlib.Path(args.directory).absolute()
         if args.cookbook:
-            return pathlib.Path(args.directory).joinpath(args.cookbook).absolute()
+            return absolute_path.joinpath(args.cookbook)
 
         # respect the old default for now, but warn:
-        cookbook = pathlib.Path(args.directory).joinpath("make.toml").absolute()
+        cookbook = absolute_path.joinpath("make.toml")
         if cookbook.exists():
             warnings.warn(
                 "Naming the cookbook make.toml is deprecated as a default. "
@@ -58,9 +59,13 @@ class MakeCommand:
             )
             return cookbook
 
-        cookbook = pathlib.Path(args.directory).joinpath("cookbook.yml").absolute()
-        if cookbook.exists():
-            return cookbook
+        cookbooks = map(
+            lambda suffix: absolute_path.joinpath("cookbook").with_suffix(suffix),
+            [".toml", ".yml", ".yaml", ".json"],
+        )
+        for cookbook in cookbooks:
+            if cookbook.exists():
+                return cookbook
         raise FileNotFoundError(f"No candidate cookbook found in {args.directory}")
 
     def make(self) -> None:
