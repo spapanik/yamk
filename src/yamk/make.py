@@ -8,7 +8,6 @@ import warnings
 from typing import Any, Dict, List
 
 from yamk import lib
-from yamk.lib import RemovedInYam3
 
 
 class MakeCommand:
@@ -55,7 +54,7 @@ class MakeCommand:
                 "You can keep using it by passing it to the -c/--cookbook flag, "
                 "or use the name cookbook.yml instead. "
                 "(use yam --change-default to update to the new default)",
-                RemovedInYam3,
+                lib.RemovedInYam3,
             )
             return cookbook
 
