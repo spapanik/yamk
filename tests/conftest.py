@@ -13,6 +13,7 @@ def mock_args():
     args.target = "mock_target"
     args.directory = "."
     args.cookbook = TEST_COOKBOOK
+    args.cookbook_type = None
     args.verbose = 0
     args.force = False
     return args
