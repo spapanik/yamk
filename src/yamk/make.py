@@ -31,7 +31,7 @@ class MakeCommand:
                 lambda var: var.split("=", maxsplit=1), args.variables  # type: ignore
             )
         ]
-        parsed_cookbook = lib.CookbookParser(cookbook).parse()
+        parsed_cookbook = lib.CookbookParser(cookbook, args.cookbook_type).parse()
         self.globals = parsed_cookbook.pop("$globals", {})
         self._parse_recipes(parsed_cookbook)
         self.subprocess_kwargs = {
@@ -60,7 +60,7 @@ class MakeCommand:
 
         cookbooks = map(
             lambda suffix: absolute_path.joinpath("cookbook").with_suffix(suffix),
-            [".toml", ".yml", ".yaml", ".json", ".conf", ".cfg", ".ini"],
+            lib.SUPPORTED_FILE_EXTENSIONS,
         )
         for cookbook in cookbooks:
             if cookbook.exists():

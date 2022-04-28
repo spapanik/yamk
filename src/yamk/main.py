@@ -3,7 +3,7 @@ import sys
 import warnings
 
 from yamk import __version__
-from yamk.lib import RemovedInYam3, change_default
+from yamk.lib import SUPPORTED_FILE_EXTENSIONS, RemovedInYam3, change_default
 from yamk.make import MakeCommand
 
 sys.tracebacklimit = 0
@@ -54,6 +54,12 @@ def parse_args():
         "--shell",
         metavar="shell",
         help="the path to the shell used to execute the commands",
+    )
+    parser.add_argument(
+        "-t",
+        "--cookbook-type",
+        choices=set(SUPPORTED_FILE_EXTENSIONS.values()),
+        help="the type of the cookbook. defaults to file extension",
     )
     parser.add_argument(
         "-V",

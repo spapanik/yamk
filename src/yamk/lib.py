@@ -18,6 +18,12 @@ VAR = re.compile(
 )
 OPTIONS = re.compile(r"\[(?P<options>.*?)\](?P<string>.*)")
 FUNCTION = re.compile(r"\$\(\((?P<name>\w+) *(?P<args>.*)\)\)")
+SUPPORTED_FILE_EXTENSIONS = {
+    ".toml": "toml",
+    ".yml": "yaml",
+    ".yaml": "yaml",
+    ".json": "json",
+}
 
 
 class RemovedInYam3(Warning):
@@ -274,13 +280,14 @@ class DAG:
 
 
 class CookbookParser:
-    __slots__ = ["cookbook"]
+    __slots__ = ["cookbook", "type"]
 
-    def __init__(self, cookbook: Path):
+    def __init__(self, cookbook: Path, file_type: str = None):
         self.cookbook = cookbook
+        self.type = file_type
 
     def parse(self) -> dict:
-        parsed_cookbook = FileReader(self.cookbook).data
+        parsed_cookbook = FileReader(self.cookbook, force_type=self.type).data
         suffix = self.cookbook.suffix
         cookbook_dir = self.cookbook.with_suffix(suffix + ".d")
         for path in sorted(cookbook_dir.glob(f"*{suffix}")):

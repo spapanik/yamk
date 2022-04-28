@@ -12,6 +12,7 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Added
 ^^^^^
 * The default cookbook is can be named cookbook.suffix with any of the supported suffixes
+* Allow setting the filetype for the cookbook
 * Support more extensions for cookbooks
 
 `2.3.3`_ - 2022-03-05
