@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^^^
+* Fixed dj_settings dependency
+
 `2.4.0`_ - 2022-04-28
 ---------------------
 
