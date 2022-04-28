@@ -9,6 +9,9 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+`2.4.1`_ - 2022-04-28
+---------------------
+
 Fixed
 ^^^^^^^
 * Fixed dj_settings dependency
@@ -349,7 +352,8 @@ Added
 * Initial project structure
 
 
-.. _`unreleased`: https://github.com/spapanik/yamk/compare/v2.4.0...main
+.. _`unreleased`: https://github.com/spapanik/yamk/compare/v2.4.1...main
+.. _`2.4.1`: https://github.com/spapanik/yamk/compare/v2.4.0...v2.4.1
 .. _`2.4.0`: https://github.com/spapanik/yamk/compare/v2.3.3...v2.4.0
 .. _`2.3.3`: https://github.com/spapanik/yamk/compare/v2.3.2...v2.3.3
 .. _`2.3.2`: https://github.com/spapanik/yamk/compare/v2.3.1...v2.3.2
