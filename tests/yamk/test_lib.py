@@ -1,5 +1,6 @@
 import pathlib
 from datetime import datetime
+from typing import Any, Dict
 
 import pytest
 
@@ -9,7 +10,7 @@ PATH = pathlib.Path(__file__)
 
 
 def test_recipe_to_str():
-    variables = {"file_vars": [], "arg_vars": []}
+    variables: Dict[str, Any] = {"file_vars": [], "arg_vars": []}
     recipe = lib.Recipe("target", {}, pathlib.Path("."), variables)
     assert str(recipe) == "Generic recipe for target"
     recipe = recipe.for_target("target")
@@ -17,7 +18,7 @@ def test_recipe_to_str():
 
 
 def test_recipe_for_target():
-    variables = {"file_vars": [], "arg_vars": []}
+    variables: Dict[str, Any] = {"file_vars": [], "arg_vars": []}
     recipe = lib.Recipe("target", {}, pathlib.Path("."), variables)
     recipe_specified = recipe.for_target("target")
     recipe_specified_again = recipe_specified.for_target("target")
