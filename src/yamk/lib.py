@@ -187,8 +187,8 @@ class Parser:
             and re.fullmatch(VAR, string)
         ):
             match = re.fullmatch(VAR, string)
-            if match.group("sep") is None:
-                return self.vars[match.group("variable")]
+            if match["sep"] is None:
+                return self.vars[match["variable"]]
         return re.sub(VAR, self.repl, string)
 
     def evaluate(self, obj):
@@ -310,8 +310,8 @@ def extract_options(string: str):
     if match is None:
         return string.strip(), set()
 
-    options = match.group("options")
-    string = match.group("string")
+    options = match["options"]
+    string = match["string"]
     return string, {s.strip() for s in options.split(",")}
 
 
