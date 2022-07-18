@@ -54,8 +54,8 @@ def test_node_equals():
         target = "target"
 
     other = FakeNode()
-    assert (node == other) is False
-    assert (other == node) is False
+    assert node != other
+    assert other != node
 
 
 def test_missing_topological_sort():
