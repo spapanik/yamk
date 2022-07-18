@@ -1,4 +1,5 @@
 import os
+from contextlib import suppress
 from unittest import mock
 
 import pytest
@@ -257,11 +258,9 @@ def test_make_with_phony_and_keep_ts_missing_ts(runner, mock_args):
     mock_args.target = "keep_ts"
     make_command = make.MakeCommand(mock_args)
     make_command.phony_dir.mkdir(exist_ok=True)
-    try:
-        make_command.phony_dir.joinpath("keep_ts").unlink()
-    except FileNotFoundError:
+    with suppress(FileNotFoundError):
         # python 3.8: add missing_ok
-        pass
+        make_command.phony_dir.joinpath("keep_ts").unlink()
     make_command.make()
     assert runner.call_count == 1
     calls = [mock.call("ls", **make_command.subprocess_kwargs)]
@@ -297,11 +296,9 @@ def test_make_with_exists_only_target_existing(runner, mock_args):
 def test_make_with_exists_only_target_missing(runner, mock_args):
     mock_args.target = "exists_only"
     make_command = make.MakeCommand(mock_args)
-    try:
-        make_command.base_dir.joinpath(mock_args.target).unlink()
-    except FileNotFoundError:
+    with suppress(FileNotFoundError):
         # python 3.8: add missing_ok
-        pass
+        make_command.base_dir.joinpath(mock_args.target).unlink()
     make_command.make()
     assert runner.call_count == 1
     calls = [mock.call("ls", **make_command.subprocess_kwargs)]
@@ -312,11 +309,9 @@ def test_make_with_exists_only_target_missing(runner, mock_args):
 def test_make_build_due_to_requirement(runner, mock_args):
     mock_args.target = "requires_build"
     make_command = make.MakeCommand(mock_args)
-    try:
-        make_command.phony_dir.joinpath("keep_ts").unlink()
-    except FileNotFoundError:
+    with suppress(FileNotFoundError):
         # python 3.8: add missing_ok
-        pass
+        make_command.phony_dir.joinpath("keep_ts").unlink()
     make_command.base_dir.joinpath(mock_args.target).touch()
     make_command.make()
     assert runner.call_count == 2
