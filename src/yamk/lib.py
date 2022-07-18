@@ -5,7 +5,7 @@ import os
 import re
 import shlex
 from pathlib import Path
-from typing import Set
+from typing import Any, Dict, List, Set
 
 import tomli
 import yaml
@@ -117,7 +117,7 @@ class Recipe:
         return target
 
 
-class Variables(dict):
+class Variables(dict):  # type: ignore[type-arg]
     def __init__(self, base_dir, **kwargs):
         super().__init__(**kwargs)
         self.base_dir = base_dir
@@ -244,7 +244,7 @@ class Node:
 
 
 class DAG:
-    ordered: list
+    ordered: List[Node]
 
     def __init__(self, root):
         self.root = root
@@ -286,7 +286,7 @@ class CookbookParser:
         self.cookbook = cookbook
         self.type = file_type
 
-    def parse(self) -> dict:
+    def parse(self) -> Dict[str, Any]:
         parsed_cookbook = FileReader(self.cookbook, force_type=self.type).data
         suffix = self.cookbook.suffix
         cookbook_dir = self.cookbook.with_suffix(suffix + ".d")
