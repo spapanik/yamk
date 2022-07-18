@@ -27,9 +27,7 @@ class MakeCommand:
         self.phony_dir = self.base_dir.joinpath(".yamk")
         self.arg_vars = [
             {key: value}
-            for key, value in map(
-                lambda var: var.split("=", maxsplit=1), args.variables  # type: ignore
-            )
+            for key, value in (var.split("=", maxsplit=1) for var in args.variables)
         ]
         parsed_cookbook = lib.CookbookParser(cookbook, args.cookbook_type).parse()
         self.globals = parsed_cookbook.pop("$globals", {})
@@ -58,9 +56,9 @@ class MakeCommand:
             )
             return cookbook
 
-        cookbooks = map(
-            lambda suffix: absolute_path.joinpath("cookbook").with_suffix(suffix),
-            lib.SUPPORTED_FILE_EXTENSIONS,
+        cookbooks = (
+            absolute_path.joinpath("cookbook").with_suffix(suffix)
+            for suffix in lib.SUPPORTED_FILE_EXTENSIONS
         )
         for cookbook in cookbooks:
             if cookbook.exists():

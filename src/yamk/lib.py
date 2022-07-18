@@ -312,7 +312,7 @@ def extract_options(string: str):
 
     options = match.group("options")
     string = match.group("string")
-    return string, set(map(lambda s: s.strip(), options.split(",")))
+    return string, {s.strip() for s in options.split(",")}
 
 
 def timestamp_to_dt(timestamp: float) -> datetime.datetime:
