@@ -289,7 +289,7 @@ class CookbookParser:
     def parse(self) -> Dict[str, Any]:
         parsed_cookbook = FileReader(self.cookbook, force_type=self.type).data
         suffix = self.cookbook.suffix
-        cookbook_dir = self.cookbook.with_suffix(suffix + ".d")
+        cookbook_dir = self.cookbook.with_suffix(f"{suffix}.d")
         for path in sorted(cookbook_dir.glob(f"*{suffix}")):
             parsed_cookbook = deep_merge(parsed_cookbook, FileReader(path).data)
         return parsed_cookbook
