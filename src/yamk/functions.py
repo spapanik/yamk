@@ -8,6 +8,9 @@ class Function:
     def __init__(self, base_dir: pathlib.Path):
         self.base_dir = base_dir
 
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError(f"{self.__class__.__name__} must be callable")
+
 
 class Glob(Function):
     name = "glob"
