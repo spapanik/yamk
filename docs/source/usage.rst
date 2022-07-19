@@ -13,8 +13,6 @@ Usage
     the path to the directory that contains the cookbook
 -f/--force
     rebuild all dependencies and the target
--m/--makefile   Makefile
-    the path to the makefile (defaults to *./make.toml*)
 -c/--cookbook   cookbook
     the path to the cookbook (defaults to *./make.toml*)
 -s/--shell      shell

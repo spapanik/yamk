@@ -9,11 +9,15 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Changed
+^^^^^^^
+* Only cookbooks are supported
+
 `2.4.1`_ - 2022-04-28
 ---------------------
 
 Fixed
-^^^^^^^
+^^^^^
 * Fixed dj_settings dependency
 
 `2.4.0`_ - 2022-04-28

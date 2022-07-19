@@ -4,7 +4,6 @@ import pathlib
 import re
 import subprocess
 import sys
-import warnings
 from typing import Any, Dict, List
 
 from yamk import lib
@@ -43,18 +42,6 @@ class MakeCommand:
         absolute_path = pathlib.Path(args.directory).absolute()
         if args.cookbook:
             return absolute_path.joinpath(args.cookbook)
-
-        # respect the old default for now, but warn:
-        cookbook = absolute_path.joinpath("make.toml")
-        if cookbook.exists():
-            warnings.warn(
-                "Naming the cookbook make.toml is deprecated as a default. "
-                "You can keep using it by passing it to the -c/--cookbook flag, "
-                "or use the name cookbook.yml instead. "
-                "(use yam --change-default to update to the new default)",
-                lib.RemovedInYam3,
-            )
-            return cookbook
 
         cookbooks = (
             absolute_path.joinpath("cookbook").with_suffix(suffix)

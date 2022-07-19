@@ -1,4 +1,3 @@
-import argparse
 import datetime
 import math
 import os
@@ -7,8 +6,6 @@ import shlex
 from pathlib import Path
 from typing import Any, Dict, List, Set
 
-import tomli
-import yaml
 from dj_settings import SettingsParser
 
 from yamk.functions import functions
@@ -24,10 +21,6 @@ SUPPORTED_FILE_EXTENSIONS = {
     ".yaml": "yaml",
     ".json": "json",
 }
-
-
-class RemovedInYam3(Warning):
-    pass
 
 
 class Recipe:
@@ -319,20 +312,3 @@ def timestamp_to_dt(timestamp: float) -> datetime.datetime:
     if math.isinf(timestamp):
         return datetime.datetime.max
     return datetime.datetime.utcfromtimestamp(timestamp)
-
-
-def change_default(args: argparse.Namespace) -> None:
-    old_cookbook = Path(args.directory).joinpath("make.toml").absolute()
-    new_cookbook = Path(args.directory).joinpath("cookbook.yml").absolute()
-    if not os.access(old_cookbook, os.R_OK):
-        raise PermissionError(f"{old_cookbook} is not readable")
-    if not os.access(new_cookbook.parent, os.W_OK, dir_fd=True):
-        raise PermissionError(f"{new_cookbook} is not writeable")
-    if new_cookbook.exists():
-        raise PermissionError(f"{new_cookbook} already exists")
-    with open(old_cookbook, "rb") as old_file:
-        data = tomli.load(old_file)
-    with open(new_cookbook, "w") as new_file:
-        yaml.dump(data, new_file, explicit_start=True)
-    print(f"{new_cookbook} is ready.")
-    print("Comments are not transferred, so you need to manually add them back.")

@@ -60,8 +60,6 @@ python = "^3.7.0"
 
 # dependencies
 dj-settings = "^3.0.1"
-tomli = "^2.0.0"
-PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

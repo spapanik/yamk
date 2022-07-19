@@ -1,9 +1,8 @@
 import argparse
 import sys
-import warnings
 
 from yamk import __version__
-from yamk.lib import SUPPORTED_FILE_EXTENSIONS, RemovedInYam3, change_default
+from yamk.lib import SUPPORTED_FILE_EXTENSIONS
 from yamk.make import MakeCommand
 
 sys.tracebacklimit = 0
@@ -23,7 +22,7 @@ def parse_args():
         "--directory",
         metavar="dir",
         default=".",
-        help="the path to the directory that contains the makefile",
+        help="the path to the directory that contains the cookbook",
     )
     parser.add_argument(
         "-f",
@@ -32,18 +31,6 @@ def parse_args():
         help="rebuild all dependencies and the target",
     )
     parser.add_argument(
-        "--change-default",
-        action="store_true",
-        help="build a cookbook.yml out of make.toml and exit",
-    )
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        "-m",
-        "--makefile",
-        metavar="Makefile",
-        help="the path to the makefile",
-    )
-    group.add_argument(
         "-c",
         "--cookbook",
         metavar="cookbook",
@@ -82,7 +69,7 @@ def parse_args():
         metavar="KEY=value",
         dest="variables",
         default=[],
-        help="a list of variables to override the ones set in the makefile, "
+        help="a list of variables to override the ones set in the cookbook, "
         "which should be in the form <variable>=<value>",
     )
 
@@ -91,15 +78,4 @@ def parse_args():
 
 def main():
     args = parse_args()
-    if args.makefile is not None:
-        warnings.warn(
-            "Using -m/--makefile is deprecated, and will be removed in yamk 3.0. "
-            "Use -c/--cookbook instead.",
-            RemovedInYam3,
-        )
-        args.cookbook = args.makefile
-        args.makefile = None
-    if args.change_default:
-        change_default(args)
-        return
     MakeCommand(args).make()
