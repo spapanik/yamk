@@ -59,7 +59,7 @@ yam = "yamk.main:main"
 python = "^3.7.0"
 
 # dependencies
-dj-settings = "^2.1.0"
+dj-settings = "^3.0.1"
 tomli = "^2.0.0"
 PyYAML = "^6.0"
 

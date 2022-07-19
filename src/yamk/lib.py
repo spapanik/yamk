@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Set
 
 import tomli
 import yaml
-from dj_settings.utils import FileReader
+from dj_settings import SettingsParser
 
 from yamk.functions import functions
 
@@ -287,11 +287,11 @@ class CookbookParser:
         self.type = file_type
 
     def parse(self) -> Dict[str, Any]:
-        parsed_cookbook = FileReader(self.cookbook, force_type=self.type).data
+        parsed_cookbook = SettingsParser(self.cookbook, force_type=self.type).data
         suffix = self.cookbook.suffix
         cookbook_dir = self.cookbook.with_suffix(f"{suffix}.d")
         for path in sorted(cookbook_dir.glob(f"*{suffix}")):
-            parsed_cookbook = deep_merge(parsed_cookbook, FileReader(path).data)
+            parsed_cookbook = deep_merge(parsed_cookbook, SettingsParser(path).data)
         return parsed_cookbook
 
 
