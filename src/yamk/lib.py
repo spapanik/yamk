@@ -249,7 +249,6 @@ class DAG:
 
     def __init__(self, root):
         self.root = root
-        self.nodes = {root}
         self._mapping = {root.target: root}
 
     def __getitem__(self, item):
@@ -274,18 +273,17 @@ class DAG:
 
     def topological_sort(self):
         self.ordered = []
-        unordered_nodes = self.nodes.copy()
+        unordered_nodes = self._mapping.copy()
         while unordered_nodes:
-            for node in unordered_nodes:
+            for target, node in unordered_nodes.items():
                 if all((parent in self.ordered) for parent in node.requires):
-                    unordered_nodes.remove(node)
+                    del unordered_nodes[target]
+                    self.ordered.append(node)
                     break
             else:
                 raise ValueError("Cyclic dependencies detected. Cowardly aborting...")
-            self.ordered.append(node)
 
     def add_node(self, node):
-        self.nodes.add(node)
         self._mapping[node.target] = node
 
 
