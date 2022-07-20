@@ -247,14 +247,14 @@ class Node:
 class DAG:
     ordered: List[Node]
 
-    def __init__(self, root):
+    def __init__(self, root: Node):
         self.root = root
         self._mapping = {root.target: root}
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> Node:
         return self._mapping[item]
 
-    def __contains__(self, item):
+    def __contains__(self, item: str) -> bool:
         return item in self._mapping
 
     def __iter__(self):
