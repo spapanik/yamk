@@ -9,6 +9,9 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+`3.0.0`_ - 2022-07-20
+---------------------
+
 Added
 ^^^^^
 * Duplicate requirements emit a warning
@@ -361,7 +364,8 @@ Added
 * Initial project structure
 
 
-.. _`unreleased`: https://github.com/spapanik/yamk/compare/v2.4.1...main
+.. _`unreleased`: https://github.com/spapanik/yamk/compare/v3.0.0...main
+.. _`2.4.1`: https://github.com/spapanik/yamk/compare/v2.4.1...v3.0.0
 .. _`2.4.1`: https://github.com/spapanik/yamk/compare/v2.4.0...v2.4.1
 .. _`2.4.0`: https://github.com/spapanik/yamk/compare/v2.3.3...v2.4.0
 .. _`2.3.3`: https://github.com/spapanik/yamk/compare/v2.3.2...v2.3.3
