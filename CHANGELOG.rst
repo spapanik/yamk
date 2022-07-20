@@ -16,6 +16,7 @@ Added
 Changed
 ^^^^^^^
 * Only cookbooks are supported
+* Requirements are now in a more predictable order
 
 `2.4.1`_ - 2022-04-28
 ---------------------

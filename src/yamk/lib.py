@@ -210,12 +210,12 @@ class Node:
     timestamp: float
     should_build: bool
     required_by: Set["Node"]
-    requires: Set["Node"]
+    requires: List["Node"]
 
     def __init__(self, recipe=None, *, target=None):
         self.recipe = recipe
         self.target = target if self.recipe is None else self.recipe.target
-        self.requires = set()
+        self.requires = []
         self.required_by = set()
 
     def __str__(self):
@@ -235,9 +235,12 @@ class Node:
     def add_requirement(self, other):
         if other in self.requires:
             warnings.warn(
-                f"`{other}` is included twice in `{self}` requirements", RuntimeWarning
+                f"`{other}` is included twice in `{self}` requirements, "
+                "only the first will be considered",
+                RuntimeWarning,
             )
-        self.requires.add(other)
+            return
+        self.requires.append(other)
         other.required_by.add(self)
 
 

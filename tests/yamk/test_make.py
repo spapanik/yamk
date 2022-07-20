@@ -40,7 +40,7 @@ def test_make_verbosity(mock_print, mock_args):
         mock.call("- phony:"),
         mock.call("    timestamp: 9999-12-31 23:59:59.999999"),
         mock.call("    should_build: True"),
-        mock.call("    requires: set()"),
+        mock.call("    requires: []"),
         mock.call("    required_by: set()"),
         mock.call("=== target: phony ==="),
     ]
