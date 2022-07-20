@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Duplicate requirements emit a warning
+
 Changed
 ^^^^^^^
 * Only cookbooks are supported

@@ -3,6 +3,7 @@ import math
 import os
 import re
 import shlex
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Set
 
@@ -232,6 +233,10 @@ class Node:
         return hash(self.target)
 
     def add_requirement(self, other):
+        if other in self.requires:
+            warnings.warn(
+                f"`{other}` is included twice in `{self}` requirements", RuntimeWarning
+            )
         self.requires.add(other)
         other.required_by.add(self)
 
