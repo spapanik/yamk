@@ -284,6 +284,23 @@ def test_make_with_dag_target(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_make_with_dag_target_no_c3(runner, mock_args):
+    mock_args.target = "dag_target_no_c3_1"
+    make_command = make.MakeCommand(mock_args)
+    with pytest.warns(RuntimeWarning):
+        make_command.make()
+    assert runner.call_count == 5
+    calls = [
+        mock.call("echo dag_target_no_c3_3", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_no_c3_5", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_no_c3_2", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_no_c3_4", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_no_c3_1", **make_command.subprocess_kwargs),
+    ]
+    assert sorted(runner.call_args_list) == sorted(calls)
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_make_with_exists_only_target_existing(runner, mock_args):
     mock_args.target = "exists_only"
     make_command = make.MakeCommand(mock_args)

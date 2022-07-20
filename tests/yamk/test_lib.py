@@ -72,7 +72,17 @@ def test_topological_sort_detects_cycles():
     node.add_requirement(root)
     dag = lib.DAG(root)
     dag.add_node(node)
-    assert pytest.raises(ValueError, dag.sort)
+    assert pytest.raises(ValueError, dag.topological_sort)
+
+
+def test_c3_sort_detects_cycles():
+    root = lib.Node(target="target")
+    node = lib.Node(target="requirement")
+    root.add_requirement(node)
+    node.add_requirement(root)
+    dag = lib.DAG(root)
+    dag.add_node(node)
+    assert pytest.raises(ValueError, dag.c3_sort)
 
 
 @pytest.mark.parametrize("obj", [1, ("string in a tuple",), {"nested integer": 1}])

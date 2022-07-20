@@ -269,7 +269,8 @@ class DAG:
             self.topological_sort()
 
     def c3_sort(self):
-        raise ValueError("c3_sort is not ready yet")
+        self.ordered = self._node_s3_sort(self.root)
+        self.ordered.reverse()
 
     def topological_sort(self):
         self.ordered = []
@@ -282,9 +283,60 @@ class DAG:
                     break
             else:
                 raise ValueError("Cyclic dependencies detected. Cowardly aborting...")
+        warnings.warn(
+            "The requirements order didn't allow the deterministic order; "
+            "fell back to old-style dependency resolution",
+            RuntimeWarning,
+        )
 
     def add_node(self, node):
         self._mapping[node.target] = node
+
+    def _node_s3_sort(self, node: Node) -> List[Node]:
+        out = [node]
+        requirements = node.requires
+        if requirements:
+            try:
+                out.extend(
+                    self._merge(
+                        *[
+                            self._node_s3_sort(requirements)
+                            for requirements in requirements
+                        ],
+                        requirements,
+                    )
+                )
+            except RecursionError:
+                raise ValueError("Cannot compute c3_sort")
+        return out
+
+    def _merge(self, *node_lists: List[Node]) -> List[Node]:
+        result: List[Node] = []
+        unmerged = [*node_lists]
+
+        while True:
+            if not unmerged:
+                return result
+
+            heads = [node_list[0] for node_list in unmerged if node_list]
+            tails = [node_list[1:] for node_list in unmerged if len(node_list) > 1]
+            for head in heads:
+                if head and all(head not in tail for tail in tails):
+                    result.append(head)
+                    unmerged = self._clean_head(unmerged, head)
+                    break
+            else:
+                raise ValueError("Cannot compute c3_sort")
+
+    @staticmethod
+    def _clean_head(unmerged: List[List[Node]], head: Node) -> List[List[Node]]:
+        new_list = []
+        for node_list in unmerged:
+            if head == node_list[0]:
+                node_list = node_list[1:]
+            if node_list:
+                new_list.append(node_list)
+        return new_list
 
 
 class CookbookParser:

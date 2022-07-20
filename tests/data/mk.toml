@@ -142,14 +142,37 @@ commands = ["echo ${.target}"]
 
 [dag_target_3]
 phony = true
+requires = ["dag_target_4", "dag_target_5"]
 commands = ["echo ${.target}"]
 
 [dag_target_4]
 phony = true
-requires = ["dag_target_3", "dag_target_5"]
 commands = ["echo ${.target}"]
 
 [dag_target_5]
+phony = true
+commands = ["echo ${.target}"]
+
+[dag_target_no_c3_1]
+phony = true
+requires = ["dag_target_no_c3_2", "dag_target_no_c3_3", "dag_target_no_c3_4"]
+commands = ["echo ${.target}"]
+
+[dag_target_no_c3_2]
+phony = true
+requires = ["dag_target_no_c3_5"]
+commands = ["echo ${.target}"]
+
+[dag_target_no_c3_3]
+phony = true
+commands = ["echo ${.target}"]
+
+[dag_target_no_c3_4]
+phony = true
+requires = ["dag_target_no_c3_3", "dag_target_no_c3_5"]
+commands = ["echo ${.target}"]
+
+[dag_target_no_c3_5]
 phony = true
 commands = ["echo ${.target}"]
 
