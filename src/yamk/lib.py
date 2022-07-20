@@ -264,6 +264,15 @@ class DAG:
         return iter(self._mapping.values())
 
     def sort(self):
+        try:
+            self.c3_sort()
+        except ValueError:
+            self.topological_sort()
+
+    def c3_sort(self):
+        raise ValueError("c3_sort is not ready yet")
+
+    def topological_sort(self):
         self.ordered = []
         unordered_nodes = self.nodes.copy()
         while unordered_nodes:
