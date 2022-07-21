@@ -274,13 +274,13 @@ def test_make_with_dag_target(runner, mock_args):
     make_command.make()
     assert runner.call_count == 5
     calls = [
-        mock.call("echo dag_target_3", **make_command.subprocess_kwargs),
         mock.call("echo dag_target_5", **make_command.subprocess_kwargs),
         mock.call("echo dag_target_2", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_3", **make_command.subprocess_kwargs),
         mock.call("echo dag_target_4", **make_command.subprocess_kwargs),
         mock.call("echo dag_target_1", **make_command.subprocess_kwargs),
     ]
-    assert sorted(runner.call_args_list) == sorted(calls)
+    assert runner.call_args_list == calls
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
@@ -291,11 +291,11 @@ def test_make_with_dag_target_no_c3(runner, mock_args):
         make_command.make()
     assert runner.call_count == 5
     calls = [
-        mock.call("echo dag_target_no_c3_3", **make_command.subprocess_kwargs),
-        mock.call("echo dag_target_no_c3_5", **make_command.subprocess_kwargs),
-        mock.call("echo dag_target_no_c3_2", **make_command.subprocess_kwargs),
-        mock.call("echo dag_target_no_c3_4", **make_command.subprocess_kwargs),
         mock.call("echo dag_target_no_c3_1", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_no_c3_2", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_no_c3_3", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_no_c3_4", **make_command.subprocess_kwargs),
+        mock.call("echo dag_target_no_c3_5", **make_command.subprocess_kwargs),
     ]
     assert sorted(runner.call_args_list) == sorted(calls)
 

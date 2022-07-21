@@ -89,6 +89,7 @@ class MakeCommand:
             target, target_node = unprocessed.popitem()
             dag.add_node(target_node)
             target_recipe = target_node.recipe
+            target_recipe.requires.reverse()
             for index, raw_requirement in enumerate(target_recipe.requires):
                 recipe = self._extract_recipe(raw_requirement)
                 if recipe is None:

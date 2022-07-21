@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+* Fixed the order of execution with the default sorter
+
 `3.0.0`_ - 2022-07-20
 ---------------------
 
