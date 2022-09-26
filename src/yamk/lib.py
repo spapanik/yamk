@@ -5,7 +5,7 @@ import re
 import shlex
 import warnings
 from pathlib import Path
-from typing import List, Set
+from typing import Any, Dict, List, Set
 
 from yamk.functions import functions
 
@@ -28,15 +28,16 @@ class Recipe:
         target: str,
         raw_recipe,
         base_dir: Path,
-        variables,
+        file_vars: List[Dict[str, Any]],
+        arg_vars: List[Dict[str, Any]],
         *,
         specified: bool = False,
     ):
         self._specified = specified
         self._raw_recipe = raw_recipe
         self.base_dir = base_dir
-        self.file_vars = variables["file_vars"]
-        self.arg_vars = variables["arg_vars"]
+        self.file_vars = file_vars
+        self.arg_vars = arg_vars
         self.local_vars = raw_recipe.get("vars", [])
         self.vars = (
             Variables(**os.environ)
@@ -64,9 +65,13 @@ class Recipe:
     def for_target(self, target: str) -> "Recipe":
         if self._specified:
             return self
-        variables = {"file_vars": self.file_vars, "arg_vars": self.arg_vars}
         new_recipe = self.__class__(
-            target, self._raw_recipe, self.base_dir, variables, specified=True
+            target,
+            self._raw_recipe,
+            self.base_dir,
+            self.file_vars,
+            self.arg_vars,
+            specified=True,
         )
         if new_recipe.regex:
             groups = re.fullmatch(self.target, new_recipe.target).groupdict()

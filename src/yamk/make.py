@@ -69,7 +69,8 @@ class MakeCommand:
                 target,
                 raw_recipe,
                 self.base_dir,
-                {"file_vars": self.globals.get("vars", []), "arg_vars": self.arg_vars},
+                self.globals.get("vars", []),
+                self.arg_vars,
             )
 
             if recipe.alias:
