@@ -5,9 +5,7 @@ import re
 import shlex
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Set
-
-from dj_settings import SettingsParser
+from typing import List, Set
 
 from yamk.functions import functions
 
@@ -337,32 +335,6 @@ class DAG:
             if node_list:
                 new_list.append(node_list)
         return new_list
-
-
-class CookbookParser:
-    __slots__ = ["cookbook", "type"]
-
-    def __init__(self, cookbook: Path, file_type: str = None):
-        self.cookbook = cookbook
-        self.type = file_type
-
-    def parse(self) -> Dict[str, Any]:
-        parsed_cookbook = SettingsParser(self.cookbook, force_type=self.type).data
-        suffix = self.cookbook.suffix
-        cookbook_dir = self.cookbook.with_suffix(f"{suffix}.d")
-        for path in sorted(cookbook_dir.glob(f"*{suffix}")):
-            parsed_cookbook = deep_merge(parsed_cookbook, SettingsParser(path).data)
-        return parsed_cookbook
-
-
-def deep_merge(dict_1, dict_2):
-    output = dict_1.copy()
-    for key, value in dict_2.items():
-        if isinstance(dict_1.get(key), dict) and isinstance(value, dict):
-            output[key] = deep_merge(dict_1[key], value)
-        else:
-            output[key] = value
-    return output
 
 
 def extract_options(string: str):

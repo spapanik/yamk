@@ -6,6 +6,8 @@ import subprocess
 import sys
 from typing import Any, Dict, List
 
+from dj_settings import SettingsParser
+
 from yamk import lib
 
 
@@ -28,7 +30,7 @@ class MakeCommand:
             {key: value}
             for key, value in (var.split("=", maxsplit=1) for var in args.variables)
         ]
-        parsed_cookbook = lib.CookbookParser(cookbook, args.cookbook_type).parse()
+        parsed_cookbook = SettingsParser(cookbook, force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self._parse_recipes(parsed_cookbook)
         self.subprocess_kwargs = {

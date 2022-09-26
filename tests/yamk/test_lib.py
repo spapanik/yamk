@@ -119,20 +119,6 @@ def test_parser_evaluation(obj, variables, expected):
 
 
 @pytest.mark.parametrize(
-    ["dict_1", "dict_2", "expected"],
-    [
-        [{1: 2}, {2: 3}, {1: 2, 2: 3}],
-        [{1: 2}, {1: 3}, {1: 3}],
-        [{1: {2: 3}}, {1: 2}, {1: 2}],
-        [{1: 2}, {1: {2: 3}}, {1: {2: 3}}],
-        [{1: {2: 3, 3: 4}}, {1: {2: 4, 4: 5}}, {1: {2: 4, 3: 4, 4: 5}}],
-    ],
-)
-def test_deep_merge(dict_1, dict_2, expected):
-    assert lib.deep_merge(dict_1, dict_2) == expected
-
-
-@pytest.mark.parametrize(
     ["string", "expected_options", "expected_string"],
     [
         ["string", set(), "string"],
