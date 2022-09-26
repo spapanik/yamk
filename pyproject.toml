@@ -61,7 +61,11 @@ python = "^3.7.0"
 # dependencies
 dj-settings = "^4.0.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
+pdbpp = "^0.10.0"
+ptpython = "^3.0.0"
+
+[tool.poetry.group.lint.dependencies]
 black = "^22.1.0"
 flake8 = "^5.0.0"
 flake8-bugbear = "^22.1.0"
@@ -73,9 +77,10 @@ flake8-mutable = "^1.2.0"
 flake8-tidy-imports = "^4.6.0"
 isort = "^5.10.0"
 mypy = "^0.971"
-pdbpp = "^0.10.0"
-ptpython = "^3.0.0"
+
+[tool.poetry.group.test.dependencies]
 pytest = "^7.0.0"
+
+[tool.poetry.group.docs.dependencies]
 sphinx = "^4.3.0"
 sphinx-rtd-theme = "^1.0.0"
-types-PyYAML = "^6.0.0"

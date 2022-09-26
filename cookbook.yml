@@ -2,7 +2,7 @@
 $globals:
   shell: bash
   vars:
-    - poetry_extra: --remove-untracked
+    - poetry_extra: --sync
     - runner: poetry run
 all:
   alias: install
@@ -27,6 +27,7 @@ lint:
   commands:
     - ${runner} isort --check .
     - ${runner} black --check .
+    - ${runner} poetry lock --check
     - ${runner} flake8 .
     - ${runner} mypy .
 tests:
