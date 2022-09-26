@@ -70,7 +70,7 @@ requires: array of strings (any)
     An array of all the requirements for the target. The requirements that need to be built, are guaranteed to be built before the target, but there are no guarantees on the order that the requirements will be built.
 commands: array of strings (any)
     The commands to build the target.
-vars: array of tables (any)
+vars: table (any)
     The variables specific to this target.
 keep_ts: boolean (phony targets)
     If set to true, this phony target will keep the timestamp when it was last built. In general, a phony target will be built every time, but a phony target with *keep_ts* set to true, will only be built if the kept timestamp is newer than the timestamp of the requirements.
@@ -92,13 +92,11 @@ A variable is defined in the key *vars*. The variables are parsed in order, so a
 
 .. code-block:: toml
 
-    [target_name]
-    vars = [
-        {"[variable_options]var_1": "<value_1>"},
-        {"[variable_options]var_2": "<value_2>"},
-        # ...
-        {"[variable_options]var_n": "<value_n>"},
-    ]
+    [target_name.vars]
+    "[variable_options]var_1" = "<value_1>"
+    "[variable_options]var_2" = "<value_2>"
+    # ...
+    "[variable_options]var_n" = "<value_n>"
 
 
 The options are completely optional, and they are comma separated.

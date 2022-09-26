@@ -26,10 +26,7 @@ class MakeCommand:
         cookbook = self.find_cookbook(args)
         self.base_dir = cookbook.parent
         self.phony_dir = self.base_dir.joinpath(".yamk")
-        self.arg_vars = [
-            {key: value}
-            for key, value in (var.split("=", maxsplit=1) for var in args.variables)
-        ]
+        self.arg_vars = dict(var.split("=", maxsplit=1) for var in args.variables)
         parsed_cookbook = SettingsParser(cookbook, force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self._parse_recipes(parsed_cookbook)
@@ -69,7 +66,7 @@ class MakeCommand:
                 target,
                 raw_recipe,
                 self.base_dir,
-                self.globals.get("vars", []),
+                self.globals.get("vars", {}),
                 self.arg_vars,
             )
 

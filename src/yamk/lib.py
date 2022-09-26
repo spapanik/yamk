@@ -28,8 +28,8 @@ class Recipe:
         target: str,
         raw_recipe,
         base_dir: Path,
-        file_vars: List[Dict[str, Any]],
-        arg_vars: List[Dict[str, Any]],
+        file_vars: Dict[str, Any],
+        arg_vars: Dict[str, Any],
         *,
         specified: bool = False,
     ):
@@ -38,9 +38,9 @@ class Recipe:
         self.base_dir = base_dir
         self.file_vars = file_vars
         self.arg_vars = arg_vars
-        self.local_vars = raw_recipe.get("vars", [])
+        self.local_vars = raw_recipe.get("vars", {})
         self.vars = dict(**os.environ)
-        update_vars(self.vars, [*self.file_vars, *self.arg_vars], self.base_dir)
+        update_vars(self.vars, [self.file_vars, self.arg_vars], self.base_dir)
         self.alias = self._alias(raw_recipe.get("alias", False))
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
@@ -84,7 +84,7 @@ class Recipe:
         return parser.evaluate(obj)
 
     def _update_variables(self, groups):
-        extra_vars = [groups, *self.local_vars, {".target": self.target}]
+        extra_vars = [groups, self.local_vars, {".target": self.target}]
         update_vars(self.vars, extra_vars, self.base_dir)
 
     def _update_requirements(self):

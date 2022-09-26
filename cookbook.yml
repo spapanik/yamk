@@ -2,8 +2,8 @@
 $globals:
   shell: bash
   vars:
-    - poetry_extra: --sync
-    - runner: poetry run
+    poetry_extra: --sync
+    runner: poetry run
 all:
   alias: install
 install:
