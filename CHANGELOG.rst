@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Allow setting the parser version
+
 Changed
 ^^^^^^^
 * The variables are now a dict, not a list of dicts

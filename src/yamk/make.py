@@ -29,6 +29,7 @@ class MakeCommand:
         self.arg_vars = dict(var.split("=", maxsplit=1) for var in args.variables)
         parsed_cookbook = SettingsParser(cookbook, force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
+        self.version = self.globals.get("version", 4)
         self._parse_recipes(parsed_cookbook)
         self.subprocess_kwargs = {
             "shell": True,

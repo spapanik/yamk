@@ -1,6 +1,7 @@
 ---
 $globals:
   shell: bash
+  version: 4
   vars:
     poetry_extra: --sync
     runner: poetry run

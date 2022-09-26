@@ -45,7 +45,9 @@ Targets
 There are two groups of mutually exclusive types of targets: File/phony targets and static/regex targets. There are also two more cases, but they are not targets: Aliases and meta-targets.
 
 Meta-targets
-    A target starting with a single dollar sign is reserved by *yam* itself, for meta-targets. If the target starts with more than one dollar sign, a single dollar sign is stripped, and it's a normal target or an alias. Currently the only meta-target is *$globals*, that has two valid keys: *vars*. *vars* is the same as the key with the same name if static and regex targets, but weaker. *shell* can override the default shell used to execute the commands, which is */bin/sh*.
+    A target starting with a single dollar sign is reserved by *yam* itself, for meta-targets. If the target starts with more than one dollar sign, a single dollar sign is stripped, and it's a normal target or an alias. Currently the only meta-target is *$globals*, that has two valid keys: *vars*. *vars* is the same as the key with the same name if static and regex targets, but weaker.
+    *shell* can override the default shell used to execute the commands, which is */bin/sh*.
+    Finally, *version* is the yam parser version.
 Aliases
     An alias has a single key, named *alias*, and the value of the key is the name of the target it aliases.
 File targets
