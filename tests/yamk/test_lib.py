@@ -38,8 +38,8 @@ def test_recipe_for_target():
     ],
 )
 def test_add_batch_to_variables(initial, batch, expected):
-    variables = lib.Variables(PATH, **initial)
-    assert variables.add_batch(batch) == expected
+    variables = lib.Variables(**initial)
+    assert variables.add_batch(batch, PATH) == expected
 
 
 def test_node_to_str():

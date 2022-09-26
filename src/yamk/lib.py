@@ -39,9 +39,9 @@ class Recipe:
         self.arg_vars = variables["arg_vars"]
         self.local_vars = raw_recipe.get("vars", [])
         self.vars = (
-            Variables(self.base_dir, **os.environ)
-            .add_batch(self.file_vars)
-            .add_batch(self.arg_vars)
+            Variables(**os.environ)
+            .add_batch(self.file_vars, self.base_dir)
+            .add_batch(self.arg_vars, self.base_dir)
         )
         self.alias = self._alias(raw_recipe.get("alias", False))
         self.phony = raw_recipe.get("phony", False)
@@ -83,14 +83,14 @@ class Recipe:
 
     def _update_variables(self, groups):
         extra_vars = [groups, *self.local_vars, {".target": self.target}]
-        self.vars = self.vars.add_batch(extra_vars)
+        self.vars = self.vars.add_batch(extra_vars, self.base_dir)
 
     def _update_requirements(self):
         self.requires = self._evaluate(self.requires)
 
     def _update_commands(self):
         extra_vars = [{".requirements": self.requires}]
-        self.vars = self.vars.add_batch(extra_vars)
+        self.vars = self.vars.add_batch(extra_vars, self.base_dir)
         self.commands = self._evaluate(self.commands)
         self.existence_command = self._evaluate(self.existence_command)
 
@@ -110,14 +110,10 @@ class Recipe:
 
 
 class Variables(dict):  # type: ignore[type-arg]
-    def __init__(self, base_dir, **kwargs):
-        super().__init__(**kwargs)
-        self.base_dir = base_dir
-
-    def add_batch(self, batch):
-        new_vars = self.__class__(self.base_dir, **self)
+    def add_batch(self, batch, base_dir):
+        new_vars = self.__class__(**self)
         for var_block in batch:
-            parser = Parser(new_vars, self.base_dir)
+            parser = Parser(new_vars, base_dir)
             for key, value in var_block.items():
                 key = parser.evaluate(key)
                 key, options = extract_options(key)
@@ -126,15 +122,6 @@ class Variables(dict):  # type: ignore[type-arg]
                 value = parser.evaluate(value)
                 new_vars[key] = value
         return new_vars
-
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, self.__class__):
-            return NotImplemented
-
-        if self.base_dir != other.base_dir:
-            return False
-
-        return super().__eq__(other)
 
 
 class Parser:
