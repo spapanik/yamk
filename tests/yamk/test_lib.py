@@ -34,9 +34,9 @@ def test_recipe_for_target():
         [{"TEST_VAR": "test"}, [{"[weak]TEST_VAR": "1"}], {"TEST_VAR": "test"}],
     ],
 )
-def test_add_batch_to_variables(initial, batch, expected):
-    variables = lib.Variables(**initial)
-    assert variables.add_batch(batch, PATH) == expected
+def test_update_dictionary(initial, batch, expected):
+    lib.update_vars(initial, batch, PATH)
+    assert initial == expected
 
 
 def test_node_to_str():

@@ -39,11 +39,8 @@ class Recipe:
         self.file_vars = file_vars
         self.arg_vars = arg_vars
         self.local_vars = raw_recipe.get("vars", [])
-        self.vars = (
-            Variables(**os.environ)
-            .add_batch(self.file_vars, self.base_dir)
-            .add_batch(self.arg_vars, self.base_dir)
-        )
+        self.vars = dict(**os.environ)
+        update_vars(self.vars, [*self.file_vars, *self.arg_vars], self.base_dir)
         self.alias = self._alias(raw_recipe.get("alias", False))
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
@@ -88,14 +85,14 @@ class Recipe:
 
     def _update_variables(self, groups):
         extra_vars = [groups, *self.local_vars, {".target": self.target}]
-        self.vars = self.vars.add_batch(extra_vars, self.base_dir)
+        update_vars(self.vars, extra_vars, self.base_dir)
 
     def _update_requirements(self):
         self.requires = self._evaluate(self.requires)
 
     def _update_commands(self):
         extra_vars = [{".requirements": self.requires}]
-        self.vars = self.vars.add_batch(extra_vars, self.base_dir)
+        update_vars(self.vars, extra_vars, self.base_dir)
         self.commands = self._evaluate(self.commands)
         self.existence_command = self._evaluate(self.existence_command)
 
@@ -112,21 +109,6 @@ class Recipe:
         if self.regex and not self._specified:
             target = re.compile(target)
         return target
-
-
-class Variables(dict):  # type: ignore[type-arg]
-    def add_batch(self, batch, base_dir):
-        new_vars = self.__class__(**self)
-        for var_block in batch:
-            parser = Parser(new_vars, base_dir)
-            for key, value in var_block.items():
-                key = parser.evaluate(key)
-                key, options = extract_options(key)
-                if "weak" in options and key in self:
-                    continue
-                value = parser.evaluate(value)
-                new_vars[key] = value
-        return new_vars
 
 
 class Parser:
@@ -327,6 +309,21 @@ class DAG:
             if node_list:
                 new_list.append(node_list)
         return new_list
+
+
+def update_vars(
+    variables: Dict[str, Any], batch: List[Dict[str, Any]], base_dir: Path
+) -> None:
+    old_keys = set(variables)
+    for var_block in batch:
+        parser = Parser(variables, base_dir)
+        for key, value in var_block.items():
+            key = parser.evaluate(key)
+            key, options = extract_options(key)
+            if "weak" in options and key in old_keys:
+                continue
+            value = parser.evaluate(value)
+            variables[key] = value
 
 
 def extract_options(string: str):
