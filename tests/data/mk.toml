@@ -4,6 +4,10 @@ dir = "/etc"
 conf_dir = "service.d"
 filename = "generic.conf"
 name = "call"
+sub = "initial"
+list = ["1", "2"]
+dict = {"x" = "1", "y" = "2", "z" = "${sub}"}
+value = "1"
 
 [phony]
 phony = true
@@ -293,4 +297,15 @@ all = "$((merge ${first} ${second} ${third}))"
 phony = true
 commands = [
     "echo base"
+]
+
+[".d_override_vars"]
+phony = true
+#list = [1, 2]
+#dict = {"x" = 1, "y" = 2}
+#value = 1
+commands = [
+    "echo ${list}",
+    "echo ${dict}",
+    "echo ${value}",
 ]
