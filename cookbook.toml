@@ -3,7 +3,7 @@ shell = "bash"
 version = 4
 
 ["$globals".vars]
-poetry_extra = "--sync"
+poetry_sync = "--sync"
 runner = "poetry run"
 
 [all]
@@ -16,7 +16,7 @@ requires = [
     "poetry.lock",
 ]
 commands = [
-    "poetry install ${poetry_extra}",
+    "poetry install ${poetry_sync} ${poetry_extra}",
 ]
 
 [format]
