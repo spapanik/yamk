@@ -83,5 +83,8 @@ mypy = "^0.982"
 pytest = "^7.1.0"
 
 [tool.poetry.group.docs.dependencies]
-sphinx = "^4.3.0"
+sphinx = [
+    {version = "^4.3.0", python = ">=3.7.0,<3.10.0"},
+    {version = "^5.2.0", python = "^3.10.0"},
+]
 sphinx-rtd-theme = "^1.0.0"
