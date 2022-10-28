@@ -9,21 +9,23 @@ Usage
 
 -h/--help
     show this help message and exit
--a/--assume dependency
+-a/--assume        dependency
     assume that dependency is up to date (works only with phony ones)
--d/--directory  dir
+-d/--directory     dir
     the path to the directory that contains the cookbook
 -f/--force
     rebuild all dependencies and the target
--c/--cookbook   cookbook
-    the path to the cookbook (defaults to *./make.toml*)
--s/--shell      shell
-    the path to the shell to execute the commands (defaults to */bin/sh*)
+-c/--cookbook      cookbook
+    the path to the cookbook (defaults to *./cookbook.toml*)
+-s/--shell         shell
+    the path to the shell used to execute the commands (defaults to */bin/sh*)
+-t/--cookbook-type {toml,json,yaml}
+    the type of the cookbook. defaults to file extension
 -V/--version
     print the version and exit
 -v/--verbose
     increase the level of verbosity
--x/--variable   KEY=value
+-x/--variable      KEY=value
     a list of variables to override the ones set in the cookbook, which should be in the form <variable>=<value>
 
 
