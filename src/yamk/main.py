@@ -22,6 +22,7 @@ def parse_args():
         "--assume",
         action="append",
         metavar="dependency",
+        default=[],
         help="assume that dependency is up to date (works only with phony ones)",
     )
     parser.add_argument(
