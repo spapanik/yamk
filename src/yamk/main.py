@@ -18,6 +18,13 @@ def parse_args():
 
     # optional arguments
     parser.add_argument(
+        "-a",
+        "--assume",
+        action="append",
+        metavar="dependency",
+        help="assume that dependency is up to date (works only with phony ones)",
+    )
+    parser.add_argument(
         "-d",
         "--directory",
         metavar="dir",

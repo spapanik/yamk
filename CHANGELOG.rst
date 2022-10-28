@@ -9,6 +9,11 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Allow assuming phony dependencies as up-to-date
+
+
 `4.0.0`_ - 2022-09-27
 ---------------------
 

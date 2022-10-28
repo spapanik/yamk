@@ -30,6 +30,7 @@ class MakeCommand:
         parsed_cookbook = SettingsParser(cookbook, force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self.version = self.globals.get("version", 4)
+        self.up_to_date = args.assume
         self._parse_recipes(parsed_cookbook)
         self.subprocess_kwargs = {
             "shell": True,
@@ -202,6 +203,8 @@ class MakeCommand:
         if not self._path_exists(node):
             return True
         if recipe.exists_only:
+            return False
+        if recipe.phony and recipe.target in self.up_to_date:
             return False
 
         if not node.requires:
