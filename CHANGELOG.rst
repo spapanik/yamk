@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Allow running the target only
+
 Fixed
 ^^^^^
 * If the command is assumed up to date, don't check the path

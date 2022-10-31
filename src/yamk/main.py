@@ -26,6 +26,12 @@ def parse_args():
         help="assume that dependency is up to date (works only with phony ones)",
     )
     parser.add_argument(
+        "-b",
+        "--bare",
+        action="store_true",
+        help="build only the target, without checking the dependencies",
+    )
+    parser.add_argument(
         "-d",
         "--directory",
         metavar="dir",

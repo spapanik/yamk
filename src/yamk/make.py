@@ -22,6 +22,7 @@ class MakeCommand:
         self.static_recipes: Dict[str, lib.Recipe] = {}
         self.aliases: Dict[str, str] = {}
         self.target = args.target
+        self.bare = args.bare
         self.force_make = args.force
         cookbook = self.find_cookbook(args)
         self.base_dir = cookbook.parent
@@ -87,7 +88,7 @@ class MakeCommand:
         root = lib.Node(recipe)
         unprocessed = {root.target: root}
         dag = lib.DAG(root)
-        while unprocessed:
+        while unprocessed and not self.bare:
             target, target_node = unprocessed.popitem()
             dag.add_node(target_node)
             target_recipe = target_node.recipe

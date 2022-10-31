@@ -11,6 +11,8 @@ Usage
     show this help message and exit
 -a/--assume        dependency
     assume that dependency is up to date (works only with phony ones)
+-b/--bare
+    build only the target, without checking the dependencies
 -d/--directory     dir
     the path to the directory that contains the cookbook
 -f/--force
