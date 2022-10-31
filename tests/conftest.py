@@ -17,4 +17,5 @@ def mock_args():
     args.verbose = 0
     args.bare = False
     args.force = False
+    args.dry_run = False
     return args

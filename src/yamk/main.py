@@ -51,6 +51,12 @@ def parse_args():
         help="the path to the cookbook",
     )
     parser.add_argument(
+        "-n",
+        "--dry-run",
+        action="store_true",
+        help="only print the commands to be executed",
+    )
+    parser.add_argument(
         "-s",
         "--shell",
         metavar="shell",

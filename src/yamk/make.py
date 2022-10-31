@@ -24,6 +24,7 @@ class MakeCommand:
         self.target = args.target
         self.bare = args.bare
         self.force_make = args.force
+        self.dry_run = args.dry_run
         cookbook = self.find_cookbook(args)
         self.base_dir = cookbook.parent
         self.phony_dir = self.base_dir.joinpath(".yamk")
@@ -60,6 +61,9 @@ class MakeCommand:
             self._make_target(node.recipe)
 
     def _run_command(self, command: List[str]) -> int:
+        if self.dry_run:
+            print(command)
+            return 0
         result = subprocess.run(command, **self.subprocess_kwargs)
         return result.returncode
 

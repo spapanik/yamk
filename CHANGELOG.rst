@@ -12,6 +12,7 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Added
 ^^^^^
 * Allow running the target only
+* Allow a dry-run that will only print the commands to be executed
 
 Fixed
 ^^^^^
