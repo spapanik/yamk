@@ -200,11 +200,11 @@ class MakeCommand:
             return False
         if self.force_make:
             return True
+        if recipe.phony and recipe.target in self.up_to_date:
+            return False
         if not self._path_exists(node):
             return True
         if recipe.exists_only:
-            return False
-        if recipe.phony and recipe.target in self.up_to_date:
             return False
 
         if not node.requires:
@@ -225,6 +225,9 @@ class MakeCommand:
         path = self._path(node)
         if recipe is None:
             return path.stat().st_mtime
+
+        if recipe.phony and recipe.target in self.up_to_date:
+            return float("inf")
 
         if not self._path_exists(node):
             return float("inf")

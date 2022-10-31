@@ -9,13 +9,16 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+* If the command is assumed up to date, don't check the path
+
 `4.1.0`_ - 2022-10-28
 ---------------------
 
 Added
 ^^^^^
 * Allow assuming phony dependencies as up-to-date
-
 
 `4.0.0`_ - 2022-09-27
 ---------------------
