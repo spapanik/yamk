@@ -82,14 +82,14 @@ Added
 ---------------------
 
 Fixed
-^^^^^^^
+^^^^^
 * Fixed parsing weak variables
 
 `2.3.2`_ - 2022-02-28
 ---------------------
 
 Fixed
-^^^^^^^
+^^^^^
 * Fix version when called with --version
 
 `2.3.1`_ - 2022-02-25
