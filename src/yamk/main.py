@@ -32,6 +32,12 @@ def parse_args():
         help="build only the target, without checking the dependencies",
     )
     parser.add_argument(
+        "-c",
+        "--cookbook",
+        metavar="cookbook",
+        help="the path to the cookbook",
+    )
+    parser.add_argument(
         "-d",
         "--directory",
         metavar="dir",
@@ -43,12 +49,6 @@ def parse_args():
         "--force",
         action="store_true",
         help="rebuild all dependencies and the target",
-    )
-    parser.add_argument(
-        "-c",
-        "--cookbook",
-        metavar="cookbook",
-        help="the path to the cookbook",
     )
     parser.add_argument(
         "-n",

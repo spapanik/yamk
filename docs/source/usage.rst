@@ -13,12 +13,14 @@ Usage
     assume that dependency is up to date (works only with phony ones)
 -b/--bare
     build only the target, without checking the dependencies
+-c/--cookbook      cookbook
+    the path to the cookbook (defaults to *./cookbook.toml*)
 -d/--directory     dir
     the path to the directory that contains the cookbook
 -f/--force
     rebuild all dependencies and the target
--c/--cookbook      cookbook
-    the path to the cookbook (defaults to *./cookbook.toml*)
+-n/--dry-run
+    only print the commands to be executed
 -s/--shell         shell
     the path to the shell used to execute the commands (defaults to */bin/sh*)
 -t/--cookbook-type {toml,json,yaml}
