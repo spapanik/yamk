@@ -4,6 +4,7 @@ import pathlib
 import re
 import subprocess
 import sys
+from time import sleep
 from typing import Any, Dict, List
 
 from dj_settings import SettingsParser
@@ -24,6 +25,7 @@ class MakeCommand:
         self.target = args.target
         self.bare = args.bare
         self.force_make = args.force
+        self.retries = args.retries
         self.dry_run = args.dry_run
         cookbook = self.find_cookbook(args)
         self.base_dir = cookbook.parent
@@ -61,11 +63,24 @@ class MakeCommand:
             self._make_target(node.recipe)
 
     def _run_command(self, command: List[str]) -> int:
+        status = 0
         if self.dry_run:
             print(command)
-            return 0
-        result = subprocess.run(command, **self.subprocess_kwargs)
-        return result.returncode
+            return status
+
+        a, b = 1, 1
+        for i in range(self.retries + 1):
+            result = subprocess.run(command, **self.subprocess_kwargs)
+            status = result.returncode
+            if status == 0:
+                return status
+
+            if i != self.retries:
+                a, b = b, a + b
+                print(f"{command} failed. Retrying in {a}s...")
+                sleep(a)
+
+        return status
 
     def _parse_recipes(self, parsed_cookbook: Dict[str, Dict[str, Any]]) -> None:
         for target, raw_recipe in parsed_cookbook.items():

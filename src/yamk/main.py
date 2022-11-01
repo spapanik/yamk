@@ -57,6 +57,14 @@ def parse_args():
         help="only print the commands to be executed",
     )
     parser.add_argument(
+        "-r",
+        "--retries",
+        metavar="retries",
+        type=int,
+        default=0,
+        help="retry commands for <retries> number of times",
+    )
+    parser.add_argument(
         "-s",
         "--shell",
         metavar="shell",

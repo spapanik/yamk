@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Added the ability to retry failed commands
+
 `4.2.0`_ - 2022-10-31
 ---------------------
 

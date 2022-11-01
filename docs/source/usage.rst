@@ -21,6 +21,8 @@ Usage
     rebuild all dependencies and the target
 -n/--dry-run
     only print the commands to be executed
+-r/--retry retries
+    retry commands for <retries> number of times
 -s/--shell         shell
     the path to the shell used to execute the commands (defaults to */bin/sh*)
 -t/--cookbook-type {toml,json,yaml}
