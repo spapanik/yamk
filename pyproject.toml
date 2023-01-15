@@ -6,9 +6,7 @@ build-backend = "poetry.core.masonry.api"
 target-version = ["py37", "py38", "py39", "py310", "py311"]
 
 [tool.isort]
-line_length = 88
-multi_line_output = 3
-include_trailing_comma = true
+profile = "black"
 known_tests = "tests"
 sections = ["STDLIB", "THIRDPARTY", "FIRSTPARTY", "TESTS"]
 
