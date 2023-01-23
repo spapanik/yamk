@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import itertools
 import pathlib
@@ -5,7 +7,7 @@ import re
 import subprocess
 import sys
 from time import sleep
-from typing import Any, Dict, List
+from typing import Any
 
 from dj_settings import SettingsParser
 
@@ -19,9 +21,9 @@ class MakeCommand:
             if self.verbosity > 1:
                 print(args)
             sys.tracebacklimit = 9999
-        self.regex_recipes: Dict[str, lib.Recipe] = {}
-        self.static_recipes: Dict[str, lib.Recipe] = {}
-        self.aliases: Dict[str, str] = {}
+        self.regex_recipes: dict[str, lib.Recipe] = {}
+        self.static_recipes: dict[str, lib.Recipe] = {}
+        self.aliases: dict[str, str] = {}
         self.target = args.target
         self.bare = args.bare
         self.force_make = args.force
@@ -62,7 +64,7 @@ class MakeCommand:
         for node in filter(lambda x: x.should_build, dag):
             self._make_target(node.recipe)
 
-    def _run_command(self, command: List[str]) -> int:
+    def _run_command(self, command: list[str]) -> int:
         status = 0
         if self.dry_run:
             print(command)
@@ -82,7 +84,7 @@ class MakeCommand:
 
         return status
 
-    def _parse_recipes(self, parsed_cookbook: Dict[str, Dict[str, Any]]) -> None:
+    def _parse_recipes(self, parsed_cookbook: dict[str, dict[str, Any]]) -> None:
         for target, raw_recipe in parsed_cookbook.items():
             recipe = lib.Recipe(
                 target,

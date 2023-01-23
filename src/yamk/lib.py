@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import math
 import os
@@ -5,7 +7,7 @@ import re
 import shlex
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Set
+from typing import Any
 
 from yamk.functions import functions
 
@@ -28,8 +30,8 @@ class Recipe:
         target: str,
         raw_recipe,
         base_dir: Path,
-        file_vars: Dict[str, Any],
-        arg_vars: Dict[str, Any],
+        file_vars: dict[str, Any],
+        arg_vars: dict[str, Any],
         *,
         specified: bool = False,
     ):
@@ -181,8 +183,8 @@ class Node:
     target: str
     timestamp: float
     should_build: bool
-    required_by: Set["Node"]
-    requires: List["Node"]
+    required_by: set["Node"]
+    requires: list["Node"]
 
     def __init__(self, recipe=None, *, target=None):
         self.recipe = recipe
@@ -217,7 +219,7 @@ class Node:
 
 
 class DAG:
-    ordered: List[Node]
+    ordered: list[Node]
 
     def __init__(self, root: Node):
         self.root = root
@@ -264,7 +266,7 @@ class DAG:
     def add_node(self, node):
         self._mapping[node.target] = node
 
-    def _node_s3_sort(self, node: Node) -> List[Node]:
+    def _node_s3_sort(self, node: Node) -> list[Node]:
         out = [node]
         requirements = node.requires
         if requirements:
@@ -282,8 +284,8 @@ class DAG:
                 raise ValueError("Cannot compute c3_sort")
         return out
 
-    def _merge(self, *node_lists: List[Node]) -> List[Node]:
-        result: List[Node] = []
+    def _merge(self, *node_lists: list[Node]) -> list[Node]:
+        result: list[Node] = []
         unmerged = [*node_lists]
 
         while True:
@@ -301,7 +303,7 @@ class DAG:
                 raise ValueError("Cannot compute c3_sort")
 
     @staticmethod
-    def _clean_head(unmerged: List[List[Node]], head: Node) -> List[List[Node]]:
+    def _clean_head(unmerged: list[list[Node]], head: Node) -> list[list[Node]]:
         new_list = []
         for node_list in unmerged:
             if head == node_list[0]:
@@ -312,7 +314,7 @@ class DAG:
 
 
 def update_vars(
-    variables: Dict[str, Any], batch: List[Dict[str, Any]], base_dir: Path
+    variables: dict[str, Any], batch: list[dict[str, Any]], base_dir: Path
 ) -> None:
     old_keys = set(variables)
     for var_block in batch:
