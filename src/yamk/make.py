@@ -7,7 +7,7 @@ import re
 import subprocess
 import sys
 from time import sleep
-from typing import Any
+from typing import Any, Optional, cast
 
 from dj_settings import SettingsParser
 
@@ -112,7 +112,7 @@ class MakeCommand:
         while unprocessed and not self.bare:
             target, target_node = unprocessed.popitem()
             dag.add_node(target_node)
-            target_recipe = target_node.recipe
+            target_recipe = cast(lib.Recipe, target_node.recipe)
             target_recipe.requires.reverse()
             for index, raw_requirement in enumerate(target_recipe.requires):
                 recipe = self._extract_recipe(raw_requirement)
@@ -169,7 +169,7 @@ class MakeCommand:
             self.phony_dir.mkdir(exist_ok=True)
             path.touch()
 
-    def _extract_recipe(self, target: str) -> lib.Recipe:
+    def _extract_recipe(self, target: str) -> Optional[lib.Recipe]:
         if target in self.aliases:
             target = self.aliases[target]
 

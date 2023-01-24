@@ -7,7 +7,7 @@ import re
 import shlex
 import warnings
 from pathlib import Path
-from typing import Any
+from typing import Any, Match, Optional, cast
 
 from yamk.functions import functions
 
@@ -61,7 +61,7 @@ class Recipe:
             return f"Specified recipe for {self.target}"
         return f"Generic recipe for {self.target}"
 
-    def for_target(self, target: str) -> "Recipe":
+    def for_target(self, target: str) -> Recipe:
         if self._specified:
             return self
         new_recipe = self.__class__(
@@ -73,7 +73,8 @@ class Recipe:
             specified=True,
         )
         if new_recipe.regex:
-            groups = re.fullmatch(self.target, new_recipe.target).groupdict()
+            match = cast(Match[Any], re.fullmatch(self.target, new_recipe.target))
+            groups = match.groupdict()
         else:
             groups = {}
         new_recipe._update_variables(groups)
@@ -128,7 +129,7 @@ class Parser:
         args = shlex.split(args)
         for i, arg in enumerate(args):
             args[i] = self.evaluate(arg)
-        function = functions.get(name)(self.base_dir)
+        function = functions[name](self.base_dir)
         return function(*args)
 
     def repl(self, matchobj):
@@ -154,7 +155,7 @@ class Parser:
             and not string.startswith("$$")
             and re.fullmatch(VAR, string)
         ):
-            match = re.fullmatch(VAR, string)
+            match = cast(Match[str], re.fullmatch(VAR, string))
             if match["sep"] is None:
                 return self.vars[match["variable"]]
         return re.sub(VAR, self.repl, string)
@@ -179,31 +180,33 @@ class Parser:
 
 
 class Node:
-    recipe: Recipe
+    recipe: Optional[Recipe]
     target: str
     timestamp: float
     should_build: bool
-    required_by: set["Node"]
-    requires: list["Node"]
+    required_by: set[Node]
+    requires: list[Node]
 
-    def __init__(self, recipe=None, *, target=None):
+    def __init__(
+        self, recipe: Optional[Recipe] = None, *, target: Optional[str] = None
+    ):
         self.recipe = recipe
         self.target = target if self.recipe is None else self.recipe.target
         self.requires = []
         self.required_by = set()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.target
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Node <{self}>"
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, self.__class__):
             return NotImplemented
         return self.target == other.target
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.target)
 
     def add_requirement(self, other):
