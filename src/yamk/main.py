@@ -1,8 +1,9 @@
 import argparse
 import sys
+import warnings
 
 from yamk import __version__
-from yamk.lib import SUPPORTED_FILE_EXTENSIONS
+from yamk.lib import SUPPORTED_FILE_EXTENSIONS, RemovedIn50Warning
 from yamk.make import MakeCommand
 
 sys.tracebacklimit = 0
@@ -14,7 +15,7 @@ def parse_args():
     )
 
     # positional arguments
-    parser.add_argument("target", nargs="?", default="all", help="the target for yamk")
+    parser.add_argument("target", nargs="?", help="the target for yamk")
 
     # optional arguments
     parser.add_argument(
@@ -106,4 +107,11 @@ def parse_args():
 
 def main():
     args = parse_args()
+    if args.target is None:
+        warnings.warn(
+            "Implicit targets won't be supported, starting from yamk 5.0",
+            RemovedIn50Warning,
+            stacklevel=3,
+        )
+        args.target = "all"
     MakeCommand(args).make()

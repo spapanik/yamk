@@ -345,3 +345,7 @@ def timestamp_to_dt(timestamp: float) -> datetime.datetime:
     if math.isinf(timestamp):
         return datetime.datetime.max
     return datetime.datetime.utcfromtimestamp(timestamp)
+
+
+class RemovedIn50Warning(FutureWarning):
+    pass
