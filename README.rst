@@ -5,9 +5,6 @@ yam: yet another make
 .. image:: https://github.com/spapanik/yamk/actions/workflows/build.yml/badge.svg
   :alt: Build
   :target: https://github.com/spapanik/yamk/actions/workflows/build.yml
-.. image:: https://img.shields.io/lgtm/alerts/g/spapanik/yamk.svg
-  :alt: Total alerts
-  :target: https://lgtm.com/projects/g/spapanik/yamk/alerts/
 .. image:: https://img.shields.io/github/license/spapanik/yamk
   :alt: License
   :target: https://github.com/spapanik/yamk/blob/main/LICENSE.txt
