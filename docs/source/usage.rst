@@ -92,6 +92,8 @@ existence_command: string (phony targets)
     If to a non-empty string, it will execute this command to check if the phony target already "exists". Upon an exit status of 0, the target is assumed to exist.
 recursive: boolean (file targets)
     This makes sense only for directories. In this case, if it's set to true, the timestamp of the directory is taken to be the maximum of all the timestamps of all files, at any depth, inside it.
+update: boolean (file targets)
+    If set to true, then yam will touch the file target after a successful build. It's meant to be used with lockfiles, that they might not get touched by the actual command if there is no need to do so.
 echo: boolean (any)
     By default, the commands are not echoed before they are run. If set to true, they do.
 allow_failures: boolean (any)
