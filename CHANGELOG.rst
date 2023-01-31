@@ -9,6 +9,9 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+`4.4.0`_ - 2023-01-31
+---------------------
+
 Added
 ^^^^^
 * Warn for upcoming removal of implicit targets
@@ -413,7 +416,8 @@ Added
 * Initial project structure
 
 
-.. _`unreleased`: https://github.com/spapanik/yamk/compare/v4.3.0...main
+.. _`unreleased`: https://github.com/spapanik/yamk/compare/v4.4.0...main
+.. _`4.4.0`: https://github.com/spapanik/yamk/compare/v4.3.0...v4.4.0
 .. _`4.3.0`: https://github.com/spapanik/yamk/compare/v4.2.0...v4.3.0
 .. _`4.2.0`: https://github.com/spapanik/yamk/compare/v4.1.0...v4.2.0
 .. _`4.1.0`: https://github.com/spapanik/yamk/compare/v4.0.0...v4.1.0
