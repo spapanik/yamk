@@ -42,8 +42,11 @@ banned-modules = """
 ban-relative-imports = true
 
 [tool.pytest.ini_options]
-addopts = "-vv"
+addopts = "-vv --cov --cov-report=term-missing:skip-covered"
 testpaths = "tests"
+
+[tool.coverage.run]
+source = ["src/"]
 
 [tool.poetry]
 name = "yamk"
@@ -98,6 +101,7 @@ mypy = "^0.991"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1"
+pytest-cov = "~4.0"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = {version = "^5.2", python = "^3.10"}
