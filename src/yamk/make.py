@@ -168,6 +168,8 @@ class MakeCommand:
             path = self._phony_path(recipe.target)
             self.phony_dir.mkdir(exist_ok=True)
             path.touch()
+        if recipe.update and not recipe.phony:
+            pathlib.Path(recipe.target).touch()
 
     def _extract_recipe(self, target: str) -> Optional[lib.Recipe]:
         if target in self.aliases:

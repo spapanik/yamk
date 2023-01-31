@@ -12,6 +12,7 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Added
 ^^^^^
 * Warn for upcoming removal of implicit targets
+* Allow updating modification time of the target, every time the commands were run
 
 `4.3.0`_ - 2022-11-02
 ---------------------

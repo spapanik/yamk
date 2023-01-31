@@ -55,6 +55,7 @@ class Recipe:
         self.keep_ts = raw_recipe.get("keep_ts", False)
         self.existence_command = raw_recipe.get("existence_command", "")
         self.recursive = raw_recipe.get("recursive", False)
+        self.update = raw_recipe.get("update", False)
 
     def __str__(self) -> str:
         if self._specified:

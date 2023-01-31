@@ -72,9 +72,10 @@ commands = [
 ]
 
 ["poetry.lock"]
+update = true
 requires = [
     "pyproject.toml",
 ]
 commands = [
-    "poetry lock && touch ${.target}",
+    "poetry lock",
 ]
