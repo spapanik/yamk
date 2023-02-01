@@ -28,6 +28,19 @@ def test_make_builds_with_no_commands(runner, mock_args):
 
 
 @mock.patch("yamk.make.print", new_callable=mock.MagicMock)
+def test_make_dry_run(mock_print, mock_args):
+    mock_args.target = "phony_requirement"
+    mock_args.dry_run = True
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert mock_print.call_count == 1
+    calls = [
+        mock.call("ls"),
+    ]
+    assert mock_print.call_args_list == calls
+
+
+@mock.patch("yamk.make.print", new_callable=mock.MagicMock)
 def test_make_verbosity(mock_print, mock_args):
     mock_args.target = "phony"
     mock_args.verbose = 4
@@ -208,6 +221,18 @@ def test_make_with_implicit_variables(runner, mock_args):
     calls = [
         mock.call("echo implicit_vars", **make_command.subprocess_kwargs),
         mock.call("echo / phony", **make_command.subprocess_kwargs),
+    ]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_duplicate_requirements_warning(runner, mock_args):
+    mock_args.target = "duplicate_requirement"
+    make_command = make.MakeCommand(mock_args)
+    pytest.warns(RuntimeWarning, make_command.make)
+    assert runner.call_count == 1
+    calls = [
+        mock.call("ls", **make_command.subprocess_kwargs),
     ]
     assert runner.call_args_list == calls
 

@@ -8,6 +8,13 @@ PATH = pathlib.Path(__file__)
 BASE_DIR = PATH.parent
 
 
+def test_function_callable():
+    class NotCallableFunction(functions.Function):
+        pass
+
+    assert pytest.raises(NotImplementedError, NotCallableFunction(BASE_DIR))
+
+
 def test_glob():
     assert PATH.as_posix() in list(functions.Glob(BASE_DIR)("*"))
 

@@ -82,6 +82,13 @@ commands = [
     "echo ${number}",
 ]
 
+[duplicate_requirement]
+phony = true
+requires = [
+    "phony_requirement",
+    "phony_requirement",
+]
+
 [multiple_regex]
 phony = true
 requires = [
