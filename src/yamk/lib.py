@@ -7,7 +7,7 @@ import re
 import shlex
 import warnings
 from pathlib import Path
-from typing import Any, Match, Optional, cast
+from typing import Any, Match, cast
 
 from yamk.functions import functions
 
@@ -181,16 +181,14 @@ class Parser:
 
 
 class Node:
-    recipe: Optional[Recipe]
+    recipe: Recipe | None
     target: str
     timestamp: float
     should_build: bool
     required_by: set[Node]
     requires: list[Node]
 
-    def __init__(
-        self, recipe: Optional[Recipe] = None, *, target: Optional[str] = None
-    ):
+    def __init__(self, recipe: Recipe | None = None, *, target: str | None = None):
         self.recipe = recipe
         self.target = target if self.recipe is None else self.recipe.target
         self.requires = []

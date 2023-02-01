@@ -1,4 +1,4 @@
-from __future__ import annotations
+from __future__ import annotations  # py39
 
 project = "yam"
 project_copyright = "2021, Stephanos Kuma"

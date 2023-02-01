@@ -7,7 +7,7 @@ import re
 import subprocess
 import sys
 from time import sleep
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 from dj_settings import SettingsParser
 
@@ -171,7 +171,7 @@ class MakeCommand:
         if recipe.update and not recipe.phony:
             pathlib.Path(recipe.target).touch()
 
-    def _extract_recipe(self, target: str) -> Optional[lib.Recipe]:
+    def _extract_recipe(self, target: str) -> lib.Recipe | None:
         if target in self.aliases:
             target = self.aliases[target]
 

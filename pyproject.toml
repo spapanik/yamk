@@ -81,12 +81,12 @@ python = "^3.7"
 dj-settings = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
-ipdb = {version = "~0.13", python = "^3.10"}
-ipython = {version = "~8.8", python = "^3.10"}
+ipdb = {version = "^0.13", python = "^3.10"}
+ipython = {version = "^8.9", python = "^3.10"}
 pipdeptree = "^2.3"
 
 [tool.poetry.group.lint.dependencies]
-black = "^22.10"
+black = "^23.1"
 flake8 = "^5.0"
 flake8-bugbear = "^23.1"
 flake8-builtins = "^2.0"
@@ -94,14 +94,14 @@ flake8-comprehensions = "^3.10"
 flake8-eradicate = "^1.4"
 flake8-executable = "^2.1"
 flake8-mutable = "^1.2"
-Flake8-pyproject = "~1.2"
+Flake8-pyproject = "^1.2"
 flake8-tidy-imports = "^4.8"
-isort = "^5.10"
+isort = "^5.11"
 mypy = "^0.991"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1"
-pytest-cov = "~4.0"
+pytest-cov = "^4.0"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = {version = "^5.2", python = "^3.10"}
