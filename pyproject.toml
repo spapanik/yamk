@@ -97,7 +97,7 @@ flake8-mutable = "^1.2"
 Flake8-pyproject = "^1.2"
 flake8-tidy-imports = "^4.8"
 isort = "^5.11"
-mypy = "^0.991"
+mypy = "^1.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1"

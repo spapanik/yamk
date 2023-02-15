@@ -214,6 +214,7 @@ class Node:
                 f"`{other}` is included twice in `{self}` requirements, "
                 "only the first will be considered",
                 RuntimeWarning,
+                stacklevel=3,
             )
             return
         self.requires.append(other)
@@ -263,6 +264,7 @@ class DAG:
             "The requirements order didn't allow the deterministic order; "
             "fell back to old-style dependency resolution",
             RuntimeWarning,
+            stacklevel=3,
         )
 
     def add_node(self, node):
