@@ -96,7 +96,7 @@ flake8-executable = "^2.1"
 flake8-mutable = "^1.2"
 Flake8-pyproject = "^1.2"
 flake8-tidy-imports = "^4.8"
-isort = "^5.11"
+isort = {version = "^5.12", python = "^3.10"}
 mypy = "^1.0"
 
 [tool.poetry.group.test.dependencies]
@@ -104,5 +104,5 @@ pytest = "^7.1"
 pytest-cov = "^4.0"
 
 [tool.poetry.group.docs.dependencies]
-sphinx = {version = "^5.2", python = "^3.10"}
-sphinx-rtd-theme = {version = "^1.0", python = "^3.10"}
+sphinx = {version = "^6.1", python = "^3.10"}
+sphinx-rtd-theme = {version = "^1.2", python = "^3.10"}

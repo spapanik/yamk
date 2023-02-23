@@ -2,9 +2,9 @@
 yam: yet another make
 =====================
 
-.. image:: https://github.com/spapanik/yamk/actions/workflows/build.yml/badge.svg
-  :alt: Build
-  :target: https://github.com/spapanik/yamk/actions/workflows/build.yml
+.. image:: https://github.com/spapanik/yamk/actions/workflows/test.yml/badge.svg
+  :alt: Test
+  :target: https://github.com/spapanik/yamk/actions/workflows/test.yml
 .. image:: https://img.shields.io/github/license/spapanik/yamk
   :alt: License
   :target: https://github.com/spapanik/yamk/blob/main/LICENSE.txt
