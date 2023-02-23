@@ -284,8 +284,8 @@ class DAG:
                         requirements,
                     )
                 )
-            except RecursionError:
-                raise ValueError("Cannot compute c3_sort")
+            except RecursionError as exc:
+                raise ValueError("Cannot compute c3_sort") from exc
         return out
 
     def _merge(self, *node_lists: list[Node]) -> list[Node]:
