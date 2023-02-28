@@ -64,7 +64,7 @@ class MakeCommand:
         for node in filter(lambda x: x.should_build, dag):
             self._make_target(node.recipe)
 
-    def _run_command(self, command: list[str]) -> int:
+    def _run_command(self, command: str) -> int:
         status = 0
         if self.dry_run:
             print(command)
