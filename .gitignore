@@ -2,6 +2,8 @@
 __pycache__/
 .mypy_cache/
 .pytest_cache/
+.ruff_cache/
+.cov_cache/
 
 # tests
 tests/data/.yamk/
@@ -18,3 +20,7 @@ docs/build/
 pip-wheel-metadata/
 dist/
 *.egg-info/
+
+# dev
+local*
+local/

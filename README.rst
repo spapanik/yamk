@@ -2,9 +2,9 @@
 yam: yet another make
 =====================
 
-.. image:: https://github.com/spapanik/yamk/actions/workflows/test.yml/badge.svg
-  :alt: Test
-  :target: https://github.com/spapanik/yamk/actions/workflows/test.yml
+.. image:: https://github.com/spapanik/yamk/actions/workflows/tests.yml/badge.svg
+  :alt: Tests
+  :target: https://github.com/spapanik/yamk/actions/workflows/tests.yml
 .. image:: https://img.shields.io/github/license/spapanik/yamk
   :alt: License
   :target: https://github.com/spapanik/yamk/blob/main/LICENSE.txt
@@ -15,8 +15,14 @@ yam: yet another make
   :alt: Downloads
   :target: https://pepy.tech/project/yamk
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-  :alt: Code style
+  :alt: code style: black
   :target: https://github.com/psf/black
+.. image:: https://img.shields.io/badge/build%20automation-yamk-success
+  :alt: build automation: yam
+  :target: https://github.com/spapanik/yamk
+.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json
+  :alt: Lint: ruff
+  :target: https://github.com/charliermarsh/ruff
 
 ``yam`` offers an alternative tool to control the housekeeping tasks of
 a project, as well as the creation of executables and non-source files
