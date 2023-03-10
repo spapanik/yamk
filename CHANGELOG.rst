@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Removed
+^^^^^^^
+* Dropped python 3.7 support
+
 `4.4.0`_ - 2023-01-31
 ---------------------
 

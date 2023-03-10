@@ -3,7 +3,7 @@ requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-target-version = ["py37", "py38", "py39", "py310", "py311"]
+target-version = ["py38", "py39", "py310", "py311"]
 
 [tool.mypy]
 check_untyped_defs = true
@@ -58,7 +58,7 @@ ignore = [
     "TRY003",
 ]
 src = ["src"]
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.per-file-ignores]
 "tests/**" = ["S101"]
@@ -89,7 +89,9 @@ authors = [
 license = "LGPL-3.0+"
 readme = "README.rst"
 
+homepage = "https://yamk.readthedocs.io/en/stable/"
 repository = "https://github.com/spapanik/yamk"
+documentation = "https://yamk.readthedocs.io/en/stable/"
 
 keywords = ["make", "build", "cli"]
 classifiers = [
@@ -105,15 +107,15 @@ yam = "yamk.main:main"
 
 [tool.poetry.dependencies]
 # python version
-python = "^3.7"
+python = "^3.8"
 
 # dependencies
-dj_settings = "^4.0"
+dj_settings = "^4.2"
 
 [tool.poetry.group.dev.dependencies]
-ipdb = {version = "^0.13", python = "^3.10"}
-ipython = {version = "^8.9", python = "^3.10"}
-pipdeptree = "^2.3"
+ipdb = {version = "^0.13", python = "^3.9"}
+ipython = {version = "^8.11", python = "^3.9"}
+pipdeptree = "^2.5"
 
 [tool.poetry.group.lint.dependencies]
 black = "^23.1"
@@ -125,5 +127,5 @@ pytest = "^7.1"
 pytest-cov = "^4.0"
 
 [tool.poetry.group.docs.dependencies]
-sphinx = {version = "^6.1", python = "^3.10"}
-sphinx-rtd-theme = {version = "^1.2", python = "^3.10"}
+sphinx = "^6.1"
+sphinx-rtd-theme = "^1.2"
