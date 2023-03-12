@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import datetime
 import math
 import os
 import re
 import shlex
 import warnings
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Match, cast
 
@@ -78,9 +78,9 @@ class Recipe:
             groups = match.groupdict()
         else:
             groups = {}
-        new_recipe._update_variables(groups)
-        new_recipe._update_requirements()
-        new_recipe._update_commands()
+        new_recipe._update_variables(groups)  # noqa: SLF001
+        new_recipe._update_requirements()  # noqa: SLF001
+        new_recipe._update_commands()  # noqa: SLF001
         return new_recipe
 
     def _evaluate(self, obj):
@@ -112,7 +112,7 @@ class Recipe:
             target = self.base_dir.joinpath(target).as_posix()
         if self.regex and not self._specified:
             target = re.compile(target)
-        return target
+        return target  # noqa: RET504
 
 
 class Parser:
@@ -309,11 +309,13 @@ class DAG:
     @staticmethod
     def _clean_head(unmerged: list[list[Node]], head: Node) -> list[list[Node]]:
         new_list = []
-        for node_list in unmerged:
-            if head == node_list[0]:
-                node_list = node_list[1:]
-            if node_list:
-                new_list.append(node_list)
+        for original_node_list in unmerged:
+            if head == original_node_list[0]:
+                node_list = original_node_list[1:]
+                if node_list:
+                    new_list.append(node_list)
+            else:
+                new_list.append(original_node_list)
         return new_list
 
 
@@ -323,12 +325,12 @@ def update_vars(
     old_keys = set(variables)
     for var_block in batch:
         parser = Parser(variables, base_dir)
-        for key, value in var_block.items():
-            key = parser.evaluate(key)
+        for raw_key, raw_value in var_block.items():
+            key = parser.evaluate(raw_key)
             key, options = extract_options(key)
             if "weak" in options and key in old_keys:
                 continue
-            value = parser.evaluate(value)
+            value = parser.evaluate(raw_value)
             variables[key] = value
 
 
@@ -342,10 +344,10 @@ def extract_options(string: str):
     return string, {s.strip() for s in options.split(",")}
 
 
-def timestamp_to_dt(timestamp: float) -> datetime.datetime:
+def human_readable_timestamp(timestamp: float) -> str:
     if math.isinf(timestamp):
-        return datetime.datetime.max
-    return datetime.datetime.utcfromtimestamp(timestamp)
+        return "end of time"
+    return str(datetime.fromtimestamp(timestamp, tz=timezone.utc))
 
 
 class RemovedIn50Warning(FutureWarning):

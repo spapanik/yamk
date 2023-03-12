@@ -143,7 +143,7 @@ class MakeCommand:
             print("=== all targets ===")
             for node in dag:
                 print(f"- {node.target}:")
-                print(f"    timestamp: {lib.timestamp_to_dt(node.timestamp)}")
+                print(f"    timestamp: {lib.human_readable_timestamp(node.timestamp)}")
                 print(f"    should_build: {node.should_build}")
                 print(f"    requires: {node.requires}")
                 print(f"    required_by: {node.required_by}")
@@ -153,8 +153,8 @@ class MakeCommand:
         if self.verbosity > 1:
             print(f"=== target: {recipe.target} ===")
 
-        for command in recipe.commands:
-            command, options = lib.extract_options(command)
+        for raw_command in recipe.commands:
+            command, options = lib.extract_options(raw_command)
             if recipe.echo or "echo" in options or self.verbosity > 2:
                 print(command)
             return_code = self._run_command(command)

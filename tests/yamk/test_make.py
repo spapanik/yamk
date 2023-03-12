@@ -10,13 +10,13 @@ from yamk import make
 def test_make_raises_on_missing_target(mock_args):
     mock_args.target = "missing_target"
     make_command = make.MakeCommand(mock_args)
-    assert pytest.raises(ValueError, make_command.make)
+    assert pytest.raises(ValueError, make_command.make)  # noqa: PT011
 
 
 def test_make_raises_on_missing_requirement(mock_args):
     mock_args.target = "missing_requirement"
     make_command = make.MakeCommand(mock_args)
-    assert pytest.raises(ValueError, make_command.make)
+    assert pytest.raises(ValueError, make_command.make)  # noqa: PT011
 
 
 @mock.patch("yamk.make.subprocess.run")
@@ -51,7 +51,7 @@ def test_make_verbosity(mock_print, mock_args):
         mock.call(mock_args),
         mock.call("=== all targets ==="),
         mock.call("- phony:"),
-        mock.call("    timestamp: 9999-12-31 23:59:59.999999"),
+        mock.call("    timestamp: end of time"),
         mock.call("    should_build: True"),
         mock.call("    requires: []"),
         mock.call("    required_by: set()"),

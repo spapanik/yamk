@@ -1,4 +1,4 @@
-.. include:: core.rst
+.. include:: ../../README.rst
 
 
 .. toctree::
