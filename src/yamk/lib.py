@@ -5,7 +5,9 @@ import os
 import re
 import shlex
 import warnings
+from dataclasses import dataclass
 from datetime import datetime, timezone
+from math import ceil, floor
 from pathlib import Path
 from typing import Any, Match, cast
 
@@ -22,6 +24,17 @@ SUPPORTED_FILE_EXTENSIONS = {
     ".yaml": "yaml",
     ".json": "json",
 }
+
+
+class ANSIEscape:
+    __slots__: list[str] = []
+
+    ENDC = "\033[0m"
+    BOLD = "\033[1m"
+    FAIL = "\033[31m"
+    OKGREEN = "\033[32m"
+    OKBLUE = "\033[34m"
+    WARNING = "\033[33m"
 
 
 class Recipe:
@@ -112,7 +125,7 @@ class Recipe:
             target = self.base_dir.joinpath(target).as_posix()
         if self.regex and not self._specified:
             target = re.compile(target)
-        return target  # noqa: RET504
+        return target
 
 
 class Parser:
@@ -319,6 +332,46 @@ class DAG:
         return new_list
 
 
+@dataclass(frozen=True)
+class CommandReport:
+    command: str
+    retries: int
+    timing_ns: int
+    success: bool
+
+    def _formatted_timing(self) -> str:
+        if self.timing_ns < 1000:
+            return f"{self.timing_ns} ns"
+        timing: float = self.timing_ns
+        timing /= 1000
+        if timing < 1000:
+            return f"{timing:.1f} µs"
+        timing /= 1000
+        if timing < 1000:
+            return f"{timing:.1f} ms"
+        timing /= 1000
+        return f"{timing:.2f} s"
+
+    def print(self, cols: int) -> None:  # noqa: A003
+        if not self.success:
+            indicator = "🔴"
+            timing_colour = ANSIEscape.FAIL
+        elif self.retries:
+            indicator = "🟠"
+            timing_colour = ANSIEscape.WARNING
+        else:
+            indicator = "🟢"
+            timing_colour = ANSIEscape.OKGREEN
+        timing = self._formatted_timing()
+        padding = " " * (cols - len(self.command) - len(timing) - 7)
+        print(
+            indicator,
+            f"`{self.command}`",
+            padding,
+            f"{timing_colour}{timing}{ANSIEscape.ENDC}",
+        )
+
+
 def update_vars(
     variables: dict[str, Any], batch: list[dict[str, Any]], base_dir: Path
 ) -> None:
@@ -348,6 +401,18 @@ def human_readable_timestamp(timestamp: float) -> str:
     if math.isinf(timestamp):
         return "end of time"
     return str(datetime.fromtimestamp(timestamp, tz=timezone.utc))
+
+
+def print_reports(reports: list[CommandReport]) -> None:
+    cols = os.get_terminal_size().columns
+    report_title = " Yam Report "
+    padding = "="
+    half = (cols - len(report_title)) / 2
+    print(
+        f"{ANSIEscape.BOLD}{padding * ceil(half)}{report_title}{padding * floor(half)}{ANSIEscape.ENDC}"
+    )
+    for report in reports:
+        report.print(cols)
 
 
 class RemovedIn50Warning(FutureWarning):

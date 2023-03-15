@@ -16,6 +16,7 @@ def mock_args():
     args.cookbook_type = None
     args.verbose = 0
     args.bare = False
+    args.time = False
     args.force = False
     args.dry_run = False
     return args

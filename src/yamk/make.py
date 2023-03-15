@@ -6,7 +6,7 @@ import pathlib
 import re
 import subprocess
 import sys
-from time import sleep
+from time import perf_counter_ns, sleep
 from typing import Any, cast
 
 from dj_settings import SettingsParser
@@ -43,6 +43,8 @@ class MakeCommand:
             "cwd": self.base_dir,
             "executable": self.globals.get("shell") or args.shell,
         }
+        self.print_timing_report = args.time
+        self.reports: list[lib.CommandReport] = []
 
     @staticmethod
     def find_cookbook(args: argparse.Namespace) -> pathlib.Path:
@@ -63,6 +65,8 @@ class MakeCommand:
         dag = self._preprocess_target()
         for node in filter(lambda x: x.should_build, dag):
             self._make_target(node.recipe)
+        if self.print_timing_report:
+            lib.print_reports(self.reports)
 
     def _run_command(self, command: str) -> int:
         status = 0
@@ -71,10 +75,18 @@ class MakeCommand:
             return status
 
         a, b = 1, 1
+        total = 0
         for i in range(self.retries + 1):
+            start = perf_counter_ns()
             result = subprocess.run(command, **self.subprocess_kwargs)
+            end = perf_counter_ns()
+            total += end - start
             status = result.returncode
             if status == 0:
+                report = lib.CommandReport(
+                    command=command, timing_ns=total, retries=i, success=True
+                )
+                self.reports.append(report)
                 return status
 
             if i != self.retries:
@@ -82,6 +94,10 @@ class MakeCommand:
                 print(f"{command} failed. Retrying in {a}s...")
                 sleep(a)
 
+        report = lib.CommandReport(
+            command=command, timing_ns=total, retries=i, success=False
+        )
+        self.reports.append(report)
         return status
 
     def _parse_recipes(self, parsed_cookbook: dict[str, dict[str, Any]]) -> None:
@@ -163,6 +179,8 @@ class MakeCommand:
                 and not recipe.allow_failures
                 and "allow_failures" not in options
             ):
+                if self.print_timing_report:
+                    lib.print_reports(self.reports)
                 sys.exit(return_code)
         if recipe.phony and recipe.keep_ts:
             path = self._phony_path(recipe.target)

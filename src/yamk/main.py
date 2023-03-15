@@ -78,6 +78,12 @@ def parse_args():
         help="the type of the cookbook. defaults to file extension",
     )
     parser.add_argument(
+        "-T",
+        "--time",
+        action="store_true",
+        help="print a timing report",
+    )
+    parser.add_argument(
         "-V",
         "--version",
         action="version",
