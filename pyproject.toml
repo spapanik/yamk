@@ -81,7 +81,7 @@ data_file = ".cov_cache/coverage.dat"
 
 [tool.poetry]
 name = "yamk"
-version = "4.4.0"
+version = "5.0.0"
 description = "Yet another make"
 authors = [
     "Stephanos Kuma <stephanos@kuma.ai>",
