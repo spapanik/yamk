@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Fixed
+^^^^^
+* Added missing dependency
+
 `5.0.0`_ - 2023-03-15
 ---------------------
 
