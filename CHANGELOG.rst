@@ -16,6 +16,7 @@ Added
 Removed
 ^^^^^^^
 * Dropped python 3.7 support
+* Disallowed parsing cookbooks of a later major version
 
 `4.4.0`_ - 2023-01-31
 ---------------------

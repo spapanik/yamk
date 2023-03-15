@@ -1,1 +1,3 @@
-__version__ = "4.4.0"
+from packaging.version import Version
+
+__version__ = Version("4.4.0")

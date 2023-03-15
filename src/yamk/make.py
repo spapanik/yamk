@@ -11,7 +11,7 @@ from typing import Any, cast
 
 from dj_settings import SettingsParser
 
-from yamk import lib
+from yamk import __version__, lib
 
 
 class MakeCommand:
@@ -36,6 +36,8 @@ class MakeCommand:
         parsed_cookbook = SettingsParser(cookbook, force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self.version = self.globals.get("version", 4)
+        if self.version > __version__.major:
+            raise RuntimeError(f"This cookbook requires an yamk >= v{self.version}.0.0")
         self.up_to_date = args.assume
         self._parse_recipes(parsed_cookbook)
         self.subprocess_kwargs = {
