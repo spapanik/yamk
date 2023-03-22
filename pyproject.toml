@@ -72,12 +72,17 @@ ban-relative-imports = "all"
 "pytz".msg = "Use zoneinfo"
 
 [tool.pytest.ini_options]
-addopts = "-vv --cov --cov-report=term-missing:skip-covered"
+addopts = "-vv"
 testpaths = "tests"
 
 [tool.coverage.run]
 source = ["src/"]
 data_file = ".cov_cache/coverage.dat"
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+skip_empty = true
 
 [tool.poetry]
 name = "yamk"
