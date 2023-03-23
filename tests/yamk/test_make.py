@@ -10,13 +10,13 @@ from yamk import make
 def test_make_raises_on_missing_target(mock_args):
     mock_args.target = "missing_target"
     make_command = make.MakeCommand(mock_args)
-    assert pytest.raises(ValueError, make_command.make)  # noqa: PT011
+    assert pytest.raises(ValueError, make_command.make)
 
 
 def test_make_raises_on_missing_requirement(mock_args):
     mock_args.target = "missing_requirement"
     make_command = make.MakeCommand(mock_args)
-    assert pytest.raises(ValueError, make_command.make)  # noqa: PT011
+    assert pytest.raises(ValueError, make_command.make)
 
 
 @mock.patch("yamk.make.subprocess.run")
