@@ -34,14 +34,11 @@ In a nutshell
 Installation
 ^^^^^^^^^^^^
 
-The easiest way is to use pip to install ``yam``.
+The easiest way is to use `pipx`_ to install ``yam``.
 
 .. code:: console
 
-   $ pip install --user yamk
-
-Please make sure that the correct directory is added to your path. This
-depends on the OS.
+   $ pipx install yamk
 
 Usage
 ^^^^^
@@ -62,4 +59,5 @@ Links
 
 
 .. _Changelog: https://github.com/spapanik/yamk/blob/main/CHANGELOG.rst
-.. _Documentation: https://yamk.readthedocs.io/en/latest/
+.. _Documentation: https://yamk.readthedocs.io/en/stable/
+.. _pipx: https://pypa.github.io/pipx/
