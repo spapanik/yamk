@@ -110,8 +110,8 @@ def test_make_allowed_failure_in_command(runner, mock_args):
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_make_extra_vars(runner, mock_args):
-    os.environ["prefix"] = ""
-    os.environ["dir"] = "generic.d"
+    os.environ["prefix"] = ""  # noqa: SIM112
+    os.environ["dir"] = "generic.d"  # noqa: SIM112
     mock_args.target = "variables"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
