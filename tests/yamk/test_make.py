@@ -7,20 +7,22 @@ import pytest
 from yamk import make
 
 
-def test_make_raises_on_missing_target(mock_args):
+def test_make_raises_on_missing_target(mock_args: mock.MagicMock) -> None:
     mock_args.target = "missing_target"
     make_command = make.MakeCommand(mock_args)
     assert pytest.raises(ValueError, make_command.make)
 
 
-def test_make_raises_on_missing_requirement(mock_args):
+def test_make_raises_on_missing_requirement(mock_args: mock.MagicMock) -> None:
     mock_args.target = "missing_requirement"
     make_command = make.MakeCommand(mock_args)
     assert pytest.raises(ValueError, make_command.make)
 
 
 @mock.patch("yamk.make.subprocess.run")
-def test_make_builds_with_no_commands(runner, mock_args):
+def test_make_builds_with_no_commands(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "phony"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -28,7 +30,7 @@ def test_make_builds_with_no_commands(runner, mock_args):
 
 
 @mock.patch("yamk.make.print", new_callable=mock.MagicMock)
-def test_make_dry_run(mock_print, mock_args):
+def test_make_dry_run(mock_print: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "phony_requirement"
     mock_args.dry_run = True
     make_command = make.MakeCommand(mock_args)
@@ -41,7 +43,7 @@ def test_make_dry_run(mock_print, mock_args):
 
 
 @mock.patch("yamk.make.print", new_callable=mock.MagicMock)
-def test_make_verbosity(mock_print, mock_args):
+def test_make_verbosity(mock_print: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "phony"
     mock_args.verbose = 4
     make_command = make.MakeCommand(mock_args)
@@ -61,7 +63,9 @@ def test_make_verbosity(mock_print, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_builds_with_two_commands(runner, mock_args):
+def test_make_builds_with_two_commands(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "two_commands"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -74,7 +78,9 @@ def test_make_builds_with_two_commands(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=42))
-def test_make_builds_wrong_command_breaks(runner, mock_args):
+def test_make_builds_wrong_command_breaks(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "failure"
     make_command = make.MakeCommand(mock_args)
     error = pytest.raises(SystemExit, make_command.make)
@@ -86,7 +92,9 @@ def test_make_builds_wrong_command_breaks(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=42))
-def test_make_allowed_failure(runner, mock_args):
+def test_make_allowed_failure(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "allowed_failure"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -99,7 +107,9 @@ def test_make_allowed_failure(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=42))
-def test_make_allowed_failure_in_command(runner, mock_args):
+def test_make_allowed_failure_in_command(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "allowed_failure_in_command"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -109,7 +119,7 @@ def test_make_allowed_failure_in_command(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_extra_vars(runner, mock_args):
+def test_make_extra_vars(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     os.environ["prefix"] = ""  # noqa: SIM112
     os.environ["dir"] = "generic.d"  # noqa: SIM112
     mock_args.target = "variables"
@@ -124,7 +134,9 @@ def test_make_extra_vars(runner, mock_args):
 
 @mock.patch("yamk.make.print", new_callable=mock.MagicMock)
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_echo_in_recipe(runner, mock_print, mock_args):
+def test_make_echo_in_recipe(
+    runner: mock.MagicMock, mock_print: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "echo"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -138,7 +150,9 @@ def test_make_echo_in_recipe(runner, mock_print, mock_args):
 
 @mock.patch("yamk.make.print", new_callable=mock.MagicMock)
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_echo_in_command(runner, mock_print, mock_args):
+def test_make_echo_in_command(
+    runner: mock.MagicMock, mock_print: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "echo_in_command"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -151,7 +165,7 @@ def test_make_echo_in_command(runner, mock_print, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_alias(runner, mock_args):
+def test_make_alias(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "alias"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -164,7 +178,9 @@ def test_make_alias(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_variable_in_name(runner, mock_args):
+def test_make_with_variable_in_name(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "call"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -177,7 +193,7 @@ def test_make_with_variable_in_name(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_regex_file_target(runner, mock_args):
+def test_regex_file_target(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "file_1024.txt"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -187,7 +203,9 @@ def test_regex_file_target(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_multiple_regex_targets(runner, mock_args):
+def test_multiple_regex_targets(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "multiple_regex"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -200,7 +218,9 @@ def test_multiple_regex_targets(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_requirements(runner, mock_args):
+def test_make_with_requirements(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "requires"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -213,7 +233,9 @@ def test_make_with_requirements(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_implicit_variables(runner, mock_args):
+def test_make_with_implicit_variables(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "implicit_vars"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -226,7 +248,9 @@ def test_make_with_implicit_variables(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_duplicate_requirements_warning(runner, mock_args):
+def test_duplicate_requirements_warning(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "duplicate_requirement"
     make_command = make.MakeCommand(mock_args)
     pytest.warns(RuntimeWarning, make_command.make)
@@ -238,7 +262,9 @@ def test_duplicate_requirements_warning(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_phony_and_keep_ts_newer_requirement(runner, mock_args):
+def test_make_with_phony_and_keep_ts_newer_requirement(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "keep_ts"
     make_command = make.MakeCommand(mock_args)
     make_command.phony_dir.mkdir(exist_ok=True)
@@ -252,7 +278,9 @@ def test_make_with_phony_and_keep_ts_newer_requirement(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_phony_and_keep_ts_older_requirement(runner, mock_args):
+def test_make_with_phony_and_keep_ts_older_requirement(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "keep_ts"
     make_command = make.MakeCommand(mock_args)
     make_command.phony_dir.mkdir(exist_ok=True)
@@ -264,7 +292,9 @@ def test_make_with_phony_and_keep_ts_older_requirement(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_phony_and_keep_ts_older_requirement_and_force(runner, mock_args):
+def test_make_with_phony_and_keep_ts_older_requirement_and_force(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "keep_ts"
     mock_args.force = True
     make_command = make.MakeCommand(mock_args)
@@ -279,7 +309,9 @@ def test_make_with_phony_and_keep_ts_older_requirement_and_force(runner, mock_ar
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_phony_and_keep_ts_missing_ts(runner, mock_args):
+def test_make_with_phony_and_keep_ts_missing_ts(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "keep_ts"
     make_command = make.MakeCommand(mock_args)
     make_command.phony_dir.mkdir(exist_ok=True)
@@ -293,7 +325,9 @@ def test_make_with_phony_and_keep_ts_missing_ts(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_dag_target(runner, mock_args):
+def test_make_with_dag_target(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "dag_target_1"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -309,7 +343,9 @@ def test_make_with_dag_target(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_dag_target_no_c3(runner, mock_args):
+def test_make_with_dag_target_no_c3(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "dag_target_no_c3_1"
     make_command = make.MakeCommand(mock_args)
     with pytest.warns(RuntimeWarning):
@@ -326,7 +362,9 @@ def test_make_with_dag_target_no_c3(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_exists_only_target_existing(runner, mock_args):
+def test_make_with_exists_only_target_existing(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "exists_only"
     make_command = make.MakeCommand(mock_args)
     make_command.base_dir.joinpath(mock_args.target).touch()
@@ -335,7 +373,9 @@ def test_make_with_exists_only_target_existing(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_exists_only_target_missing(runner, mock_args):
+def test_make_with_exists_only_target_missing(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "exists_only"
     make_command = make.MakeCommand(mock_args)
     with suppress(FileNotFoundError):
@@ -348,7 +388,9 @@ def test_make_with_exists_only_target_missing(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_build_due_to_requirement(runner, mock_args):
+def test_make_build_due_to_requirement(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "requires_build"
     make_command = make.MakeCommand(mock_args)
     with suppress(FileNotFoundError):
@@ -365,7 +407,9 @@ def test_make_build_due_to_requirement(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_recursive_requirement(runner, mock_args):
+def test_make_with_recursive_requirement(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "recursive_requirement"
     make_command = make.MakeCommand(mock_args)
     recursive_dir = make_command.base_dir.joinpath("dir")
@@ -380,7 +424,9 @@ def test_make_with_recursive_requirement(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_nested_requires(runner, mock_args):
+def test_make_nested_requires(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "nested_requires"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -393,7 +439,7 @@ def test_make_nested_requires(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_sort_variable(runner, mock_args):
+def test_make_sort_variable(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "sort_variable"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -404,7 +450,7 @@ def test_make_sort_variable(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_sort_function(runner, mock_args):
+def test_make_sort_function(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "sort_function"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -415,7 +461,7 @@ def test_make_sort_function(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_pwd(runner, mock_args):
+def test_make_pwd(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "pwd"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -426,7 +472,9 @@ def test_make_pwd(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_ternary_if_true(runner, mock_args):
+def test_make_ternary_if_true(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "ternary_if_true"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -436,7 +484,9 @@ def test_make_ternary_if_true(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_ternary_if_false(runner, mock_args):
+def test_make_ternary_if_false(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "ternary_if_false"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -446,7 +496,9 @@ def test_make_ternary_if_false(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_ternary_if_function(runner, mock_args):
+def test_make_ternary_if_function(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = "ternary_if_function"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -456,7 +508,7 @@ def test_make_ternary_if_function(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_substitution(runner, mock_args):
+def test_make_substitution(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "substitute"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -466,7 +518,7 @@ def test_make_substitution(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_merge(runner, mock_args):
+def test_make_merge(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "merge"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -476,7 +528,9 @@ def test_make_merge(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_d_override(runner, mock_args):
+def test_make_with_d_override(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = ".d_override"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
@@ -486,7 +540,9 @@ def test_make_with_d_override(runner, mock_args):
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
-def test_make_with_d_override_vars(runner, mock_args):
+def test_make_with_d_override_vars(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
     mock_args.target = ".d_override_vars"
     make_command = make.MakeCommand(mock_args)
     make_command.make()

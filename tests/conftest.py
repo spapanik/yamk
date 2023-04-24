@@ -8,7 +8,7 @@ TEST_COOKBOOK = TESTS_ROOT.joinpath("data", "mk.toml")
 
 
 @pytest.fixture()
-def mock_args():
+def mock_args() -> mock.MagicMock:
     args = mock.MagicMock()
     args.target = "mock_target"
     args.directory = "."

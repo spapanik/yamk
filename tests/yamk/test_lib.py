@@ -1,4 +1,5 @@
 import pathlib
+from typing import Any
 
 import pytest
 
@@ -7,14 +8,14 @@ from yamk import lib
 PATH = pathlib.Path(__file__)
 
 
-def test_recipe_to_str():
+def test_recipe_to_str() -> None:
     recipe = lib.Recipe("target", {}, pathlib.Path("."), {}, {})
     assert str(recipe) == "Generic recipe for target"
     recipe = recipe.for_target("target")
     assert str(recipe) == "Specified recipe for target"
 
 
-def test_recipe_for_target():
+def test_recipe_for_target() -> None:
     recipe = lib.Recipe("target", {}, pathlib.Path("."), {}, {})
     recipe_specified = recipe.for_target("target")
     recipe_specified_again = recipe_specified.for_target("target")
@@ -33,18 +34,20 @@ def test_recipe_for_target():
         ({"TEST_VAR": "test"}, [{"[weak]TEST_VAR": "1"}], {"TEST_VAR": "test"}),
     ],
 )
-def test_update_dictionary(initial, batch, expected):
+def test_update_dictionary(
+    initial: dict[str, str], batch: list[dict[str, str]], expected: dict[str, str]
+) -> None:
     lib.update_vars(initial, batch, PATH)
     assert initial == expected
 
 
-def test_node_to_str():
+def test_node_to_str() -> None:
     node = lib.Node(target="target")
     assert str(node) == "target"
     assert str([node]) == "[Node <target>]"
 
 
-def test_node_equals():
+def test_node_equals() -> None:
     node = lib.Node(target="target")
 
     class FakeNode:
@@ -55,13 +58,13 @@ def test_node_equals():
     assert other != node
 
 
-def test_missing_topological_sort():
+def test_missing_topological_sort() -> None:
     root = lib.Node(target="target")
     dag = lib.DAG(root)
     assert list(dag) == [root]
 
 
-def test_topological_sort_detects_cycles():
+def test_topological_sort_detects_cycles() -> None:
     root = lib.Node(target="target")
     node = lib.Node(target="requirement")
     root.add_requirement(node)
@@ -71,7 +74,7 @@ def test_topological_sort_detects_cycles():
     assert pytest.raises(ValueError, dag.topological_sort)
 
 
-def test_c3_sort_detects_cycles():
+def test_c3_sort_detects_cycles() -> None:
     root = lib.Node(target="target")
     node = lib.Node(target="requirement")
     root.add_requirement(node)
@@ -82,7 +85,7 @@ def test_c3_sort_detects_cycles():
 
 
 @pytest.mark.parametrize("obj", [1, ("string in a tuple",), {"nested integer": 1}])
-def test_parser_evaluation_raises(obj):
+def test_parser_evaluation_raises(obj: Any) -> None:
     parser = lib.Parser({}, PATH)
     assert pytest.raises(TypeError, parser.evaluate, obj)
 
@@ -109,7 +112,9 @@ def test_parser_evaluation_raises(obj):
         ("$((sort ${x}))", {"x": [3, 1, 2]}, [1, 2, 3]),
     ],
 )
-def test_parser_evaluation(obj, variables, expected):
+def test_parser_evaluation(
+    obj: str | list[str], variables: dict[str, Any], expected: str | list[str]
+) -> None:
     parser = lib.Parser(variables, PATH)
     assert parser.evaluate(obj) == expected
 
@@ -127,7 +132,9 @@ def test_parser_evaluation(obj, variables, expected):
         ),
     ],
 )
-def test_extract_options(string, expected_options, expected_string):
+def test_extract_options(
+    string: str, expected_options: set[str], expected_string: str
+) -> None:
     string, options = lib.extract_options(string)
     assert string == expected_string
     assert options == expected_options
@@ -141,5 +148,5 @@ def test_extract_options(string, expected_options, expected_string):
         (float("inf"), "end of time"),
     ],
 )
-def test_timestamp_to_dt(timestamp, dt):
+def test_timestamp_to_dt(timestamp: int | float, dt: str) -> None:
     assert lib.human_readable_timestamp(timestamp) == dt

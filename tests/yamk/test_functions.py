@@ -1,25 +1,26 @@
-import pathlib
+from pathlib import Path
 
 import pytest
 
 from yamk import functions
+from yamk.types import Pathlike
 
-PATH = pathlib.Path(__file__)
+PATH = Path(__file__)
 BASE_DIR = PATH.parent
 
 
-def test_function_callable():
+def test_function_callable() -> None:
     class NotCallableFunction(functions.Function):
         pass
 
     assert pytest.raises(NotImplementedError, NotCallableFunction(BASE_DIR))
 
 
-def test_glob():
+def test_glob() -> None:
     assert PATH.as_posix() in list(functions.Glob(BASE_DIR)("*"))
 
 
-def test_sort():
+def test_sort() -> None:
     assert functions.Sort(BASE_DIR)([3, 1, 2]) == [1, 2, 3]
 
 
@@ -31,7 +32,7 @@ def test_sort():
         ([PATH, "random.rnd"], [True, False]),
     ],
 )
-def test_exists(path, exists):
+def test_exists(path: Pathlike, exists: bool) -> None:
     assert functions.Exists(BASE_DIR)(path) == exists
 
 
@@ -43,7 +44,7 @@ def test_exists(path, exists):
         (["make.toml", "path/to/file.txt"], ["make", "file"]),
     ],
 )
-def test_stem(path, stem):
+def test_stem(path: Pathlike | list[Pathlike], stem: str | list[str]) -> None:
     assert functions.Stem(BASE_DIR)(path) == stem
 
 
@@ -55,7 +56,7 @@ def test_stem(path, stem):
         (["make.toml", "path/to/file.txt"], [".toml", ".txt"]),
     ],
 )
-def test_suffix(path, suffix):
+def test_suffix(path: Pathlike | list[Pathlike], suffix: str | list[str]) -> None:
     assert functions.Suffix(BASE_DIR)(path) == suffix
 
 
@@ -67,7 +68,7 @@ def test_suffix(path, suffix):
         (["make.toml", "path/to/file.txt"], ["make.toml", "file.txt"]),
     ],
 )
-def test_name(path, name):
+def test_name(path: Pathlike | list[Pathlike], name: str | list[str]) -> None:
     assert functions.Name(BASE_DIR)(path) == name
 
 
@@ -90,7 +91,9 @@ def test_name(path, name):
         ),
     ],
 )
-def test_change_parent(path, new_parent, new_path):
+def test_change_parent(
+    path: Pathlike | list[Pathlike], new_parent: str, new_path: str | list[str]
+) -> None:
     assert functions.ChangeParent(BASE_DIR)(path, new_parent) == new_path
 
 
@@ -114,7 +117,9 @@ def test_change_parent(path, new_parent, new_path):
         ),
     ],
 )
-def test_change_suffix(path, new_suffix, new_path):
+def test_change_suffix(
+    path: Pathlike | list[Pathlike], new_suffix: str, new_path: str | list[str]
+) -> None:
     assert functions.ChangeSuffix(BASE_DIR)(path, new_suffix) == new_path
 
 
@@ -127,11 +132,11 @@ def test_change_suffix(path, new_suffix, new_path):
         (["file.txt", "dir/"], [BASE_DIR.as_posix(), BASE_DIR.as_posix()]),
     ],
 )
-def test_parent(path, parent):
+def test_parent(path: Pathlike | list[Pathlike], parent: str | list[str]) -> None:
     assert functions.Parent(BASE_DIR)(path) == parent
 
 
-def test_pwd():
+def test_pwd() -> None:
     assert functions.PWD(BASE_DIR)() == BASE_DIR.as_posix()
 
 
@@ -139,14 +144,16 @@ def test_pwd():
     ("condition", "true_value", "false_value", "expected"),
     [(True, 42, 1024, 42), (False, 42, 1024, 1024)],
 )
-def test_ternary_if(condition, true_value, false_value, expected):
+def test_ternary_if(
+    condition: bool, true_value: int, false_value: int, expected: int
+) -> None:
     assert functions.TernaryIf(BASE_DIR)(condition, true_value, false_value) == expected
 
 
 @pytest.mark.parametrize(
     ("odd", "obj", "expected"), [(1, [42, 1024], [42, 1024]), (1024, [42, 1024], [42])]
 )
-def test_filter_out(odd, obj, expected):
+def test_filter_out(odd: int, obj: list[int], expected: list[int]) -> None:
     assert functions.FilterOut(BASE_DIR)(odd, obj) == expected
 
 
@@ -162,7 +169,9 @@ def test_filter_out(odd, obj, expected):
         ),
     ],
 )
-def test_substitute(old, new, obj, expected):
+def test_substitute(
+    old: str, new: str, obj: str | list[str], expected: str | list[str]
+) -> None:
     assert functions.Substitute(BASE_DIR)(old, new, obj) == expected
 
 
@@ -176,5 +185,5 @@ def test_substitute(old, new, obj, expected):
         ([[0], 1, [2]], [0, 1, 2]),
     ],
 )
-def test_merge(arguments, expected):
+def test_merge(arguments: list[int | list[int]], expected: list[int]) -> None:
     assert functions.Merge(BASE_DIR)(*arguments) == expected
