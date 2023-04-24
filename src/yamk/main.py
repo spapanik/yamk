@@ -8,7 +8,7 @@ from yamk.make import MakeCommand
 sys.tracebacklimit = 0
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="yamk", description="Yet another make command"
     )
@@ -110,6 +110,6 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     args = parse_args()
     MakeCommand(args).make()
