@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from math import ceil, floor
 from pathlib import Path
-from typing import Any, Match, cast
+from typing import Any, Iterator, Literal, Match, cast
 
 from yamk.functions import functions
 
@@ -41,7 +41,7 @@ class Recipe:
     def __init__(
         self,
         target: str,
-        raw_recipe,
+        raw_recipe: dict[str, Any],
         base_dir: Path,
         file_vars: dict[str, Any],
         arg_vars: dict[str, Any],
@@ -96,57 +96,57 @@ class Recipe:
         new_recipe._update_commands()  # noqa: SLF001
         return new_recipe
 
-    def _evaluate(self, obj):
+    def _evaluate(self, obj: Any) -> Any:
         parser = Parser(self.vars, self.base_dir)
         return parser.evaluate(obj)
 
-    def _update_variables(self, groups):
+    def _update_variables(self, groups: dict[str, str]) -> None:
         extra_vars = [groups, self.local_vars, {".target": self.target}]
         update_vars(self.vars, extra_vars, self.base_dir)
 
-    def _update_requirements(self):
+    def _update_requirements(self) -> None:
         self.requires = self._evaluate(self.requires)
 
-    def _update_commands(self):
+    def _update_commands(self) -> None:
         extra_vars = [{".requirements": self.requires}]
         update_vars(self.vars, extra_vars, self.base_dir)
         self.commands = self._evaluate(self.commands)
         self.existence_command = self._evaluate(self.existence_command)
 
-    def _alias(self, alias):
+    def _alias(self, alias: str | Literal[False]) -> Any:
         if alias is False:
             return alias
         return self._evaluate(alias)
 
-    def _target(self, target):
+    def _target(self, target: str) -> Any:
         if not self._specified:
             target = self._evaluate(target)
         if not self.phony and not self.alias:
             target = self.base_dir.joinpath(target).as_posix()
         if self.regex and not self._specified:
-            target = re.compile(target)
+            return re.compile(target)
         return target
 
 
 class Parser:
-    def __init__(self, variables, base_dir):
+    def __init__(self, variables: dict[str, Any], base_dir: Path):
         self.vars = variables
         self.base_dir = base_dir
 
     @staticmethod
-    def _stringify(value):
+    def _stringify(value: Any) -> str:
         if isinstance(value, list):
             return " ".join(map(str, value))
         return str(value)
 
-    def expand_function(self, name, args):
-        args = shlex.split(args)
-        for i, arg in enumerate(args):
-            args[i] = self.evaluate(arg)
+    def expand_function(self, name: str, args: str) -> Any:
+        split_args = shlex.split(args)
+        for i, arg in enumerate(split_args):
+            split_args[i] = self.evaluate(arg)
         function = functions[name](self.base_dir)
-        return function(*args)
+        return function(*split_args)
 
-    def repl(self, matchobj):
+    def repl(self, matchobj: re.Match[str]) -> str:
         dollars = matchobj.group("dollars")
         variable = matchobj.group("variable")
         key = matchobj.group("key")
@@ -159,7 +159,7 @@ class Parser:
             return self._stringify(value[key])
         return f"{'$'*(len(dollars)//2)}{{{variable}}}"
 
-    def substitute(self, string):
+    def substitute(self, string: str) -> Any:
         function = re.fullmatch(FUNCTION, string)
         if function is not None:
             return self.expand_function(**function.groupdict())
@@ -174,7 +174,7 @@ class Parser:
                 return self.vars[match["variable"]]
         return re.sub(VAR, self.repl, string)
 
-    def evaluate(self, obj):
+    def evaluate(self, obj: str | list[Any] | dict[str, Any]) -> Any:
         if isinstance(obj, str):
             return self.substitute(obj)
         if isinstance(obj, list):
@@ -213,7 +213,7 @@ class Node:
     def __repr__(self) -> str:
         return f"Node <{self}>"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, self.__class__):
             return NotImplemented
         return self.target == other.target
@@ -221,7 +221,7 @@ class Node:
     def __hash__(self) -> int:
         return hash(self.target)
 
-    def add_requirement(self, other):
+    def add_requirement(self, other: Node) -> None:
         if other in self.requires:
             warnings.warn(
                 f"`{other}` is included twice in `{self}` requirements, "
@@ -247,22 +247,22 @@ class DAG:
     def __contains__(self, item: str) -> bool:
         return item in self._mapping
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Node]:
         if hasattr(self, "ordered"):
             return iter(self.ordered)
         return iter(self._mapping.values())
 
-    def sort(self):
+    def sort(self) -> None:
         try:
             self.c3_sort()
         except ValueError:
             self.topological_sort()
 
-    def c3_sort(self):
+    def c3_sort(self) -> None:
         self.ordered = self._node_s3_sort(self.root)
         self.ordered.reverse()
 
-    def topological_sort(self):
+    def topological_sort(self) -> None:
         self.ordered = []
         unordered_nodes = self._mapping.copy()
         while unordered_nodes:
@@ -280,7 +280,7 @@ class DAG:
             stacklevel=3,
         )
 
-    def add_node(self, node):
+    def add_node(self, node: Node) -> None:
         self._mapping[node.target] = node
 
     def _node_s3_sort(self, node: Node) -> list[Node]:
@@ -387,7 +387,7 @@ def update_vars(
             variables[key] = value
 
 
-def extract_options(string: str):
+def extract_options(string: str) -> tuple[str, set[str]]:
     match = re.fullmatch(OPTIONS, string)
     if match is None:
         return string.strip(), set()
