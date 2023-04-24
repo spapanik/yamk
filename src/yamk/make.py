@@ -66,7 +66,7 @@ class MakeCommand:
     def make(self) -> None:
         dag = self._preprocess_target()
         for node in filter(lambda x: x.should_build, dag):
-            self._make_target(node.recipe)
+            self._make_target(cast(lib.Recipe, node.recipe))
         if self.print_timing_report:
             lib.print_reports(self.reports)
 
