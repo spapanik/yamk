@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Allow specifying min yamk version more granularly
+
 `5.0.1`_ - 2023-03-15
 ---------------------
 
