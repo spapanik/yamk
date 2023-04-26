@@ -1,20 +1,22 @@
 name: tests
-
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
-
+    branches:
+      - main
 jobs:
   lint:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
-
+        python-version:
+          - '3.8'
+          - '3.9'
+          - '3.10'
+          - '3.11'
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
@@ -37,15 +39,16 @@ jobs:
       - name: Lint the project
         run: |
           yam lint
-
   run-unittests:
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11" ]
-
+        python-version:
+          - '3.8'
+          - '3.9'
+          - '3.10'
+          - '3.11'
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
