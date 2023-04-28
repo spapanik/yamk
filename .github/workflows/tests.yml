@@ -33,11 +33,13 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('pyproject.toml') }}
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip wheel yamk
+          . $(poetry env use python | tail -n 1 | cut -d' ' -f3-)/bin/activate
           python -m pip install --upgrade pip wheel
-          pip install yamk
           yam install
       - name: Lint the project
         run: |
+          . $(poetry env use python | tail -n 1 | cut -d' ' -f3-)/bin/activate
           yam lint
   run-unittests:
     runs-on: ubuntu-latest
@@ -65,9 +67,11 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.python-version }}-poetry-${{ hashFiles('pyproject.toml') }}
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip wheel yamk
+          . $(poetry env use python | tail -n 1 | cut -d' ' -f3-)/bin/activate
           python -m pip install --upgrade pip wheel
-          pip install yamk
           yam install
       - name: Lint the project
         run: |
+          . $(poetry env use python | tail -n 1 | cut -d' ' -f3-)/bin/activate
           yam tests
