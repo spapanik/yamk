@@ -28,6 +28,7 @@ class MakeCommand:
         self.target = args.target
         self.bare = args.bare
         self.force_make = args.force
+        self.extra = args.extra
         self.retries = args.retries
         self.dry_run = args.dry_run
         cookbook = self.find_cookbook(args)
@@ -111,6 +112,7 @@ class MakeCommand:
                 self.base_dir,
                 self.globals.get("vars", {}),
                 self.arg_vars,
+                extra=[],
             )
 
             if recipe.alias:
@@ -121,7 +123,7 @@ class MakeCommand:
                 self.static_recipes[recipe.target] = recipe
 
     def _preprocess_target(self) -> lib.DAG:
-        recipe = self._extract_recipe(self.target)
+        recipe = self._extract_recipe(self.target, use_extra=True)
         if recipe is None:
             raise ValueError(f"No recipe to build {self.target}")
 
@@ -192,7 +194,9 @@ class MakeCommand:
         if recipe.update and not recipe.phony:
             pathlib.Path(recipe.target).touch()
 
-    def _extract_recipe(self, target: str) -> lib.Recipe | None:
+    def _extract_recipe(
+        self, target: str, *, use_extra: bool = False
+    ) -> lib.Recipe | None:
         if target in self.aliases:
             target = self.aliases[target]
 
@@ -209,8 +213,8 @@ class MakeCommand:
                     break
             else:
                 return None
-
-        return recipe.for_target(target)
+        extra = self.extra if use_extra else []
+        return recipe.for_target(target, extra)
 
     def _mark_unchanged(self, dag: lib.DAG) -> None:
         for node in dag:

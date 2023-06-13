@@ -43,7 +43,7 @@ requires = [
     "install",
 ]
 commands = [
-    "pytest ${pytest_args} ${pytest_path}",
+    "pytest ${pytest_args} ${pytest_path} ${.extra}",
 ]
 
 ["docs/source"]

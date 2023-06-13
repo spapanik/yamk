@@ -45,9 +45,11 @@ class Recipe:
         base_dir: Path,
         file_vars: dict[str, Any],
         arg_vars: dict[str, Any],
+        extra: list[str],
         *,
         specified: bool = False,
     ):
+        self.extra = extra
         self._specified = specified
         self._raw_recipe = raw_recipe
         self.base_dir = base_dir
@@ -75,7 +77,7 @@ class Recipe:
             return f"Specified recipe for {self.target}"
         return f"Generic recipe for {self.target}"
 
-    def for_target(self, target: str) -> Recipe:
+    def for_target(self, target: str, extra: list[str]) -> Recipe:
         if self._specified:
             return self
         new_recipe = self.__class__(
@@ -84,6 +86,7 @@ class Recipe:
             self.base_dir,
             self.file_vars,
             self.arg_vars,
+            extra,
             specified=True,
         )
         if new_recipe.regex:
@@ -108,7 +111,7 @@ class Recipe:
         self.requires = self._evaluate(self.requires)
 
     def _update_commands(self) -> None:
-        extra_vars = [{".requirements": self.requires}]
+        extra_vars = [{".requirements": self.requires, ".extra": self.extra}]
         update_vars(self.vars, extra_vars, self.base_dir)
         self.commands = self._evaluate(self.commands)
         self.existence_command = self._evaluate(self.existence_command)

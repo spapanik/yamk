@@ -19,4 +19,5 @@ def mock_args() -> mock.MagicMock:
     args.time = False
     args.force = False
     args.dry_run = False
+    args.extra = []
     return args

@@ -107,6 +107,13 @@ def parse_args() -> argparse.Namespace:
         "which should be in the form <variable>=<value>",
     )
 
+    # extra arguments
+    parser.add_argument(
+        "extra",
+        nargs=argparse.REMAINDER,
+        help="extra args to be passed to the recipe",
+    )
+
     return parser.parse_args()
 
 
