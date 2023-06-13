@@ -47,9 +47,8 @@ Usage
 but you can specify a different file if you want. Specifying a name ``<name.toml>`` will also parse all the ``.toml``
 files in the directory named ``<name.toml>.d``.
 
-``yam`` can be invoked by using the command ``yam``, which is also
-aliased to ``yamk``. ``yam`` follows the GNU recommendations for command
-line interfaces.
+``yam`` can be invoked by using the command ``yam``, which is also aliased to ``yamk``. ``yam`` follows
+the GNU recommendations for command line interfaces.
 
 Links
 -----

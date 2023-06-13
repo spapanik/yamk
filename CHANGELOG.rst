@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Allow passing extra arguments to a command
+
 `5.1.0`_ - 2023-04-28
 ---------------------
 

@@ -25,6 +25,8 @@ Usage
     retry commands for <retries> number of times
 -s/--shell         shell
     the path to the shell used to execute the commands (defaults to */bin/sh*)
+-T/--time
+    print a timing report
 -t/--cookbook-type {toml,json,yaml}
     the type of the cookbook. defaults to file extension
 -V/--version
@@ -137,6 +139,7 @@ Implicit
 
     * *.target*: the name of the target. In case of a file target, it's the absolute path to the file, regardless of they way it was defined.
     * *.requirements*: the array of the requirements. All the file requirements are given as their absolute paths.
+    * *.extra*: an array of all the extra arguments passed to the yam command.
 
     All the implicit variables, they are specific to the target that it's being built, i.e. if the file target is specified as a regular expression, the absolute path to the specific file, not the regex path.
 
