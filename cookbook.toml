@@ -1,6 +1,6 @@
 ["$globals"]
 shell = "bash"
-version = 5
+version = "5.2"
 
 ["$globals".vars]
 poetry_sync = "--sync"
