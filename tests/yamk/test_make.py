@@ -253,7 +253,8 @@ def test_duplicate_requirements_warning(
 ) -> None:
     mock_args.target = "duplicate_requirement"
     make_command = make.MakeCommand(mock_args)
-    pytest.warns(RuntimeWarning, make_command.make)
+    with pytest.warns(RuntimeWarning):
+        make_command.make()
     assert runner.call_count == 1
     calls = [
         mock.call("ls", **make_command.subprocess_kwargs),
