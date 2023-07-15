@@ -15,7 +15,8 @@ def test_function_callable() -> None:
     class NotCallableFunction(functions.Function):
         pass
 
-    assert pytest.raises(NotImplementedError, NotCallableFunction(BASE_DIR))
+    with pytest.raises(NotImplementedError):
+        NotCallableFunction(BASE_DIR)()
 
 
 def test_glob() -> None:
