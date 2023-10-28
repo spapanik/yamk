@@ -82,7 +82,9 @@ class MakeCommand:
         total = 0
         for i in range(self.retries + 1):
             start = perf_counter_ns()
-            result = subprocess.run(command, **self.subprocess_kwargs)  # noqa: S603
+            result = subprocess.run(  # noqa: PLW1510
+                command, **self.subprocess_kwargs  # noqa: S603
+            )
             end = perf_counter_ns()
             total += end - start
             status = result.returncode
