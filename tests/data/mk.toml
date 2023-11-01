@@ -102,6 +102,19 @@ commands = [
     "ls file_${number}.txt",
 ]
 
+['echo_(?P<number>\d+)']
+regex = true
+phony = true
+commands = [
+    "echo ${number}",
+]
+
+[echo_42]
+phony = true
+commands = [
+    "echo 'The answer to life, the universe, and everything'",
+]
+
 [phony_requirement]
 phony = true
 commands = [

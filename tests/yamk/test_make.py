@@ -205,6 +205,21 @@ def test_regex_file_target(runner: mock.MagicMock, mock_args: mock.MagicMock) ->
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_regex_strength(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
+    mock_args.target = "echo_42"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    calls = [
+        mock.call(
+            "echo 'The answer to life, the universe, and everything'",
+            **make_command.subprocess_kwargs,
+        )
+    ]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_multiple_regex_targets(
     runner: mock.MagicMock, mock_args: mock.MagicMock
 ) -> None:
