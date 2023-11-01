@@ -32,7 +32,7 @@ requires = [
 ]
 commands = [
     "black --check .",
-    "poetry lock --check",
+    "poetry check --lock",
     "ruff .",
     "mypy .",
 ]
