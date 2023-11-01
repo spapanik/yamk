@@ -119,7 +119,7 @@ authors = [
 ]
 
 license = "LGPL-3.0+"
-readme = "docs/README.rst"
+readme = "docs/README.md"
 
 homepage = "https://yamk.readthedocs.io/en/stable/"
 repository = "https://github.com/spapanik/yamk"
@@ -164,5 +164,6 @@ pytest = "^7.3"
 pytest-cov = "^4.0"
 
 [tool.poetry.group.docs.dependencies]
-furo = "^2023.5"
-sphinx = "^7.0"
+mkdocs = "^1.5"
+mkdocs-material = "^9.4"
+pygments = "^2.16"

@@ -38,27 +38,6 @@ tests:
   commands:
     - "pytest ${pytest_args} ${pytest_path} ${.extra}"
 
-docs/source:
-  exists_only: true
-  recursive: true
-
-docs:
-  alias: documentation
-
-documentation:
-  phony: true
-  keep_ts: true
-  requires:
-    - docs/source
-  commands:
-    - sphinx-build -b html docs/source docs/build
-
-clean-docs:
-  phony: true
-  commands:
-    - rm -rf docs/build/
-    - rm -f .yamk/documentation
-
 poetry.lock:
   update: true
   requires:

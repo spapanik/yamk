@@ -1,0 +1,53 @@
+site_name: yamk
+
+repo_url: https://github.com/spapanik/yamk
+
+nav:
+  - Home: README.md
+  - Installation: installation.md
+  - Terminology: terminology.md
+  - Usage:
+      - usage/index.md
+      - Interface: usage/cli.md
+      - Key options: usage/keys.md
+  - About:
+      - License: LICENSE.md
+      - Changelog: CHANGELOG.md
+      - Code of Conduct: CODE_OF_CONDUCT.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      use_pygments: true
+  - admonition
+  - pymdownx.superfences
+  - pymdownx.details
+
+theme:
+  name: material
+
+  icon:
+    repo: fontawesome/brands/github
+
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  features:
+    - content.code.annotate
+    - content.code.copy
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - search
+    - search.suggest
+    - search.share
