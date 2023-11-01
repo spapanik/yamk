@@ -5,8 +5,11 @@ conf_dir = "service.d"
 filename = "generic.conf"
 name = "call"
 sub = "initial"
-list = ["1", "2"]
-dict = {"x" = "1", "y" = "2", "z" = "${sub}"}
+list = [
+    "1",
+    "2",
+]
+dict = { "x" = "1", "y" = "2", "z" = "${sub}" }
 value = "1"
 
 [phony]
@@ -39,7 +42,7 @@ filename = "service.conf"
 phony = true
 commands = [
     "false",
-    "ls"
+    "ls",
 ]
 
 [allowed_failure]
@@ -154,49 +157,87 @@ commands = [
 
 [dag_target_1]
 phony = true
-requires = ["dag_target_2", "dag_target_3", "dag_target_4"]
-commands = ["echo ${.target}"]
+requires = [
+    "dag_target_2",
+    "dag_target_3",
+    "dag_target_4",
+]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_2]
 phony = true
-requires = ["dag_target_5"]
-commands = ["echo ${.target}"]
+requires = [
+    "dag_target_5",
+]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_3]
 phony = true
-commands = ["echo ${.target}"]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_4]
 phony = true
-requires = ["dag_target_5", "dag_target_3"]
-commands = ["echo ${.target}"]
+requires = [
+    "dag_target_5",
+    "dag_target_3",
+]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_5]
 phony = true
-commands = ["echo ${.target}"]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_no_c3_1]
 phony = true
-requires = ["dag_target_no_c3_2", "dag_target_no_c3_3", "dag_target_no_c3_4"]
-commands = ["echo ${.target}"]
+requires = [
+    "dag_target_no_c3_2",
+    "dag_target_no_c3_3",
+    "dag_target_no_c3_4",
+]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_no_c3_2]
 phony = true
-requires = ["dag_target_no_c3_5"]
-commands = ["echo ${.target}"]
+requires = [
+    "dag_target_no_c3_5",
+]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_no_c3_3]
 phony = true
-commands = ["echo ${.target}"]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_no_c3_4]
 phony = true
-requires = ["dag_target_no_c3_3", "dag_target_no_c3_5"]
-commands = ["echo ${.target}"]
+requires = [
+    "dag_target_no_c3_3",
+    "dag_target_no_c3_5",
+]
+commands = [
+    "echo ${.target}",
+]
 
 [dag_target_no_c3_5]
 phony = true
-commands = ["echo ${.target}"]
+commands = [
+    "echo ${.target}",
+]
 
 [exists_only]
 exists_only = true
@@ -227,7 +268,7 @@ commands = [
 [sort_variable]
 phony = true
 commands = [
-    "echo ${sorted_files}"
+    "echo ${sorted_files}",
 ]
 
 [sort_variable.vars]
@@ -236,15 +277,15 @@ sorted_files = "$((sort '${toml_files}'))"
 
 [sort_function]
 phony = true
-vars = {sorted_files = "$((sort '$((glob ./*.toml))'))"}
+vars = { sorted_files = "$((sort '$((glob ./*.toml))'))" }
 commands = [
-    "echo ${sorted_files}"
+    "echo ${sorted_files}",
 ]
 
 [ternary_if_true]
 phony = true
 commands = [
-    "echo ${number}"
+    "echo ${number}",
 ]
 
 [ternary_if_true.vars]
@@ -254,7 +295,7 @@ number = "$((ternary_if '${make_exists}' 42 1024))"
 [ternary_if_false]
 phony = true
 commands = [
-    "echo ${number}"
+    "echo ${number}",
 ]
 
 [ternary_if_false.vars]
@@ -296,7 +337,7 @@ commands = [
 
 [nested_requires]
 phony = true
-vars = {requirements = ["inner_one", "inner_two"]}
+vars = { requirements = ["inner_one", "inner_two"] }
 requires = [
     "${requirements}",
 ]
@@ -304,19 +345,24 @@ requires = [
 [merge]
 phony = true
 commands = [
-    "echo ${all}"
+    "echo ${all}",
 ]
 
 [merge.vars]
-first = ["one", "two"]
-second = ["three"]
+first = [
+    "one",
+    "two",
+]
+second = [
+    "three",
+]
 third = "four"
 all = "$((merge ${first} ${second} ${third}))"
 
 [".d_override"]
 phony = true
 commands = [
-    "echo base"
+    "echo base",
 ]
 
 [".d_override_vars"]
