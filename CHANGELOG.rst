@@ -9,6 +9,11 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 `Unreleased`_
 -------------
 
+Added
+^^^^^
+* Add a deprecation warning for removing implicit or non-string min version
+
+
 `5.2.0`_ - 2023-06-13
 ---------------------
 
@@ -150,6 +155,7 @@ Changed
 Added
 ^^^^^
 * Added a method to update the make.toml to cookbook.yml
+
 Changed
 ^^^^^^^
 * Deprecated the make.toml file as default in favour of cookbook.yml

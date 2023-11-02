@@ -6,6 +6,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import warnings
 from time import perf_counter_ns, sleep
 from typing import Any, cast
 
@@ -37,7 +38,7 @@ class MakeCommand:
         self.arg_vars = dict(var.split("=", maxsplit=1) for var in args.variables)
         parsed_cookbook = SettingsParser(cookbook, force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
-        self.version = Version(str(self.globals.get("version", "4.0.0")))
+        self.version = self._get_version()
         if self.version > __version__:
             raise RuntimeError(f"This cookbook requires an yamk >= v{self.version}")
         self.up_to_date = args.assume
@@ -298,3 +299,20 @@ class MakeCommand:
             raise ValueError("Existence commands needs either exists_only or keep_ts")
 
         return path.stat().st_mtime
+
+    def _get_version(self) -> Version:
+        if (manual_version := self.globals.get("version")) is None:
+            warnings.warn(
+                "Min cookbook versions will become mandatory.",
+                lib.RemovedIn60Warning,
+                stacklevel=3,
+            )
+            return Version("4.0.0")
+        if not isinstance(manual_version, str):
+            warnings.warn(
+                "Min cookbook versions will be required to be a string",
+                lib.RemovedIn60Warning,
+                stacklevel=3,
+            )
+            return Version(str(manual_version))
+        return Version(manual_version)
