@@ -288,8 +288,7 @@ class DAG:
 
     def _node_s3_sort(self, node: Node) -> list[Node]:
         out = [node]
-        requirements = node.requires
-        if requirements:
+        if requirements := node.requires:
             try:
                 out.extend(
                     self._merge(
@@ -327,8 +326,7 @@ class DAG:
         new_list = []
         for original_node_list in unmerged:
             if head == original_node_list[0]:
-                node_list = original_node_list[1:]
-                if node_list:
+                if node_list := original_node_list[1:]:
                     new_list.append(node_list)
             else:
                 new_list.append(original_node_list)
