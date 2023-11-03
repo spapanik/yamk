@@ -57,6 +57,6 @@ Links
 - `Changelog`_
 
 
-.. _Changelog: https://github.com/spapanik/yamk/blob/main/CHANGELOG.rst
+.. _Changelog: https://github.com/spapanik/yamk/blob/main/docs/CHANGELOG.rst
 .. _Documentation: https://yamk.readthedocs.io/en/stable/
 .. _pipx: https://pypa.github.io/pipx/
