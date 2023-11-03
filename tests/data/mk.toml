@@ -1,7 +1,7 @@
 ["$globals"]
 shell = "bash"
 version = "5.2"
-new_order = false
+new_order = true
 
 ["$globals".vars]
 "[weak]prefix" = "/home/user/.config/"

@@ -123,13 +123,16 @@ def test_make_allowed_failure_in_command(
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_make_extra_vars(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     os.environ["prefix"] = ""  # noqa: SIM112
-    os.environ["dir"] = "generic.d"  # noqa: SIM112
+    os.environ["dir"] = "/home/user/.config/generic.d"  # noqa: SIM112
     mock_args.target = "variables"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
     assert runner.call_count == 1
     calls = [
-        mock.call("echo /etc/service.d/service.conf", **make_command.subprocess_kwargs)
+        mock.call(
+            "echo /home/user/.config/generic.d/service.d/service.conf",
+            **make_command.subprocess_kwargs,
+        )
     ]
     assert runner.call_args_list == calls
 
