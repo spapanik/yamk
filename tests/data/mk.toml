@@ -1,3 +1,7 @@
+["$globals"]
+shell = "bash"
+version = "5.2"
+
 ["$globals".vars]
 "[weak]prefix" = "/home/user/.config/"
 dir = "/etc"
@@ -304,42 +308,47 @@ number = "$((ternary_if '${make_exists}' 42 1024))"
 
 [ternary_if_function]
 phony = true
-vars = {number = "$((ternary_if '$((exists ./mk.toml))' 42 1024))"}
+vars = { number = "$((ternary_if '$((exists ./mk.toml))' 42 1024))" }
 commands = [
-    "echo ${number}"
+    "echo ${number}",
 ]
 
 [pwd]
 phony = true
-vars = {pwd = "$((pwd))"}
+vars = { pwd = "$((pwd))" }
 commands = [
-    "echo ${pwd}"
+    "echo ${pwd}",
 ]
 
 [substitute]
 phony = true
-vars = {text = "$((sub old new 'the old version'))"}
+vars = { text = "$((sub old new 'the old version'))" }
 commands = [
-    "echo ${text}"
+    "echo ${text}",
 ]
 
 [inner_one]
 phony = true
 commands = [
-    "echo one"
+    "echo one",
 ]
 
 [inner_two]
 phony = true
 commands = [
-    "echo two"
+    "echo two",
 ]
 
 [nested_requires]
 phony = true
-vars = { requirements = ["inner_one", "inner_two"] }
 requires = [
     "${requirements}",
+]
+
+[nested_requires.vars]
+requirements = [
+    "inner_one",
+    "inner_two",
 ]
 
 [merge]
