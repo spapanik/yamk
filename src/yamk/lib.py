@@ -47,30 +47,57 @@ class Recipe:
         arg_vars: dict[str, Any],
         extra: list[str],
         *,
+        original_regex: str | None = None,
         specified: bool = False,
     ):
         self.extra = extra
         self._specified = specified
         self._raw_recipe = raw_recipe
         self.base_dir = base_dir
-        self.file_vars = file_vars
-        self.arg_vars = arg_vars
-        self.local_vars = raw_recipe.get("vars", {})
-        self.vars = dict(**os.environ)
-        update_vars(self.vars, [self.file_vars, self.arg_vars], self.base_dir)
-        self.alias = self._alias(raw_recipe.get("alias", False))
         self.phony = raw_recipe.get("phony", False)
         self.requires = raw_recipe.get("requires", [])
         self.commands = raw_recipe.get("commands", [])
         self.echo = raw_recipe.get("echo", False)
         self.regex = raw_recipe.get("regex", False)
         self.allow_failures = raw_recipe.get("allow_failures", False)
-        self.target = self._target(target)
         self.exists_only = raw_recipe.get("exists_only", False)
         self.keep_ts = raw_recipe.get("keep_ts", False)
         self.existence_command = raw_recipe.get("existence_command", "")
         self.recursive = raw_recipe.get("recursive", False)
         self.update = raw_recipe.get("update", False)
+        temp_vars = {
+            "global": file_vars,
+            "env": dict(**os.environ),
+            "arg": arg_vars,
+        }
+        self.alias = self._alias(raw_recipe.get("alias", False), temp_vars)
+        self.target = self._target(target, temp_vars)
+        temp_vars["local"] = raw_recipe.get("vars", {})
+        if self._specified:
+            temp_vars["implicit"] = {
+                ".target": self.target,
+                ".requirements": self.requires,
+                ".extra": self.extra,
+            }
+            if self.regex:
+                if original_regex is None:
+                    raise RuntimeError(
+                        "original_regex must be specified when target is specific"
+                    )
+                match_obj = re.fullmatch(original_regex, self.target)
+                if match_obj is None:
+                    raise RuntimeError(
+                        f"original_regex {original_regex} does not match {self.target}"
+                    )
+                temp_vars["regex"] = match_obj.groupdict()
+            else:
+                temp_vars["regex"] = {}
+        else:
+            temp_vars["regex"] = {}
+            temp_vars["implicit"] = {}
+        self.vars = temp_vars
+        if self._specified:
+            self._re_evaluate()
 
     def __str__(self) -> str:
         if self._specified:
@@ -80,50 +107,39 @@ class Recipe:
     def for_target(self, target: str, extra: list[str]) -> Recipe:
         if self._specified:
             return self
-        new_recipe = self.__class__(
+        return self.__class__(
             target,
             self._raw_recipe,
             self.base_dir,
-            self.file_vars,
-            self.arg_vars,
+            self.vars["global"],
+            self.vars["arg"],
             extra,
+            original_regex=self.target,
             specified=True,
         )
-        if new_recipe.regex:
-            match = cast(Match[Any], re.fullmatch(self.target, new_recipe.target))
-            groups = match.groupdict()
-        else:
-            groups = {}
-        new_recipe._update_variables(groups)  # noqa: SLF001
-        new_recipe._update_requirements()  # noqa: SLF001
-        new_recipe._update_commands()  # noqa: SLF001
-        return new_recipe
 
-    def _evaluate(self, obj: Any) -> Any:
-        parser = Parser(self.vars, self.base_dir)
+    def _evaluate(
+        self, obj: Any, variables: dict[str, dict[str, Any]] | None = None
+    ) -> Any:
+        if variables is None:
+            variables = self.vars
+        flat_vars = flatten_vars(variables, self.base_dir)
+        parser = Parser(flat_vars, self.base_dir)
         return parser.evaluate(obj)
 
-    def _update_variables(self, groups: dict[str, str]) -> None:
-        extra_vars = [groups, self.local_vars, {".target": self.target}]
-        update_vars(self.vars, extra_vars, self.base_dir)
-
-    def _update_requirements(self) -> None:
+    def _re_evaluate(self) -> None:
         self.requires = self._evaluate(self.requires)
-
-    def _update_commands(self) -> None:
-        extra_vars = [{".requirements": self.requires, ".extra": self.extra}]
-        update_vars(self.vars, extra_vars, self.base_dir)
         self.commands = self._evaluate(self.commands)
         self.existence_command = self._evaluate(self.existence_command)
 
-    def _alias(self, alias: str | Literal[False]) -> Any:
+    def _alias(self, alias: str | Literal[False], variables: dict[str, Any]) -> Any:
         if alias is False:
             return alias
-        return self._evaluate(alias)
+        return self._evaluate(alias, variables)
 
-    def _target(self, target: str) -> Any:
+    def _target(self, target: str, variables: dict[str, Any]) -> Any:
         if not self._specified:
-            target = self._evaluate(target)
+            target = self._evaluate(target, variables)
         if not self.phony and not self.alias:
             target = self.base_dir.joinpath(target).as_posix()
         if self.regex and not self._specified:
@@ -149,10 +165,10 @@ class Parser:
         function = functions[name](self.base_dir)
         return function(*split_args)
 
-    def repl(self, matchobj: re.Match[str]) -> str:
-        dollars = matchobj.group("dollars")
-        variable = matchobj.group("variable")
-        key = matchobj.group("key")
+    def repl(self, match_obj: re.Match[str]) -> str:
+        dollars = match_obj.group("dollars")
+        variable = match_obj.group("variable")
+        key = match_obj.group("key")
         if len(dollars) % 2:
             value = self.vars.get(variable, "")
             if key is None:
@@ -373,19 +389,22 @@ class CommandReport:
         )
 
 
-def update_vars(
-    variables: dict[str, Any], batch: list[dict[str, Any]], base_dir: Path
-) -> None:
-    old_keys = set(variables)
-    for var_block in batch:
-        parser = Parser(variables, base_dir)
+def flatten_vars(
+    variables: dict[str, dict[str, Any]], base_dir: Path
+) -> dict[str, Any]:
+    order = ["env", "global", "regex", "local", "arg", "implicit"]
+    output: dict[str, Any] = {}
+    for var_type in order:
+        var_block = variables.get(var_type, {})
+        parser = Parser(output, base_dir)
         for raw_key, raw_value in var_block.items():
             key = parser.evaluate(raw_key)
             key, options = extract_options(key)
-            if "weak" in options and key in old_keys:
+            if "weak" in options and key in output:
                 continue
             value = parser.evaluate(raw_value)
-            variables[key] = value
+            output[key] = value
+    return output
 
 
 def extract_options(string: str) -> tuple[str, set[str]]:

@@ -26,21 +26,29 @@ def test_recipe_for_target() -> None:
 
 
 @pytest.mark.parametrize(
-    ("initial", "batch", "expected"),
+    ("initial", "expected"),
     [
-        ({}, [{"x": "1"}], {"x": "1"}),
-        ({}, [{"x": "1"}, {"y": "2"}], {"x": "1", "y": "2"}),
-        ({}, [{"x": "1", "y": "0"}, {"y": "2"}], {"x": "1", "y": "2"}),
-        ({"x": "0"}, [{"x": "1"}], {"x": "1"}),
-        ({"TEST_VAR": "test"}, [{"TEST_VAR": "1"}], {"TEST_VAR": "1"}),
-        ({"TEST_VAR": "test"}, [{"[weak]TEST_VAR": "1"}], {"TEST_VAR": "test"}),
+        ({"regex": {}, "local": {"x": "1"}}, {"x": "1"}),
+        ({"regex": {}, "local": {"x": "1", "y": "2"}}, {"x": "1", "y": "2"}),
+        (
+            {"global": {}, "regex": {"x": "1", "y": "0"}, "local": {"y": "2"}},
+            {"x": "1", "y": "2"},
+        ),
+        ({"regex": {"x": "0"}, "local": {"x": "1"}}, {"x": "1"}),
+        (
+            {"regex": {"TEST_VAR": "test"}, "local": {"TEST_VAR": "1"}},
+            {"TEST_VAR": "1"},
+        ),
+        (
+            {"regex": {"TEST_VAR": "test"}, "local": {"[weak]TEST_VAR": "1"}},
+            {"TEST_VAR": "test"},
+        ),
     ],
 )
-def test_update_dictionary(
-    initial: dict[str, str], batch: list[dict[str, str]], expected: dict[str, str]
+def test_flatten_vars(
+    initial: dict[str, dict[str, str]], expected: dict[str, str]
 ) -> None:
-    lib.update_vars(initial, batch, PATH)
-    assert initial == expected
+    assert lib.flatten_vars(initial, PATH) == expected
 
 
 def test_node_to_str() -> None:
