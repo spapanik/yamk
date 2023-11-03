@@ -124,32 +124,35 @@ Variable types
 
 There are six types of variables: environment variables, argument, global, local, regex and implicit ones. If a variable is being used within a command and it's not set, it will be treated as the empty string. With an increasing strength order:
 
-Environment
-    All the environment variables gathered at the beginning of the execution of *yam* are gathered into variables. They are the weakest variables.
 Global
-    A global variable is a variable specified in the *$global* meta-target.
+    A global variable is a variable specified in the *$global* meta-target. They are the least specific, and therefore the weakest variables.
+Implicit
+    The implicit variables are variables created by the target itself, implicitly. They are guarded against overriding, as they start with a dot. This dot acts as a safeguard so they cannot mix with environment and regex ones. At the moment, the following three implicit variables exist:
+        * *.target*: the name of the target. In case of a file target, it's the absolute path to the file, regardless of they way it was defined.
+        * *.requirements*: the array of the requirements. All the file requirements are given as their absolute paths.
+        * *.extra*: an array of all the extra arguments passed to the yam command.
 Regex
     In the case of a regex target, any named group is a regex variable, which has the value of the matched text.
 Local
     A local variable is a variable specified by the *vars* key inside a target.
+Environment
+    All the environment variables gathered at the beginning of the execution of *yam* are gathered into variables.
 Argument
     An argument variable is a variable defined with the --variable option when *yam* was invoked.
-Implicit
-    The implicit variables are variables created by the target itself, implicitly. They are guarded against overriding, as they start with a dot. This dot acts as a safeguard so they cannot mix with environment and regex ones. At the moment, the following two implicit variables exist:
 
-    * *.target*: the name of the target. In case of a file target, it's the absolute path to the file, regardless of they way it was defined.
-    * *.requirements*: the array of the requirements. All the file requirements are given as their absolute paths.
-    * *.extra*: an array of all the extra arguments passed to the yam command.
+All the implicitly defined variables (implicit and regex), they are specific to the target that it's being built, i.e. if the file target is specified as a regular expression, the absolute path to the specific file, not the regex path.
 
-    All the implicit variables, they are specific to the target that it's being built, i.e. if the file target is specified as a regular expression, the absolute path to the specific file, not the regex path.
 
 Variable options
 ----------------
 
-The only option at the moment is *weak*.
+The only options at the moment is *weak* and *strong*.
 
-Weak
+weak
     Weak can be used to make the variable keep its value if it's not unset
+
+strong
+    Strong can be used to make the variable keep its value if it's not unset
 
 Commands
 --------

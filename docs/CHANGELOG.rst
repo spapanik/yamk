@@ -12,6 +12,7 @@ The format is based on `Keep a Changelog`_, and this project adheres to `Semanti
 Added
 ^^^^^
 * Add a deprecation warning for removing implicit or non-string min version
+* Add a way to use the new (v6.0+) variable strength
 
 
 `5.2.0`_ - 2023-06-13

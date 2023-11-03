@@ -46,10 +46,12 @@ class Recipe:
         file_vars: dict[str, Any],
         arg_vars: dict[str, Any],
         extra: list[str],
-        *,
         original_regex: str | None = None,
+        *,
+        new_order: bool,
         specified: bool = False,
     ):
+        self.new_order = new_order
         self.extra = extra
         self._specified = specified
         self._raw_recipe = raw_recipe
@@ -114,6 +116,7 @@ class Recipe:
             self.vars["global"],
             self.vars["arg"],
             extra,
+            new_order=self.new_order,
             original_regex=self.target,
             specified=True,
         )
@@ -123,7 +126,7 @@ class Recipe:
     ) -> Any:
         if variables is None:
             variables = self.vars
-        flat_vars = flatten_vars(variables, self.base_dir)
+        flat_vars = flatten_vars(variables, self.base_dir, new_order=self.new_order)
         parser = Parser(flat_vars, self.base_dir)
         return parser.evaluate(obj)
 
@@ -390,18 +393,37 @@ class CommandReport:
 
 
 def flatten_vars(
-    variables: dict[str, dict[str, Any]], base_dir: Path
+    variables: dict[str, dict[str, Any]], base_dir: Path, *, new_order: bool
 ) -> dict[str, Any]:
-    order = ["env", "global", "regex", "local", "arg", "implicit"]
+    if new_order:
+        order = [
+            "env",
+            "arg",
+            "global",
+            "local",
+            "global",
+            "implicit",
+            "regex",
+            "local",
+            "env",
+            "arg",
+        ]
+    else:
+        order = ["env", "global", "regex", "local", "arg", "implicit"]
     output: dict[str, Any] = {}
+    strong_keys: set[str] = set()
     for var_type in order:
         var_block = variables.get(var_type, {})
         parser = Parser(output, base_dir)
         for raw_key, raw_value in var_block.items():
             key = parser.evaluate(raw_key)
             key, options = extract_options(key)
+            if key in strong_keys:
+                continue
             if "weak" in options and key in output:
                 continue
+            if "strong" in options:
+                strong_keys.add(key)
             value = parser.evaluate(raw_value)
             output[key] = value
     return output

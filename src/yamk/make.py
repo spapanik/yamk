@@ -116,6 +116,7 @@ class MakeCommand:
                 self.globals.get("vars", {}),
                 self.arg_vars,
                 extra=[],
+                new_order=self._is_new_order,
             )
 
             if recipe.alias:
@@ -300,6 +301,13 @@ class MakeCommand:
 
         return path.stat().st_mtime
 
+    @property
+    def _is_new_order(self) -> bool:
+        if (raw_order := self.globals.get("new_order")) is None:
+            warnings.warn(_msg, lib.RemovedIn60Warning, stacklevel=3)
+            return False
+        return bool(raw_order)
+
     def _get_version(self) -> Version:
         if (manual_version := self.globals.get("version")) is None:
             warnings.warn(
@@ -316,3 +324,16 @@ class MakeCommand:
             )
             return Version(str(manual_version))
         return Version(manual_version)
+
+
+_msg = """ The relative strength of variables will change.
+Please set new_order to false in your cookbook to keep the old behaviour,
+or to new to adopt the new one.
+The new order is the following (from weakest to strongest):
+- global variables
+- implicit variables (e.g. ${.target})
+- regex variables (the ones that come from the target name)
+- local variables
+- environment variables
+- command line arguments
+"""
