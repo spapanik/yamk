@@ -48,10 +48,8 @@ class Recipe:
         extra: list[str],
         original_regex: str | None = None,
         *,
-        new_order: bool,
         specified: bool = False,
     ):
-        self.new_order = new_order
         self.extra = extra
         self._specified = specified
         self._raw_recipe = raw_recipe
@@ -116,7 +114,6 @@ class Recipe:
             self.vars["global"],
             self.vars["arg"],
             extra,
-            new_order=self.new_order,
             original_regex=self.target,
             specified=True,
         )
@@ -126,7 +123,7 @@ class Recipe:
     ) -> Any:
         if variables is None:
             variables = self.vars
-        flat_vars = flatten_vars(variables, self.base_dir, new_order=self.new_order)
+        flat_vars = flatten_vars(variables, self.base_dir)
         parser = Parser(flat_vars, self.base_dir)
         return parser.evaluate(obj)
 
@@ -393,23 +390,20 @@ class CommandReport:
 
 
 def flatten_vars(
-    variables: dict[str, dict[str, Any]], base_dir: Path, *, new_order: bool
+    variables: dict[str, dict[str, Any]], base_dir: Path
 ) -> dict[str, Any]:
-    if new_order:
-        order = [
-            "env",
-            "arg",
-            "global",
-            "local",
-            "global",
-            "implicit",
-            "regex",
-            "local",
-            "env",
-            "arg",
-        ]
-    else:
-        order = ["env", "global", "regex", "local", "arg", "implicit"]
+    order = [
+        "env",
+        "arg",
+        "global",
+        "local",
+        "global",
+        "implicit",
+        "regex",
+        "local",
+        "env",
+        "arg",
+    ]
     output: dict[str, Any] = {}
     strong_keys: set[str] = set()
     for var_type in order:
@@ -457,5 +451,5 @@ def print_reports(reports: list[CommandReport]) -> None:
         report.print(cols)
 
 
-class RemovedIn60Warning(FutureWarning):
+class RemovedIn70Warning(FutureWarning):
     pass

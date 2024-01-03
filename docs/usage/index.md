@@ -34,12 +34,11 @@ but they are not targets: Aliases and meta-targets.
 A target starting with a single dollar sign is reserved by `yam` itself, for meta-targets.
 To use a normal target that starts with a dollar sign, use one more dollar sign, than what
 is needed, and `yam` will strip one of them and turn it into a normal target or an alias.
-Currently the only meta-target is `$globals`, that has four valid keys:
+Currently the only meta-target is `$globals`, that has 3 valid keys:
 
 - `vars`, which is the same as the key with the same name in targets, but weaker
 - `shell`, to override the default shell used to execute the commands
 - `version`, which is the minimum version of `yam` needed for the cookbook.
-- `new_order`, to adopt the new order of variable strength before it becomes default.
 
 ### Aliases
 

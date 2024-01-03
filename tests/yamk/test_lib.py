@@ -11,14 +11,14 @@ PATH = pathlib.Path(__file__)
 
 
 def test_recipe_to_str() -> None:
-    recipe = lib.Recipe("target", {}, pathlib.Path(), {}, {}, extra=[], new_order=True)
+    recipe = lib.Recipe("target", {}, pathlib.Path(), {}, {}, extra=[])
     assert str(recipe) == "Generic recipe for target"
     recipe = recipe.for_target("target", extra=[])
     assert str(recipe) == "Specified recipe for target"
 
 
 def test_recipe_for_target() -> None:
-    recipe = lib.Recipe("target", {}, pathlib.Path(), {}, {}, extra=[], new_order=True)
+    recipe = lib.Recipe("target", {}, pathlib.Path(), {}, {}, extra=[])
     recipe_specified = recipe.for_target("target", extra=[])
     recipe_specified_again = recipe_specified.for_target("target", extra=[])
     assert recipe is not recipe_specified
@@ -48,7 +48,7 @@ def test_recipe_for_target() -> None:
 def test_flatten_vars(
     initial: dict[str, dict[str, str]], expected: dict[str, str]
 ) -> None:
-    assert lib.flatten_vars(initial, PATH, new_order=True) == expected
+    assert lib.flatten_vars(initial, PATH) == expected
 
 
 def test_node_to_str() -> None:

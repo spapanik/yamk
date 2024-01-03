@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+### Changed
+
+- Min version is mandatory and must be a string
+- New variable strength is now used
+
 ## [5.3.0] - 2023-11-03
 
 ### Added
