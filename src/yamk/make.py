@@ -39,7 +39,8 @@ class MakeCommand:
         self.globals = parsed_cookbook.pop("$globals", {})
         self.version = self._get_version()
         if self.version > __version__:
-            raise RuntimeError(f"This cookbook requires an yamk >= v{self.version}")
+            msg = f"This cookbook requires an yamk >= v{self.version}"
+            raise RuntimeError(msg)
         self.up_to_date = args.assume
         self._parse_recipes(parsed_cookbook)
         self.subprocess_kwargs = {
@@ -63,7 +64,8 @@ class MakeCommand:
         for cookbook in cookbooks:
             if cookbook.exists():
                 return cookbook
-        raise FileNotFoundError(f"No candidate cookbook found in {args.directory}")
+        msg = f"No candidate cookbook found in {args.directory}"
+        raise FileNotFoundError(msg)
 
     def make(self) -> None:
         dag = self._preprocess_target()
@@ -127,7 +129,8 @@ class MakeCommand:
     def _preprocess_target(self) -> lib.DAG:
         recipe = self._extract_recipe(self.target, use_extra=True)
         if recipe is None:
-            raise ValueError(f"No recipe to build {self.target}")
+            msg = f"No recipe to build {self.target}"
+            raise ValueError(msg)
 
         root = lib.Node(recipe)
         unprocessed = {root.target: root}
@@ -143,7 +146,8 @@ class MakeCommand:
                     requirement_path = self._file_path(raw_requirement)
                     requirement = requirement_path.as_posix()
                     if not requirement_path.exists():
-                        raise ValueError(f"No recipe to build {requirement}")
+                        msg = f"No recipe to build {requirement}"
+                        raise ValueError(msg)
                 else:
                     requirement = recipe.target
                 target_recipe.requires[index] = requirement
@@ -259,10 +263,11 @@ class MakeCommand:
             return False
 
         if not node.requires:
-            raise ValueError(
+            msg = (
                 "This target already exists and has no requirements. "
                 "Consider marking it with exists_only"
             )
+            raise ValueError(msg)
 
         if any(child.should_build for child in node.requires):
             return True
@@ -295,7 +300,8 @@ class MakeCommand:
             return 0
 
         if not recipe.keep_ts:
-            raise ValueError("Existence commands needs either exists_only or keep_ts")
+            msg = "Existence commands needs either exists_only or keep_ts"
+            raise ValueError(msg)
 
         return path.stat().st_mtime
 

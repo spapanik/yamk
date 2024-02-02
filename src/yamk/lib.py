@@ -81,14 +81,14 @@ class Recipe:
             }
             if self.regex:
                 if original_regex is None:
-                    raise RuntimeError(
-                        "original_regex must be specified when target is specific"
-                    )
+                    msg = "original_regex must be specified when target is specific"
+                    raise RuntimeError(msg)
                 match_obj = re.fullmatch(original_regex, self.target)
                 if match_obj is None:
-                    raise RuntimeError(
+                    msg = (
                         f"original_regex {original_regex} does not match {self.target}"
                     )
+                    raise RuntimeError(msg)
                 temp_vars["regex"] = match_obj.groupdict()
             else:
                 temp_vars["regex"] = {}
@@ -209,7 +209,8 @@ class Parser:
             return {
                 self.evaluate(key): self.evaluate(value) for key, value in obj.items()
             }
-        raise TypeError(f"{obj.__class__.__name__} is not supported for evaluation")
+        msg = f"{obj.__class__.__name__} is not supported for evaluation"  # type: ignore[unreachable]
+        raise TypeError(msg)
 
 
 class Node:
@@ -291,7 +292,8 @@ class DAG:
                     self.ordered.append(node)
                     break
             else:
-                raise ValueError("Cyclic dependencies detected. Cowardly aborting...")
+                msg = "Cyclic dependencies detected. Cowardly aborting..."
+                raise ValueError(msg)
         warnings.warn(
             "The requirements order didn't allow the deterministic order; "
             "fell back to old-style dependency resolution",
@@ -316,7 +318,8 @@ class DAG:
                     )
                 )
             except RecursionError as exc:
-                raise ValueError("Cannot compute c3_sort") from exc
+                msg = "Cannot compute c3_sort"
+                raise ValueError(msg) from exc
         return out
 
     def _merge(self, *node_lists: list[Node]) -> list[Node]:
@@ -335,7 +338,8 @@ class DAG:
                     unmerged = self._clean_head(unmerged, head)
                     break
             else:
-                raise ValueError("Cannot compute c3_sort")
+                msg = "Cannot compute c3_sort"
+                raise ValueError(msg)
 
     @staticmethod
     def _clean_head(unmerged: list[list[Node]], head: Node) -> list[list[Node]]:
@@ -369,7 +373,7 @@ class CommandReport:
         timing /= 1000
         return f"{timing:.2f} s"
 
-    def print(self, cols: int) -> None:  # noqa: A003
+    def print(self, cols: int) -> None:
         if not self.success:
             indicator = "🔴"
             timing_colour = ANSIEscape.FAIL

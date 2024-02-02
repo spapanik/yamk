@@ -13,8 +13,9 @@ class Function:
     def __init__(self, base_dir: Path):
         self.base_dir = base_dir
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        raise NotImplementedError(f"{self.__class__.__name__} must be callable")
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:  # noqa: ARG002
+        msg = f"{self.__class__.__name__} must be callable"
+        raise NotImplementedError(msg)
 
 
 class Glob(Function):
