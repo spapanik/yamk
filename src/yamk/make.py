@@ -9,7 +9,7 @@ import sys
 from time import perf_counter_ns, sleep
 from typing import Any, cast
 
-from dj_settings import SettingsParser
+from dj_settings import ConfigParser
 from packaging.version import Version
 
 from yamk import __version__, lib
@@ -35,7 +35,7 @@ class MakeCommand:
         self.base_dir = cookbook.parent
         self.phony_dir = self.base_dir.joinpath(".yamk")
         self.arg_vars = dict(var.split("=", maxsplit=1) for var in args.variables)
-        parsed_cookbook = SettingsParser(cookbook, force_type=args.cookbook_type).data
+        parsed_cookbook = ConfigParser([cookbook], force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self.version = self._get_version()
         if self.version > __version__:
