@@ -15,6 +15,7 @@ list = [
 ]
 dict = { "x" = "1", "y" = "2", "z" = "${sub}" }
 value = "1"
+VARIABLE = "global"
 
 [phony]
 phony = true
@@ -95,6 +96,29 @@ requires = [
     "phony_requirement",
     "phony_requirement",
 ]
+
+[variable_strength]
+phony = true
+vars = { VARIABLE = "local" }
+commands = [
+    "echo ${VARIABLE}",
+]
+
+['variable_strength_(?P<number_>[^.]\d+)']
+regex = true
+phony = true
+vars = { number = "42" }
+commands = [
+    "echo ${number}",
+]
+
+['variable_strength_(?P<value>[^.]\d+)_v2']
+regex = true
+phony = true
+commands = [
+    "echo ${value}",
+]
+
 
 [multiple_regex]
 phony = true

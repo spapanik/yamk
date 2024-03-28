@@ -223,6 +223,57 @@ def test_regex_strength(runner: mock.MagicMock, mock_args: mock.MagicMock) -> No
 
 
 @mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_variable_strength_argument_vs_env(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
+    os.environ["VARIABLE"] = "env"
+    mock_args.target = "variable_strength"
+    mock_args.variables = ["VARIABLE=argument"]
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    calls = [mock.call("echo argument", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_variable_strength_env_vs_local(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
+    os.environ["VARIABLE"] = "env"
+    mock_args.target = "variable_strength"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    calls = [mock.call("echo env", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_variable_strength_local_vs_regex(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
+    mock_args.target = "variable_strength_1024"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    calls = [mock.call("echo 42", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_variable_strength_regex_vs_global(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
+    mock_args.target = "variable_strength_1024_v2"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 1
+    calls = [mock.call("echo 1024", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
 def test_multiple_regex_targets(
     runner: mock.MagicMock, mock_args: mock.MagicMock
 ) -> None:
