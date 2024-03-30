@@ -402,6 +402,7 @@ def flatten_vars(
         "global",
         "local",
         "global",
+        "regex",
         "implicit",
         "regex",
         "local",
@@ -416,6 +417,9 @@ def flatten_vars(
         for raw_key, raw_value in var_block.items():
             key = parser.evaluate(raw_key)
             key, options = extract_options(key)
+            if raw_key.startswith(".") and var_type != "implicit":
+                msg = "Starting at yam 7.0, only implicit vars will be able to start with a dot (`.`)"
+                warnings.warn(msg, RemovedIn70Warning, stacklevel=1)
             if key in strong_keys:
                 continue
             if "weak" in options and key in output:

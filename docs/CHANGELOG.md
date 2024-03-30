@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+### Added
+
+- Added a deprecation warning for non-implicit vars starting with a dot (`.`)
+
+### Fixed
+
+- Fixed a bug with regex variables not getting passed to the requirements
+
 ## [6.0.0] - 2024-01-03
 
 ### Changed
