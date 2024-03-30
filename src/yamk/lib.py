@@ -243,12 +243,11 @@ class Node:
 
     def add_requirement(self, other: Node) -> None:
         if other in self.requires:
-            warnings.warn(
+            msg = (
                 f"`{other}` is included twice in `{self}` requirements, "
-                "only the first will be considered",
-                RuntimeWarning,
-                stacklevel=3,
+                "only the first will be considered"
             )
+            warnings.warn(msg, RuntimeWarning, stacklevel=3)
             return
         self.requires.append(other)
         other.required_by.add(self)
@@ -294,12 +293,11 @@ class DAG:
             else:
                 msg = "Cyclic dependencies detected. Cowardly aborting..."
                 raise ValueError(msg)
-        warnings.warn(
+        msg = (
             "The requirements order didn't allow the deterministic order; "
-            "fell back to old-style dependency resolution",
-            RuntimeWarning,
-            stacklevel=3,
+            "fell back to old-style dependency resolution"
         )
+        warnings.warn(msg, RuntimeWarning, stacklevel=3)
 
     def add_node(self, node: Node) -> None:
         self._mapping[node.target] = node
