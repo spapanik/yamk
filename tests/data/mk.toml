@@ -16,6 +16,7 @@ list = [
 dict = { "x" = "1", "y" = "2", "z" = "${sub}" }
 value = "1"
 VARIABLE = "global"
+echo = "echo"
 
 [phony]
 phony = true
@@ -75,6 +76,44 @@ commands = [
 phony = true
 commands = [
     "[echo]ls",
+]
+
+[requirement_ext]
+phony = true
+requires = [
+    "${EXT_VARIABLE}",
+]
+commands = [
+    "echo '${.requirements}'",
+]
+
+['regex_requirement_(?P<special_value>[a-z]+)']
+regex = true
+phony = true
+requires = [
+    "${special_value}",
+]
+commands = [
+    "echo '${.requirements}'",
+]
+
+[requirement_local]
+phony = true
+requires = [
+    "${local_variable}",
+]
+vars = { local_variable = "echo" }
+commands = [
+    "echo '${.requirements}'",
+]
+
+[requirement]
+phony = true
+requires = [
+    "${echo}",
+]
+commands = [
+    "echo '${.requirements}'",
 ]
 
 [alias]

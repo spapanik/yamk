@@ -7,6 +7,75 @@ import pytest
 from yamk import make
 
 
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def requirement_ext(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
+    mock_args.target = "requirement_ext"
+    mock_args.variables = ["EXT_VARIABLE=echo"]
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 2
+    calls = [
+        mock.call("ls -l", **make_command.subprocess_kwargs),
+        mock.call("echo 'echo'", **make_command.subprocess_kwargs),
+    ]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_requires_from_env(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
+    mock_args.target = "requirement_ext"
+    os.environ["EXT_VARIABLE"] = "echo"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 2
+    calls = [
+        mock.call("ls -l", **make_command.subprocess_kwargs),
+        mock.call("echo 'echo'", **make_command.subprocess_kwargs),
+    ]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_requires_from_local(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
+    mock_args.target = "requirement_local"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 2
+    calls = [
+        mock.call("ls -l", **make_command.subprocess_kwargs),
+        mock.call("echo 'echo'", **make_command.subprocess_kwargs),
+    ]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_requires_from_regex(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
+    mock_args.target = "regex_requirement_echo"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 2
+    calls = [
+        mock.call("ls -l", **make_command.subprocess_kwargs),
+        mock.call("echo 'echo'", **make_command.subprocess_kwargs),
+    ]
+    assert runner.call_args_list == calls
+
+
+@mock.patch("yamk.make.subprocess.run", return_value=mock.MagicMock(returncode=0))
+def test_requires_from_global(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
+    mock_args.target = "requirement"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 2
+    calls = [
+        mock.call("ls -l", **make_command.subprocess_kwargs),
+        mock.call("echo 'echo'", **make_command.subprocess_kwargs),
+    ]
+    assert runner.call_args_list == calls
+
+
 def test_make_raises_on_missing_target(mock_args: mock.MagicMock) -> None:
     mock_args.target = "missing_target"
     make_command = make.MakeCommand(mock_args)
