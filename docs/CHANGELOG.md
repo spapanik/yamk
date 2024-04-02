@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+## [6.1.0] - 2024-04-02
+
 ### Added
 
 - Added a version parser to avoid the packaging dependency
@@ -433,7 +435,8 @@ cookbook.yml
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
-[Unreleased]: https://github.com/spapanik/yamk/compare/v6.0.1...main
+[Unreleased]: https://github.com/spapanik/yamk/compare/v6.1.0...main
+[6.1.0]: https://github.com/spapanik/yamk/compare/v6.0.1...v6.1.0
 [6.0.1]: https://github.com/spapanik/yamk/compare/v6.0.0...v6.0.1
 [6.0.0]: https://github.com/spapanik/yamk/compare/v5.3.0...v6.0.0
 [5.3.0]: https://github.com/spapanik/yamk/compare/v5.2.0...v5.3.0
