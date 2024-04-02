@@ -161,7 +161,6 @@ python = "^3.8"
 
 # dependencies
 dj_settings = "^5.0"
-packaging = "^24.0"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = { version = "^0.13", python = "^3.10" }

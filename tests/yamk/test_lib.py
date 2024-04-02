@@ -163,3 +163,37 @@ def test_extract_options(
 )
 def test_timestamp_to_dt(timestamp: int | float, dt: str) -> None:
     assert lib.human_readable_timestamp(timestamp) == dt
+
+
+@pytest.mark.parametrize(
+    ("version", "major", "minor", "patch"),
+    [
+        ("1", 1, 0, 0),
+        ("1.2", 1, 2, 0),
+        ("1.2.3", 1, 2, 3),
+        ("5.1.0dev1", 5, 1, 0),
+        ("5.1.0dev1+2020-01-01", 5, 1, 0),
+        ("5.1.0dev1+2020-01-01.1", 5, 1, 0),
+        ("5.1.0dev1+2020-01-01.1.2", 5, 1, 0),
+        ("1.1a1", 1, 1, 0),
+        ("1.1a1+2020-01-01", 1, 1, 0),
+        ("1.1-a1", 1, 1, 0),
+    ],
+)
+def test_version_parsing(version: str, major: int, minor: int, patch: int) -> None:
+    parsed_version = lib.Version.from_string(version)
+    assert parsed_version.major == major
+    assert parsed_version.minor == minor
+    assert parsed_version.patch == patch
+
+
+@pytest.mark.parametrize(
+    ("old_version", "new_version"),
+    [
+        ("1.0.0", "1.0.1"),
+        ("0.0.1", "0.1.0"),
+        ("0.0.0.post1", "0.0.1"),
+    ],
+)
+def test_version_comparison(old_version: str, new_version: str) -> None:
+    assert lib.Version.from_string(old_version) < lib.Version.from_string(new_version)

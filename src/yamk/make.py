@@ -10,7 +10,6 @@ from time import perf_counter_ns, sleep
 from typing import Any, cast
 
 from dj_settings import ConfigParser
-from packaging.version import Version
 
 from yamk import __version__, lib
 
@@ -38,7 +37,7 @@ class MakeCommand:
         parsed_cookbook = ConfigParser([cookbook], force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self.version = self._get_version()
-        if self.version > __version__:
+        if self.version > lib.Version.from_string(__version__):
             msg = f"This cookbook requires an yamk >= v{self.version}"
             raise RuntimeError(msg)
         self.up_to_date = args.assume
@@ -305,5 +304,5 @@ class MakeCommand:
 
         return path.stat().st_mtime
 
-    def _get_version(self) -> Version:
-        return Version(self.globals["version"])
+    def _get_version(self) -> lib.Version:
+        return lib.Version.from_string(self.globals["version"])
