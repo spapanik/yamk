@@ -15,7 +15,7 @@ build only the target, without checking the dependencies
 
 #### -c/--cookbook cookbook
 
-the path to the cookbook (defaults to *./cookbook.toml*)
+the path to the cookbook (defaults to _./cookbook.toml_)
 
 #### -d/--directory dir
 
@@ -35,7 +35,7 @@ retry commands for \<retries\> number of times
 
 #### -s/--shell shell
 
-the path to the shell used to execute the commands (defaults to */bin/sh*)
+the path to the shell used to execute the commands (defaults to _/bin/sh_)
 
 #### -T/--time
 

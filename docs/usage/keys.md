@@ -67,6 +67,6 @@ true, they do.
 #### allow_failures: boolean (any)
 
 By default, a failing command will halt the execution of the recipe.
-This will allow *yam* to try and recover from the error. Allow_failures
+This will allow _yam_ to try and recover from the error. Allow_failures
 doesn't guarantee that the execution will resume, because the nature of
 the failure may not allow that.

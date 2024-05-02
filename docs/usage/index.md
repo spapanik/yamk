@@ -4,9 +4,9 @@
 `cookbook.<extension>`, but if a different filename is required, it can be passed
 using the `-c/--cookbook` flag. The supported extensions are:
 
-- toml
-- yml,yaml
-- json
+-   toml
+-   yml,yaml
+-   json
 
 If the cookbook has a different extension, the type won't be automatically recognised,
 but this can be configured by the `-t/--cookbook-type` flag.
@@ -15,7 +15,7 @@ but this can be configured by the `-t/--cookbook-type` flag.
 
 A cookbook is a collection of recipes. A recipe has the following format:
 
-``` toml title="cookbook.toml"
+```toml title="cookbook.toml"
 [target_name]
 "<key_1>" = "<value_1>"
 "<key_2>" = "<value_2>"
@@ -36,9 +36,9 @@ To use a normal target that starts with a dollar sign, use one more dollar sign,
 is needed, and `yam` will strip one of them and turn it into a normal target or an alias.
 Currently the only meta-target is `$globals`, that has 3 valid keys:
 
-- `vars`, which is the same as the key with the same name in targets, but weaker
-- `shell`, to override the default shell used to execute the commands
-- `version`, which is the minimum version of `yam` needed for the cookbook.
+-   `vars`, which is the same as the key with the same name in targets, but weaker
+-   `shell`, to override the default shell used to execute the commands
+-   `version`, which is the minimum version of `yam` needed for the cookbook.
 
 ### Aliases
 
@@ -67,7 +67,7 @@ specifically set to a false value. A static target will be called verbatim.
 A target that contains the `regex` key set to a true value, is a regex target. Regex targets
 are weaker than static ones, which means that if you have the following targets in a cookbook:
 
-``` toml title="cookbook.toml"
+```toml title="cookbook.toml"
 ['echo_(?P<number>\d+)']
 regex = true
 commands = [
@@ -89,7 +89,7 @@ and not `42`.
 A variable is defined in the key `vars`. The variables are parsed in order, so a variable,
 once defined can be used later. An example of `vars`:
 
-``` toml
+```toml
 [target_name.vars]
 "[variable_options]var_1" = "<value_1>"
 "[variable_options]var_2" = "<value_2>"
@@ -113,7 +113,7 @@ string. With an increasing strength order:
 
 #### Global
 
-A global variable is a variable specified in the *$global* meta-target. They are the least specific,
+A global variable is a variable specified in the _$global_ meta-target. They are the least specific,
 and therefore the weakest variables.
 
 #### Implicit
@@ -122,10 +122,10 @@ The implicit variables are variables created by the target itself, implicitly. T
 overriding, as they start with a dot. This dot acts as a safeguard so they cannot mix with environment ones.
 At the moment, the following three implicit variables exist:
 
-- **.target**: the name of the target. In case of a file target, it's the absolute path to the file, regardless
-  of they way it was defined.
-- **.requirements**: the array of the requirements. All the file requirements are given as their absolute paths.
-- **.extra**: an array of all the extra arguments passed to the yam command.
+-   **.target**: the name of the target. In case of a file target, it's the absolute path to the file, regardless
+    of they way it was defined.
+-   **.requirements**: the array of the requirements. All the file requirements are given as their absolute paths.
+-   **.extra**: an array of all the extra arguments passed to the yam command.
 
 #### Regex
 
@@ -159,5 +159,5 @@ The only option at the moment is `weak` and `strong`.
 
 ### Command options
 
-There are two command options: *echo* and *allow_failures*. These commands can be used to customise the specific command,
+There are two command options: _echo_ and _allow_failures_. These commands can be used to customise the specific command,
 as if the respective variable was set.

@@ -42,8 +42,8 @@ the same extension inside a directory named `<cookbook_filename>.d/`.
 
 ## Links
 
-- [Documentation]
-- [Changelog]
+-   [Documentation]
+-   [Changelog]
 
 [test_badge]: https://github.com/spapanik/yamk/actions/workflows/tests.yml/badge.svg
 [test_url]: https://github.com/spapanik/yamk/actions/workflows/tests.yml
