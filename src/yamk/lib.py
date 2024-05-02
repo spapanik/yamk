@@ -5,11 +5,13 @@ import os
 import re
 import shlex
 import warnings
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from math import ceil, floor
 from pathlib import Path
-from typing import Any, Iterator, Literal, Match, cast
+from re import Match
+from typing import Any, Literal, cast
 
 from yamk.functions import functions
 

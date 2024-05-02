@@ -45,6 +45,13 @@ def parse_args() -> argparse.Namespace:
         help="the path to the directory that contains the cookbook",
     )
     parser.add_argument(
+        "-e",
+        "--echo",
+        metavar="echo",
+        action=argparse.BooleanOptionalAction,
+        help="a boolean flag to enable or disable the echo of the commands",
+    )
+    parser.add_argument(
         "-f",
         "--force",
         action="store_true",

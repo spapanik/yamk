@@ -6,6 +6,7 @@ import pathlib
 import re
 import subprocess
 import sys
+from collections.abc import Iterator
 from time import perf_counter_ns, sleep
 from typing import Any, cast
 
@@ -30,6 +31,7 @@ class MakeCommand:
         self.extra = args.extra
         self.retries = args.retries
         self.dry_run = args.dry_run
+        self.echo_override = args.echo
         cookbook = self.find_cookbook(args)
         self.base_dir = cookbook.parent
         self.phony_dir = self.base_dir.joinpath(".yamk")
@@ -76,7 +78,6 @@ class MakeCommand:
     def _run_command(self, command: str) -> int:
         status = 0
         if self.dry_run:
-            print(command)
             return status
 
         a, b = 1, 1
@@ -179,11 +180,15 @@ class MakeCommand:
         if self.verbosity > 1:
             print(f"=== target: {recipe.target} ===")
 
-        for raw_command in recipe.commands:
+        n = len(recipe.commands)
+        for i, raw_command in enumerate(recipe.commands):
             command, options = lib.extract_options(raw_command)
-            if recipe.echo or "echo" in options or self.verbosity > 2:
-                print(command)
+            should_echo = any(self._print_reasons(recipe, options))
+            if should_echo:
+                self._print_command(command)
             return_code = self._run_command(command)
+            if should_echo:
+                self._print_result(command, return_code)
             if (
                 return_code
                 and not recipe.allow_failures
@@ -192,6 +197,8 @@ class MakeCommand:
                 if self.print_timing_report:
                     lib.print_reports(self.reports)
                 sys.exit(return_code)
+            if i != n - 1:
+                print()
         if recipe.phony and recipe.keep_ts:
             path = self._phony_path(recipe.target)
             self.phony_dir.mkdir(exist_ok=True)
@@ -303,6 +310,26 @@ class MakeCommand:
             raise ValueError(msg)
 
         return path.stat().st_mtime
+
+    def _print_reasons(self, recipe: lib.Recipe, options: set[str]) -> Iterator[bool]:
+        yield "echo" in options
+        yield recipe.echo
+        yield self.verbosity > 2
+        yield self.echo_override
+
+    def _print_command(self, command: str) -> None:
+        bold_command = f"{lib.ANSIEscape.BOLD}`{command}`{lib.ANSIEscape.ENDC}"
+        print(f"🔧 Running {bold_command}")
+
+    def _print_result(self, command: str, return_code: int) -> None:
+        bold_command = f"{lib.ANSIEscape.BOLD}`{command}`{lib.ANSIEscape.ENDC}"
+        if return_code:
+            prefix = "❌"
+            suffix = f"failed with exit code {return_code}"
+        else:
+            prefix = "✅"
+            suffix = "run successfully!"
+        print(f"{prefix} {bold_command} {suffix}")
 
     def _get_version(self) -> lib.Version:
         return lib.Version.from_string(self.globals["version"])

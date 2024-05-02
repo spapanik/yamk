@@ -1,5 +1,4 @@
 import os
-from contextlib import suppress
 from unittest import mock
 
 import pytest
@@ -106,9 +105,10 @@ def test_make_dry_run(mock_print: mock.MagicMock, mock_args: mock.MagicMock) -> 
     mock_args.dry_run = True
     make_command = make.MakeCommand(mock_args)
     make_command.make()
-    assert mock_print.call_count == 1
+    assert mock_print.call_count == 2
     calls = [
-        mock.call("ls"),
+        mock.call("🔧 Running \x1b[1m`ls`\x1b[0m"),
+        mock.call("✅ \x1b[1m`ls`\x1b[0m run successfully!"),
     ]
     assert mock_print.call_args_list == calls
 
@@ -214,8 +214,11 @@ def test_make_echo_in_recipe(
     mock_args.target = "echo"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
-    assert mock_print.call_count == 1
-    calls = [mock.call("ls -l")]
+    assert mock_print.call_count == 2
+    calls = [
+        mock.call("🔧 Running \x1b[1m`ls -l`\x1b[0m"),
+        mock.call("✅ \x1b[1m`ls -l`\x1b[0m run successfully!"),
+    ]
     assert mock_print.call_args_list == calls
     assert runner.call_count == 1
     calls = [mock.call("ls -l", **make_command.subprocess_kwargs)]
@@ -230,8 +233,11 @@ def test_make_echo_in_command(
     mock_args.target = "echo_in_command"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
-    assert mock_print.call_count == 1
-    calls = [mock.call("ls")]
+    assert mock_print.call_count == 2
+    calls = [
+        mock.call("🔧 Running \x1b[1m`ls`\x1b[0m"),
+        mock.call("✅ \x1b[1m`ls`\x1b[0m run successfully!"),
+    ]
     assert mock_print.call_args_list == calls
     assert runner.call_count == 1
     calls = [mock.call("ls", **make_command.subprocess_kwargs)]
@@ -456,9 +462,7 @@ def test_make_with_phony_and_keep_ts_missing_ts(
     mock_args.target = "keep_ts"
     make_command = make.MakeCommand(mock_args)
     make_command.phony_dir.mkdir(exist_ok=True)
-    with suppress(FileNotFoundError):
-        # python 3.8: add missing_ok
-        make_command.phony_dir.joinpath("keep_ts").unlink()
+    make_command.phony_dir.joinpath("keep_ts").unlink(missing_ok=True)
     make_command.make()
     assert runner.call_count == 1
     calls = [mock.call("ls", **make_command.subprocess_kwargs)]
@@ -519,9 +523,7 @@ def test_make_with_exists_only_target_missing(
 ) -> None:
     mock_args.target = "exists_only"
     make_command = make.MakeCommand(mock_args)
-    with suppress(FileNotFoundError):
-        # python 3.8: add missing_ok
-        make_command.base_dir.joinpath(mock_args.target).unlink()
+    make_command.base_dir.joinpath(mock_args.target).unlink(missing_ok=True)
     make_command.make()
     assert runner.call_count == 1
     calls = [mock.call("ls", **make_command.subprocess_kwargs)]
@@ -534,9 +536,7 @@ def test_make_build_due_to_requirement(
 ) -> None:
     mock_args.target = "requires_build"
     make_command = make.MakeCommand(mock_args)
-    with suppress(FileNotFoundError):
-        # python 3.8: add missing_ok
-        make_command.phony_dir.joinpath("keep_ts").unlink()
+    make_command.phony_dir.joinpath("keep_ts").unlink(missing_ok=True)
     make_command.base_dir.joinpath(mock_args.target).touch()
     make_command.make()
     assert runner.call_count == 2

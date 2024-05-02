@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 target-version = [
-    "py38",
+    "py39",
 ]
 
 [tool.mypy]
@@ -32,7 +32,7 @@ warn_unused_configs = true
 src = [
     "src",
 ]
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.lint]
 select = [
@@ -157,7 +157,7 @@ yam = "yamk.main:main"
 
 [tool.poetry.dependencies]
 # python version
-python = "^3.8"
+python = "^3.9"
 
 # dependencies
 dj_settings = "^5.0"
