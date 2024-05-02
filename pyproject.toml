@@ -171,7 +171,7 @@ pipdeptree = "^2.13"
 [tool.poetry.group.lint.dependencies]
 black = "^24.1"
 mypy = "^1.8"
-ruff = "^0.3"
+ruff = "^0.4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.0"
