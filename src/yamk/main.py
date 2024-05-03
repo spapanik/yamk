@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from yamk import __version__
+from yamk.__version__ import __version__
 from yamk.lib import SUPPORTED_FILE_EXTENSIONS
 from yamk.make import MakeCommand
 

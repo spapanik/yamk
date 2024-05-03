@@ -12,7 +12,8 @@ from typing import Any, cast
 
 from dj_settings import ConfigParser
 
-from yamk import __version__, lib
+from yamk import lib
+from yamk.__version__ import __version__
 
 
 class MakeCommand:
