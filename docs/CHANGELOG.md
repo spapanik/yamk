@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 -   Dropped python 3.8 support
 
+### Changed
+
+-   Only implicit vars can start with a dot
+
 ## [6.1.0] - 2024-04-02
 
 ### Added
