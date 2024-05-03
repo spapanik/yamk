@@ -47,7 +47,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "-e",
         "--echo",
-        metavar="echo",
         action=argparse.BooleanOptionalAction,
         help="a boolean flag to enable or disable the echo of the commands",
     )
