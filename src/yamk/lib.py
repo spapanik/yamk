@@ -8,10 +8,11 @@ import warnings
 from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from math import ceil, floor
 from pathlib import Path
 from re import Match
 from typing import Any, Literal, cast
+
+from pyutilkit.term import SGRCodes, SGRString
 
 from yamk.functions import functions
 
@@ -26,17 +27,6 @@ SUPPORTED_FILE_EXTENSIONS = {
     ".yaml": "yaml",
     ".json": "json",
 }
-
-
-class ANSIEscape:
-    __slots__: list[str] = []
-
-    ENDC = "\033[0m"
-    BOLD = "\033[1m"
-    FAIL = "\033[31m"
-    OKGREEN = "\033[32m"
-    OKBLUE = "\033[34m"
-    WARNING = "\033[33m"
 
 
 class Recipe:
@@ -376,20 +366,20 @@ class CommandReport:
     def print(self, cols: int) -> None:
         if not self.success:
             indicator = "🔴"
-            timing_colour = ANSIEscape.FAIL
+            sgr_code = SGRCodes.RED
         elif self.retries:
             indicator = "🟠"
-            timing_colour = ANSIEscape.WARNING
+            sgr_code = SGRCodes.YELLOW
         else:
             indicator = "🟢"
-            timing_colour = ANSIEscape.OKGREEN
+            sgr_code = SGRCodes.GREEN
         timing = self._formatted_timing()
         padding = " " * (cols - len(self.command) - len(timing) - 7)
         print(
             indicator,
             f"`{self.command}`",
             padding,
-            f"{timing_colour}{timing}{ANSIEscape.ENDC}",
+            SGRString(timing, params=[sgr_code]),
         )
 
 
@@ -465,13 +455,11 @@ def human_readable_timestamp(timestamp: float) -> str:
 
 
 def print_reports(reports: list[CommandReport]) -> None:
-    cols = os.get_terminal_size().columns
-    report_title = " Yam Report "
-    padding = "="
-    half = (cols - len(report_title)) / 2
-    print(
-        f"{ANSIEscape.BOLD}{padding * ceil(half)}{report_title}{padding * floor(half)}{ANSIEscape.ENDC}"
+    SGRString("Yam Report", params=[SGRCodes.BOLD]).header(
+        padding=SGRString("=", params=[SGRCodes.BOLD])
     )
+
+    cols = os.get_terminal_size().columns
     for report in reports:
         report.print(cols)
 

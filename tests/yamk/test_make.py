@@ -107,8 +107,8 @@ def test_make_dry_run(mock_print: mock.MagicMock, mock_args: mock.MagicMock) -> 
     make_command.make()
     assert mock_print.call_count == 2
     calls = [
-        mock.call("🔧 Running \x1b[1m`ls`\x1b[0m"),
-        mock.call("✅ \x1b[1m`ls`\x1b[0m run successfully!"),
+        mock.call("🔧 Running `\x1b[1mls\x1b[0m`"),
+        mock.call("✅ `\x1b[1mls\x1b[0m` run successfully!"),
     ]
     assert mock_print.call_args_list == calls
 
@@ -216,8 +216,8 @@ def test_make_echo_in_recipe(
     make_command.make()
     assert mock_print.call_count == 2
     calls = [
-        mock.call("🔧 Running \x1b[1m`ls -l`\x1b[0m"),
-        mock.call("✅ \x1b[1m`ls -l`\x1b[0m run successfully!"),
+        mock.call("🔧 Running `\x1b[1mls -l\x1b[0m`"),
+        mock.call("✅ `\x1b[1mls -l\x1b[0m` run successfully!"),
     ]
     assert mock_print.call_args_list == calls
     assert runner.call_count == 1
@@ -235,8 +235,8 @@ def test_make_echo_in_command(
     make_command.make()
     assert mock_print.call_count == 2
     calls = [
-        mock.call("🔧 Running \x1b[1m`ls`\x1b[0m"),
-        mock.call("✅ \x1b[1m`ls`\x1b[0m run successfully!"),
+        mock.call("🔧 Running `\x1b[1mls\x1b[0m`"),
+        mock.call("✅ `\x1b[1mls\x1b[0m` run successfully!"),
     ]
     assert mock_print.call_args_list == calls
     assert runner.call_count == 1

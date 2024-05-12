@@ -11,6 +11,7 @@ from time import perf_counter_ns, sleep
 from typing import Any, cast
 
 from dj_settings import ConfigParser
+from pyutilkit.term import SGRCodes, SGRString
 
 from yamk import lib
 from yamk.__version__ import __version__
@@ -319,18 +320,18 @@ class MakeCommand:
         yield self.echo_override
 
     def _print_command(self, command: str) -> None:
-        bold_command = f"{lib.ANSIEscape.BOLD}`{command}`{lib.ANSIEscape.ENDC}"
-        print(f"🔧 Running {bold_command}")
+        bold_command = SGRString(command, params=[SGRCodes.BOLD])
+        print(f"🔧 Running `{bold_command}`")
 
     def _print_result(self, command: str, return_code: int) -> None:
-        bold_command = f"{lib.ANSIEscape.BOLD}`{command}`{lib.ANSIEscape.ENDC}"
+        bold_command = SGRString(command, params=[SGRCodes.BOLD])
         if return_code:
             prefix = "❌"
             suffix = f"failed with exit code {return_code}"
         else:
             prefix = "✅"
             suffix = "run successfully!"
-        print(f"{prefix} {bold_command} {suffix}")
+        print(f"{prefix} `{bold_command}` {suffix}")
 
     def _get_version(self) -> lib.Version:
         return lib.Version.from_string(self.globals["version"])
