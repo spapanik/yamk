@@ -13,6 +13,7 @@ from re import Match
 from typing import Any, Literal, cast
 
 from pyutilkit.term import SGRCodes, SGRString
+from pyutilkit.timing import Timing
 
 from yamk.functions import functions
 
@@ -347,21 +348,8 @@ class DAG:
 class CommandReport:
     command: str
     retries: int
-    timing_ns: int
+    timing: Timing
     success: bool
-
-    def _formatted_timing(self) -> str:
-        if self.timing_ns < 1000:
-            return f"{self.timing_ns} ns"
-        timing: float = self.timing_ns
-        timing /= 1000
-        if timing < 1000:
-            return f"{timing:.1f} µs"
-        timing /= 1000
-        if timing < 1000:
-            return f"{timing:.1f} ms"
-        timing /= 1000
-        return f"{timing:.2f} s"
 
     def print(self, cols: int) -> None:
         if not self.success:
@@ -373,7 +361,7 @@ class CommandReport:
         else:
             indicator = "🟢"
             sgr_code = SGRCodes.GREEN
-        timing = self._formatted_timing()
+        timing = str(self.timing)
         padding = " " * (cols - len(self.command) - len(timing) - 7)
         print(
             indicator,

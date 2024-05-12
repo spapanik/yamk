@@ -12,6 +12,7 @@ from typing import Any, cast
 
 from dj_settings import ConfigParser
 from pyutilkit.term import SGRCodes, SGRString
+from pyutilkit.timing import Timing
 
 from yamk import lib
 from yamk.__version__ import __version__
@@ -94,7 +95,10 @@ class MakeCommand:
             status = result.returncode
             if status == 0:
                 report = lib.CommandReport(
-                    command=command, timing_ns=total, retries=i, success=True
+                    command=command,
+                    timing=Timing(nanoseconds=total),
+                    retries=i,
+                    success=True,
                 )
                 self.reports.append(report)
                 return status
@@ -105,7 +109,7 @@ class MakeCommand:
                 sleep(a)
 
         report = lib.CommandReport(
-            command=command, timing_ns=total, retries=i, success=False
+            command=command, timing=Timing(nanoseconds=total), retries=i, success=False
         )
         self.reports.append(report)
         return status
