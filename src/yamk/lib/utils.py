@@ -15,7 +15,7 @@ from typing import Any, Literal, cast
 from pyutilkit.term import SGRCodes, SGRString
 from pyutilkit.timing import Timing
 
-from yamk.functions import functions
+from yamk.lib.functions import functions
 
 VAR = re.compile(
     r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+)(?P<sep>:)?(?P<key>[a-zA-Z0-9_.]+)?}"

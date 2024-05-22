@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from yamk import functions
+from yamk.lib import functions
 from yamk.types import Pathlike
 
 PATH = Path(__file__)
