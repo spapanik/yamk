@@ -4,7 +4,7 @@ from functools import reduce
 from pathlib import Path
 from typing import Any, cast
 
-from yamk.types import Pathlike
+from yamk.lib.types import Pathlike
 
 
 class Function:

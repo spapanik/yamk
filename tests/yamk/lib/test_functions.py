@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from yamk.lib import functions
-from yamk.types import Pathlike
+from yamk.lib.types import Pathlike
 
 PATH = Path(__file__)
 BASE_DIR = PATH.parent
