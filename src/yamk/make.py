@@ -14,8 +14,18 @@ from dj_settings import ConfigParser
 from pyutilkit.term import SGRCodes, SGRString
 from pyutilkit.timing import Timing
 
-from yamk import lib
 from yamk.__version__ import __version__
+from yamk.lib.utils import (
+    DAG,
+    SUPPORTED_FILE_EXTENSIONS,
+    CommandReport,
+    Node,
+    Recipe,
+    Version,
+    extract_options,
+    human_readable_timestamp,
+    print_reports,
+)
 
 
 class MakeCommand:
@@ -25,8 +35,8 @@ class MakeCommand:
             if self.verbosity > 1:
                 print(args)
             sys.tracebacklimit = 9999
-        self.regex_recipes: dict[str, lib.Recipe] = {}
-        self.static_recipes: dict[str, lib.Recipe] = {}
+        self.regex_recipes: dict[str, Recipe] = {}
+        self.static_recipes: dict[str, Recipe] = {}
         self.aliases: dict[str, str] = {}
         self.target = args.target
         self.bare = args.bare
@@ -42,7 +52,7 @@ class MakeCommand:
         parsed_cookbook = ConfigParser([cookbook], force_type=args.cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self.version = self._get_version()
-        if self.version > lib.Version.from_string(__version__):
+        if self.version > Version.from_string(__version__):
             msg = f"This cookbook requires an yamk >= v{self.version}"
             raise RuntimeError(msg)
         self.up_to_date = args.assume
@@ -53,7 +63,7 @@ class MakeCommand:
             "executable": self.globals.get("shell") or args.shell,
         }
         self.print_timing_report = args.time
-        self.reports: list[lib.CommandReport] = []
+        self.reports: list[CommandReport] = []
 
     @staticmethod
     def find_cookbook(args: argparse.Namespace) -> pathlib.Path:
@@ -63,7 +73,7 @@ class MakeCommand:
 
         cookbooks = (
             absolute_path.joinpath("cookbook").with_suffix(suffix)
-            for suffix in lib.SUPPORTED_FILE_EXTENSIONS
+            for suffix in SUPPORTED_FILE_EXTENSIONS
         )
         for cookbook in cookbooks:
             if cookbook.exists():
@@ -74,9 +84,9 @@ class MakeCommand:
     def make(self) -> None:
         dag = self._preprocess_target()
         for node in filter(lambda x: x.should_build, dag):
-            self._make_target(cast(lib.Recipe, node.recipe))
+            self._make_target(cast(Recipe, node.recipe))
         if self.print_timing_report:
-            lib.print_reports(self.reports)
+            print_reports(self.reports)
 
     def _run_command(self, command: str) -> int:
         status = 0
@@ -94,7 +104,7 @@ class MakeCommand:
             total += end - start
             status = result.returncode
             if status == 0:
-                report = lib.CommandReport(
+                report = CommandReport(
                     command=command,
                     timing=Timing(nanoseconds=total),
                     retries=i,
@@ -108,7 +118,7 @@ class MakeCommand:
                 print(f"{command} failed. Retrying in {a}s...")
                 sleep(a)
 
-        report = lib.CommandReport(
+        report = CommandReport(
             command=command, timing=Timing(nanoseconds=total), retries=i, success=False
         )
         self.reports.append(report)
@@ -116,7 +126,7 @@ class MakeCommand:
 
     def _parse_recipes(self, parsed_cookbook: dict[str, dict[str, Any]]) -> None:
         for target, raw_recipe in parsed_cookbook.items():
-            recipe = lib.Recipe(
+            recipe = Recipe(
                 target,
                 raw_recipe,
                 self.base_dir,
@@ -132,19 +142,19 @@ class MakeCommand:
             else:
                 self.static_recipes[recipe.target] = recipe
 
-    def _preprocess_target(self) -> lib.DAG:
+    def _preprocess_target(self) -> DAG:
         recipe = self._extract_recipe(self.target, use_extra=True)
         if recipe is None:
             msg = f"No recipe to build {self.target}"
             raise ValueError(msg)
 
-        root = lib.Node(recipe)
+        root = Node(recipe)
         unprocessed = {root.target: root}
-        dag = lib.DAG(root)
+        dag = DAG(root)
         while unprocessed and not self.bare:
             target, target_node = unprocessed.popitem()
             dag.add_node(target_node)
-            target_recipe = cast(lib.Recipe, target_node.recipe)
+            target_recipe = cast(Recipe, target_node.recipe)
             target_recipe.requires.reverse()
             for index, raw_requirement in enumerate(target_recipe.requires):
                 recipe = self._extract_recipe(raw_requirement)
@@ -163,10 +173,10 @@ class MakeCommand:
                 elif requirement in unprocessed:
                     node = unprocessed[requirement]
                 elif recipe is None:
-                    node = lib.Node(target=requirement)
+                    node = Node(target=requirement)
                     dag.add_node(node)
                 else:
-                    node = lib.Node(recipe)
+                    node = Node(recipe)
                     unprocessed[requirement] = node
                 target_node.add_requirement(node)
 
@@ -176,19 +186,19 @@ class MakeCommand:
             print("=== all targets ===")
             for node in dag:
                 print(f"- {node.target}:")
-                print(f"    timestamp: {lib.human_readable_timestamp(node.timestamp)}")
+                print(f"    timestamp: {human_readable_timestamp(node.timestamp)}")
                 print(f"    should_build: {node.should_build}")
                 print(f"    requires: {node.requires}")
                 print(f"    required_by: {node.required_by}")
         return dag
 
-    def _make_target(self, recipe: lib.Recipe) -> None:
+    def _make_target(self, recipe: Recipe) -> None:
         if self.verbosity > 1:
             print(f"=== target: {recipe.target} ===")
 
         n = len(recipe.commands)
         for i, raw_command in enumerate(recipe.commands):
-            command, options = lib.extract_options(raw_command)
+            command, options = extract_options(raw_command)
             should_echo = any(self._print_reasons(recipe, options))
             if should_echo:
                 self._print_command(command)
@@ -201,7 +211,7 @@ class MakeCommand:
                 and "allow_failures" not in options
             ):
                 if self.print_timing_report:
-                    lib.print_reports(self.reports)
+                    print_reports(self.reports)
                 sys.exit(return_code)
             if i != n - 1:
                 print()
@@ -212,9 +222,7 @@ class MakeCommand:
         if recipe.update and not recipe.phony:
             pathlib.Path(recipe.target).touch()
 
-    def _extract_recipe(
-        self, target: str, *, use_extra: bool = False
-    ) -> lib.Recipe | None:
+    def _extract_recipe(self, target: str, *, use_extra: bool = False) -> Recipe | None:
         if target in self.aliases:
             target = self.aliases[target]
 
@@ -234,7 +242,7 @@ class MakeCommand:
         extra = self.extra if use_extra else []
         return recipe.for_target(target, extra)
 
-    def _mark_unchanged(self, dag: lib.DAG) -> None:
+    def _mark_unchanged(self, dag: DAG) -> None:
         for node in dag:
             node.timestamp = self._infer_timestamp(node)
             node.should_build = self._should_build(node)
@@ -246,14 +254,14 @@ class MakeCommand:
     def _file_path(self, target: str) -> pathlib.Path:
         return self.base_dir.joinpath(target)
 
-    def _path(self, node: lib.Node) -> pathlib.Path:
+    def _path(self, node: Node) -> pathlib.Path:
         recipe = node.recipe
         if recipe is None or not recipe.phony:
             return self._file_path(node.target)
 
         return self._phony_path(node.target)
 
-    def _path_exists(self, node: lib.Node) -> bool:
+    def _path_exists(self, node: Node) -> bool:
         recipe = node.recipe
         path = self._path(node)
         if recipe is not None and recipe.phony and recipe.existence_command:
@@ -261,7 +269,7 @@ class MakeCommand:
 
         return path.exists()
 
-    def _should_build(self, node: lib.Node) -> bool:
+    def _should_build(self, node: Node) -> bool:
         recipe = node.recipe
         if recipe is None:
             return False
@@ -288,7 +296,7 @@ class MakeCommand:
         req_ts = max(child.timestamp for child in node.requires)
         return req_ts > ts
 
-    def _infer_timestamp(self, node: lib.Node) -> float:
+    def _infer_timestamp(self, node: Node) -> float:
         recipe = node.recipe
         path = self._path(node)
         if recipe is None:
@@ -317,7 +325,7 @@ class MakeCommand:
 
         return path.stat().st_mtime
 
-    def _print_reasons(self, recipe: lib.Recipe, options: set[str]) -> Iterator[bool]:
+    def _print_reasons(self, recipe: Recipe, options: set[str]) -> Iterator[bool]:
         yield "echo" in options
         yield recipe.echo
         yield self.verbosity > 2
@@ -337,5 +345,5 @@ class MakeCommand:
             suffix = "run successfully!"
         print(f"{prefix} `{bold_command}` {suffix}")
 
-    def _get_version(self) -> lib.Version:
-        return lib.Version.from_string(self.globals["version"])
+    def _get_version(self) -> Version:
+        return Version.from_string(self.globals["version"])

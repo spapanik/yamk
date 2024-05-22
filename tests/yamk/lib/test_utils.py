@@ -5,20 +5,29 @@ from typing import Any
 
 import pytest
 
-from yamk import lib
+from yamk.lib.utils import (
+    DAG,
+    Node,
+    Parser,
+    Recipe,
+    Version,
+    extract_options,
+    flatten_vars,
+    human_readable_timestamp,
+)
 
 PATH = pathlib.Path(__file__)
 
 
 def test_recipe_to_str() -> None:
-    recipe = lib.Recipe("target", {}, pathlib.Path(), {}, {}, extra=[])
+    recipe = Recipe("target", {}, pathlib.Path(), {}, {}, extra=[])
     assert str(recipe) == "Generic recipe for target"
     recipe = recipe.for_target("target", extra=[])
     assert str(recipe) == "Specified recipe for target"
 
 
 def test_recipe_for_target() -> None:
-    recipe = lib.Recipe("target", {}, pathlib.Path(), {}, {}, extra=[])
+    recipe = Recipe("target", {}, pathlib.Path(), {}, {}, extra=[])
     recipe_specified = recipe.for_target("target", extra=[])
     recipe_specified_again = recipe_specified.for_target("target", extra=[])
     assert recipe is not recipe_specified
@@ -48,17 +57,17 @@ def test_recipe_for_target() -> None:
 def test_flatten_vars(
     initial: dict[str, dict[str, str]], expected: dict[str, str]
 ) -> None:
-    assert lib.flatten_vars(initial, PATH) == expected
+    assert flatten_vars(initial, PATH) == expected
 
 
 def test_node_to_str() -> None:
-    node = lib.Node(target="target")
+    node = Node(target="target")
     assert str(node) == "target"
     assert str([node]) == "[Node <target>]"
 
 
 def test_node_equals() -> None:
-    node = lib.Node(target="target")
+    node = Node(target="target")
 
     class FakeNode:
         target = "target"
@@ -69,28 +78,28 @@ def test_node_equals() -> None:
 
 
 def test_missing_topological_sort() -> None:
-    root = lib.Node(target="target")
-    dag = lib.DAG(root)
+    root = Node(target="target")
+    dag = DAG(root)
     assert list(dag) == [root]
 
 
 def test_topological_sort_detects_cycles() -> None:
-    root = lib.Node(target="target")
-    node = lib.Node(target="requirement")
+    root = Node(target="target")
+    node = Node(target="requirement")
     root.add_requirement(node)
     node.add_requirement(root)
-    dag = lib.DAG(root)
+    dag = DAG(root)
     dag.add_node(node)
     with pytest.raises(ValueError):
         dag.topological_sort()
 
 
 def test_c3_sort_detects_cycles() -> None:
-    root = lib.Node(target="target")
-    node = lib.Node(target="requirement")
+    root = Node(target="target")
+    node = Node(target="requirement")
     root.add_requirement(node)
     node.add_requirement(root)
-    dag = lib.DAG(root)
+    dag = DAG(root)
     dag.add_node(node)
     with pytest.raises(ValueError):
         dag.c3_sort()
@@ -98,7 +107,7 @@ def test_c3_sort_detects_cycles() -> None:
 
 @pytest.mark.parametrize("obj", [1, ("string in a tuple",), {"nested integer": 1}])
 def test_parser_evaluation_raises(obj: Any) -> None:
-    parser = lib.Parser({}, PATH)
+    parser = Parser({}, PATH)
     with pytest.raises(TypeError):
         parser.evaluate(obj)
 
@@ -128,7 +137,7 @@ def test_parser_evaluation_raises(obj: Any) -> None:
 def test_parser_evaluation(
     obj: str | list[str], variables: dict[str, Any], expected: str | list[str]
 ) -> None:
-    parser = lib.Parser(variables, PATH)
+    parser = Parser(variables, PATH)
     assert parser.evaluate(obj) == expected
 
 
@@ -148,7 +157,7 @@ def test_parser_evaluation(
 def test_extract_options(
     string: str, expected_options: set[str], expected_string: str
 ) -> None:
-    string, options = lib.extract_options(string)
+    string, options = extract_options(string)
     assert string == expected_string
     assert options == expected_options
 
@@ -162,7 +171,7 @@ def test_extract_options(
     ],
 )
 def test_timestamp_to_dt(timestamp: int | float, dt: str) -> None:
-    assert lib.human_readable_timestamp(timestamp) == dt
+    assert human_readable_timestamp(timestamp) == dt
 
 
 @pytest.mark.parametrize(
@@ -181,7 +190,7 @@ def test_timestamp_to_dt(timestamp: int | float, dt: str) -> None:
     ],
 )
 def test_version_parsing(version: str, major: int, minor: int, patch: int) -> None:
-    parsed_version = lib.Version.from_string(version)
+    parsed_version = Version.from_string(version)
     assert parsed_version.major == major
     assert parsed_version.minor == minor
     assert parsed_version.patch == patch
@@ -196,4 +205,4 @@ def test_version_parsing(version: str, major: int, minor: int, patch: int) -> No
     ],
 )
 def test_version_comparison(old_version: str, new_version: str) -> None:
-    assert lib.Version.from_string(old_version) < lib.Version.from_string(new_version)
+    assert Version.from_string(old_version) < Version.from_string(new_version)

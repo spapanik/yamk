@@ -2,7 +2,7 @@ import argparse
 import sys
 
 from yamk.__version__ import __version__
-from yamk.lib import SUPPORTED_FILE_EXTENSIONS
+from yamk.lib.utils import SUPPORTED_FILE_EXTENSIONS
 from yamk.make import MakeCommand
 
 sys.tracebacklimit = 0
