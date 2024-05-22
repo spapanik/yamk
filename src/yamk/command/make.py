@@ -30,11 +30,7 @@ from yamk.lib.utils import (
 
 class MakeCommand:
     def __init__(self, args: argparse.Namespace):
-        self.verbosity = args.verbose
-        if self.verbosity:
-            if self.verbosity > 1:
-                print(args)
-            sys.tracebacklimit = 9999
+        self.verbosity = args.verbosity
         self.regex_recipes: dict[str, Recipe] = {}
         self.static_recipes: dict[str, Recipe] = {}
         self.aliases: dict[str, str] = {}

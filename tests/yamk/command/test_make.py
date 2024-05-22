@@ -126,12 +126,11 @@ def test_make_dry_run(mock_print: mock.MagicMock, mock_args: mock.MagicMock) -> 
 @mock.patch("yamk.command.make.print", new_callable=mock.MagicMock)
 def test_make_verbosity(mock_print: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "phony"
-    mock_args.verbose = 4
+    mock_args.verbosity = 4
     make_command = make.MakeCommand(mock_args)
     make_command.make()
-    assert mock_print.call_count == 8
+    assert mock_print.call_count == 7
     calls = [
-        mock.call(mock_args),
         mock.call("=== all targets ==="),
         mock.call("- phony:"),
         mock.call("    timestamp: end of time"),

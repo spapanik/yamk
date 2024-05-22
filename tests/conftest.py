@@ -14,7 +14,7 @@ def mock_args() -> mock.MagicMock:
     args.directory = "."
     args.cookbook = TEST_COOKBOOK
     args.cookbook_type = None
-    args.verbose = 0
+    args.verbosity = 0
     args.bare = False
     args.time = False
     args.force = False
