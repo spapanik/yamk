@@ -152,8 +152,8 @@ classifiers = [
 ]
 
 [tool.poetry.scripts]
-yamk = "yamk.main:main"
-yam = "yamk.main:main"
+yamk = "yamk.__main__:main"
+yam = "yamk.__main__:main"
 
 [tool.poetry.dependencies]
 # python version
