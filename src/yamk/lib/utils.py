@@ -457,5 +457,5 @@ def print_reports(reports: list[CommandReport]) -> None:
         report.print(cols)
 
 
-class RemovedIn80Warning(FutureWarning):
+class RemovedIn90Warning(FutureWarning):
     pass
