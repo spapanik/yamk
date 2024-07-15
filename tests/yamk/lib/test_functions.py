@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from yamk.lib import functions
-from yamk.lib.types import Pathlike
+
+if TYPE_CHECKING:
+    from yamk.lib.types import Pathlike
 
 PATH = Path(__file__)
 BASE_DIR = PATH.parent

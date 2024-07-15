@@ -5,17 +5,20 @@ import os
 import re
 import shlex
 import warnings
-from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from pathlib import Path
 from re import Match
-from typing import Any, Literal, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 from pyutilkit.term import SGRCodes, SGRString
-from pyutilkit.timing import Timing
 
 from yamk.lib.functions import functions
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from pathlib import Path
+
+    from pyutilkit.timing import Timing
 
 VAR = re.compile(
     r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+)(?P<sep>:)?(?P<key>[a-zA-Z0-9_.]+)?}"
@@ -42,7 +45,7 @@ class Recipe:
         original_regex: str | None = None,
         *,
         specified: bool = False,
-    ):
+    ) -> None:
         self.extra = extra
         self._specified = specified
         self._raw_recipe = raw_recipe
@@ -141,7 +144,7 @@ class Recipe:
 
 
 class Parser:
-    def __init__(self, variables: dict[str, Any], base_dir: Path):
+    def __init__(self, variables: dict[str, Any], base_dir: Path) -> None:
         self.vars = variables
         self.base_dir = base_dir
 
@@ -214,7 +217,9 @@ class Node:
     required_by: set[Node]
     requires: list[Node]
 
-    def __init__(self, recipe: Recipe | None = None, *, target: str | None = None):
+    def __init__(
+        self, recipe: Recipe | None = None, *, target: str | None = None
+    ) -> None:
         self.recipe = recipe
         self.target = target if self.recipe is None else self.recipe.target
         self.requires = []
@@ -249,7 +254,7 @@ class Node:
 class DAG:
     ordered: list[Node]
 
-    def __init__(self, root: Node):
+    def __init__(self, root: Node) -> None:
         self.root = root
         self._mapping = {root.target: root}
 

@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-import argparse
 import itertools
 import pathlib
 import re
 import subprocess
 import sys
-from collections.abc import Iterator
 from time import perf_counter_ns, sleep
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from dj_settings import ConfigParser
 from pyutilkit.term import SGRCodes, SGRString
@@ -27,9 +25,13 @@ from yamk.lib.utils import (
     print_reports,
 )
 
+if TYPE_CHECKING:
+    import argparse
+    from collections.abc import Iterator
+
 
 class MakeCommand:
-    def __init__(self, args: argparse.Namespace):
+    def __init__(self, args: argparse.Namespace) -> None:
         self.verbosity = args.verbosity
         self.regex_recipes: dict[str, Recipe] = {}
         self.static_recipes: dict[str, Recipe] = {}
@@ -93,8 +95,8 @@ class MakeCommand:
         total = 0
         for i in range(self.retries + 1):
             start = perf_counter_ns()
-            result = subprocess.run(  # noqa: PLW1510
-                command, **self.subprocess_kwargs  # noqa: S603
+            result = subprocess.run(  # noqa: PLW1510, S603
+                command, **self.subprocess_kwargs
             )
             end = perf_counter_ns()
             total += end - start

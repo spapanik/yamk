@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 from functools import reduce
-from pathlib import Path
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
-from yamk.lib.types import Pathlike
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from yamk.lib.types import Pathlike
 
 
 class Function:
     name: str
 
-    def __init__(self, base_dir: Path):
+    def __init__(self, base_dir: Path) -> None:
         self.base_dir = base_dir
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:  # noqa: ARG002
