@@ -10,16 +10,12 @@ tests/data/.yamk/
 tests/data/dir/
 tests/data/requires_build
 
-# installation artifacts
+# installation/build artifacts
 .yamk/
-poetry.lock
-
-# Distribution / packaging
-pip-wheel-metadata/
 dist/
-*.egg-info/
+p-lock.toml
 
 # local dev
 /cookbook.yaml.d/
-local.*
 local/
+local.*
