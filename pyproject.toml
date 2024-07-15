@@ -13,7 +13,7 @@ dynamic = [
 authors = [
     { name = "Stephanos Kuma", email = "stephanos@kuma.ai" },
 ]
-license = { text = "LGPLv3+" }
+license = { text = "BSD-3-Clause" }
 
 readme = "docs/README.md"
 description = "Yet another make"
