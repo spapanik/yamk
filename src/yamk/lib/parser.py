@@ -8,7 +8,7 @@ sys.tracebacklimit = 0
 
 
 def parse_args() -> Namespace:
-    parser = ArgumentParser(prog="yamk", description="Yet another make command")
+    parser = ArgumentParser(description="Yet another make command")
     parser.add_argument(
         "-V",
         "--version",
@@ -26,7 +26,7 @@ def parse_args() -> Namespace:
         help="increase the level of verbosity",
     )
 
-    parser.add_argument("target", help="the target for yamk")
+    parser.add_argument("target", help="the target for yam")
 
     parser.add_argument(
         "-a",
