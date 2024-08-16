@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "phosphorus>=0.3",
+    "phosphorus>=0.4",
 ]
 build-backend = "phosphorus.construction.api"
 
