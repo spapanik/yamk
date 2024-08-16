@@ -170,7 +170,7 @@ def test_extract_options(
         (float("inf"), "end of time"),
     ],
 )
-def test_timestamp_to_dt(timestamp: int | float, dt: str) -> None:
+def test_timestamp_to_dt(timestamp: float, dt: str) -> None:
     assert human_readable_timestamp(timestamp) == dt
 
 

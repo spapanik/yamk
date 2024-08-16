@@ -231,7 +231,7 @@ class Node:
     def __repr__(self) -> str:
         return f"Node <{self}>"
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return NotImplemented
         return self.target == other.target
