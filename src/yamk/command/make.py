@@ -5,12 +5,12 @@ import pathlib
 import re
 import subprocess
 import sys
-from time import perf_counter_ns, sleep
+from time import sleep
 from typing import TYPE_CHECKING, Any, cast
 
 from dj_settings import ConfigParser
 from pyutilkit.term import SGRCodes, SGRString
-from pyutilkit.timing import Timing
+from pyutilkit.timing import Stopwatch
 
 from yamk.__version__ import __version__
 from yamk.lib.utils import (
@@ -92,24 +92,15 @@ class MakeCommand:
             return status
 
         a, b = 1, 1
-        total = 0
+        stopwatch = Stopwatch()
         for i in range(self.retries + 1):
-            start = perf_counter_ns()
-            result = subprocess.run(  # noqa: PLW1510, S603
-                command, **self.subprocess_kwargs
-            )
-            end = perf_counter_ns()
-            total += end - start
+            with stopwatch:
+                result = subprocess.run(  # noqa: PLW1510, S603
+                    command, **self.subprocess_kwargs
+                )
             status = result.returncode
             if status == 0:
-                report = CommandReport(
-                    command=command,
-                    timing=Timing(nanoseconds=total),
-                    retries=i,
-                    success=True,
-                )
-                self.reports.append(report)
-                return status
+                break
 
             if i != self.retries:
                 a, b = b, a + b
@@ -117,7 +108,7 @@ class MakeCommand:
                 sleep(a)
 
         report = CommandReport(
-            command=command, timing=Timing(nanoseconds=total), retries=i, success=False
+            command=command, timing=stopwatch.elapsed, retries=i, success=False
         )
         self.reports.append(report)
         return status
