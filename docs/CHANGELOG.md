@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+### Added
+
+-   Added a way to configure the expected existence command output
+
 ## [8.0.0] - 2024-07-15
 
 ### Changed

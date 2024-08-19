@@ -29,6 +29,8 @@ if TYPE_CHECKING:
     import argparse
     from collections.abc import Iterator
 
+    from yamk.lib.types import ExistenceCheck
+
 
 class MakeCommand:
     def __init__(self, args: argparse.Namespace) -> None:
@@ -112,6 +114,20 @@ class MakeCommand:
         )
         self.reports.append(report)
         return status
+
+    def _check_command(self, check: ExistenceCheck) -> bool:
+        if self.dry_run:
+            return True
+
+        command = check["command"]
+        result = subprocess.run(  # noqa: PLW1510, S603
+            command, capture_output=True, text=True, **self.subprocess_kwargs
+        )
+        if check["stdout"] is not None and result.stdout != check["stdout"]:
+            return False
+        if check["stderr"] is not None and result.stderr != check["stdout"]:
+            return False
+        return result.returncode == check["returncode"]
 
     def _parse_recipes(self, parsed_cookbook: dict[str, dict[str, Any]]) -> None:
         for target, raw_recipe in parsed_cookbook.items():
@@ -253,8 +269,8 @@ class MakeCommand:
     def _path_exists(self, node: Node) -> bool:
         recipe = node.recipe
         path = self._path(node)
-        if recipe is not None and recipe.phony and recipe.existence_command:
-            return not self._run_command(recipe.existence_command)
+        if recipe is not None and recipe.phony and recipe.existence_check:
+            return self._check_command(recipe.existence_check)
 
         return path.exists()
 

@@ -105,7 +105,7 @@ def test_c3_sort_detects_cycles() -> None:
         dag.c3_sort()
 
 
-@pytest.mark.parametrize("obj", [1, ("string in a tuple",), {"nested integer": 1}])
+@pytest.mark.parametrize("obj", [("string in a tuple",), None])
 def test_parser_evaluation_raises(obj: Any) -> None:
     parser = Parser({}, PATH)
     with pytest.raises(TypeError):

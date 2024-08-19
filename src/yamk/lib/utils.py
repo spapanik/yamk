@@ -58,7 +58,9 @@ class Recipe:
         self.allow_failures = raw_recipe.get("allow_failures", False)
         self.exists_only = raw_recipe.get("exists_only", False)
         self.keep_ts = raw_recipe.get("keep_ts", False)
-        self.existence_command = raw_recipe.get("existence_command", "")
+        self.existence_check = raw_recipe.get("existence_check", {})
+        if existence_command := raw_recipe.get("existence_command"):
+            self.existence_check["command"] = existence_command
         self.recursive = raw_recipe.get("recursive", False)
         self.update = raw_recipe.get("update", False)
         temp_vars = {
@@ -126,7 +128,11 @@ class Recipe:
     def _re_evaluate(self) -> None:
         self.requires = self._evaluate(self.requires)
         self.commands = self._evaluate(self.commands)
-        self.existence_command = self._evaluate(self.existence_command)
+        self.existence_check = self._evaluate(self.existence_check)
+        if self.existence_check:
+            self.existence_check.setdefault("stdout", None)
+            self.existence_check.setdefault("stderr", None)
+            self.existence_check.setdefault("returncode", 0)
 
     def _alias(self, alias: str | Literal[False], variables: dict[str, Any]) -> Any:
         if alias is False:
@@ -189,7 +195,7 @@ class Parser:
                 return self.vars[match["variable"]]
         return re.sub(VAR, self.repl, string)
 
-    def evaluate(self, obj: str | list[Any] | dict[str, Any]) -> Any:
+    def evaluate(self, obj: Any) -> Any:
         if isinstance(obj, str):
             return self.substitute(obj)
         if isinstance(obj, list):
@@ -205,7 +211,9 @@ class Parser:
             return {
                 self.evaluate(key): self.evaluate(value) for key, value in obj.items()
             }
-        msg = f"{obj.__class__.__name__} is not supported for evaluation"  # type: ignore[unreachable]
+        if isinstance(obj, (int, float, bool)):
+            return obj
+        msg = f"{obj.__class__.__name__} is not supported for evaluation"
         raise TypeError(msg)
 
 

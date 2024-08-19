@@ -312,6 +312,15 @@ commands = [
     "ls",
 ]
 
+
+[existence_command]
+phony = true
+exists_only = true
+existence_check = { command = "sub", stdout = "yoink" }
+commands = [
+    "ls",
+]
+
 [requires_build]
 requires = [
     "keep_ts",

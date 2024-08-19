@@ -581,6 +581,27 @@ def test_make_with_exists_only_target_existing(
 @mock.patch(
     "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
 )
+def test_make_with_existence_command(
+    runner: mock.MagicMock, mock_args: mock.MagicMock
+) -> None:
+    mock_args.target = "existence_command"
+    make_command = make.MakeCommand(mock_args)
+    make_command.make()
+    assert runner.call_count == 3
+    assert runner.call_args_list == [
+        mock.call(
+            "sub", capture_output=True, text=True, **make_command.subprocess_kwargs
+        ),
+        mock.call(
+            "sub", capture_output=True, text=True, **make_command.subprocess_kwargs
+        ),
+        mock.call("ls", **make_command.subprocess_kwargs),
+    ]
+
+
+@mock.patch(
+    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
+)
 def test_make_with_exists_only_target_missing(
     runner: mock.MagicMock, mock_args: mock.MagicMock
 ) -> None:
