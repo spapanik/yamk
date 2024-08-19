@@ -47,7 +47,7 @@ yam = "yamk.__main__:main"
 [tool.phosphorus.dev-dependencies]
 dev = [
     "ipdb~=0.13",
-    "ipython~=8.25",
+    "ipython~=8.18",
 ]
 lint = [
     "black~=24.8",
