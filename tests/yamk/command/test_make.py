@@ -587,11 +587,8 @@ def test_make_with_existence_command(
     mock_args.target = "existence_command"
     make_command = make.MakeCommand(mock_args)
     make_command.make()
-    assert runner.call_count == 3
+    assert runner.call_count == 2
     assert runner.call_args_list == [
-        mock.call(
-            "sub", capture_output=True, text=True, **make_command.subprocess_kwargs
-        ),
         mock.call(
             "sub", capture_output=True, text=True, **make_command.subprocess_kwargs
         ),

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed a bug with some commands being calculated twice
+
 ### Added
 
 -   Added a way to configure the expected existence command output

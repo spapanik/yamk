@@ -249,8 +249,7 @@ class MakeCommand:
 
     def _mark_unchanged(self, dag: DAG) -> None:
         for node in dag:
-            node.timestamp = self._infer_timestamp(node)
-            node.should_build = self._should_build(node)
+            node.should_build, node.timestamp = self._should_build(node)
 
     def _phony_path(self, target: str) -> pathlib.Path:
         encoded_target = target.replace(".", ".46").replace("/", ".47")
@@ -270,22 +269,26 @@ class MakeCommand:
         recipe = node.recipe
         path = self._path(node)
         if recipe is not None and recipe.phony and recipe.existence_check:
+            if not recipe.exists_only:
+                msg = "Existence commands need exists_only"
+                raise ValueError(msg)
             return self._check_command(recipe.existence_check)
 
         return path.exists()
 
-    def _should_build(self, node: Node) -> bool:
+    def _should_build(self, node: Node) -> tuple[bool, float]:
         recipe = node.recipe
+        path = self._path(node)
         if recipe is None:
-            return False
+            return False, path.stat().st_mtime
         if self.force_make:
-            return True
+            return True, float("inf")
         if recipe.phony and recipe.target in self.up_to_date:
-            return False
+            return False, float("inf")
         if not self._path_exists(node):
-            return True
+            return True, float("inf")
         if recipe.exists_only:
-            return False
+            return False, 0
 
         if not node.requires:
             msg = (
@@ -294,41 +297,17 @@ class MakeCommand:
             )
             raise ValueError(msg)
 
+        if not recipe.phony and recipe.recursive:
+            mtime = max(
+                p.stat().st_mtime for p in itertools.chain([path], path.rglob("*"))
+            )
+        else:
+            mtime = path.stat().st_mtime
         if any(child.should_build for child in node.requires):
-            return True
+            return True, mtime
 
-        ts = node.timestamp
         req_ts = max(child.timestamp for child in node.requires)
-        return req_ts > ts
-
-    def _infer_timestamp(self, node: Node) -> float:
-        recipe = node.recipe
-        path = self._path(node)
-        if recipe is None:
-            return path.stat().st_mtime
-
-        if recipe.phony and recipe.target in self.up_to_date:
-            return float("inf")
-
-        if not self._path_exists(node):
-            return float("inf")
-
-        if not recipe.phony:
-            if recipe.recursive:
-                descendants = itertools.chain([path], path.rglob("*"))
-                return max(p.stat().st_mtime for p in descendants)
-            if recipe.exists_only:
-                return 0
-            return path.stat().st_mtime
-
-        if recipe.exists_only:
-            return 0
-
-        if not recipe.keep_ts:
-            msg = "Existence commands needs either exists_only or keep_ts"
-            raise ValueError(msg)
-
-        return path.stat().st_mtime
+        return req_ts > mtime, mtime
 
     def _print_reasons(self, recipe: Recipe, options: set[str]) -> Iterator[bool]:
         yield "echo" in options
