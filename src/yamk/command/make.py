@@ -187,7 +187,7 @@ class MakeCommand:
 
         dag.sort()
         self._mark_unchanged(dag)
-        if self.verbosity > 3:
+        if self.verbosity > 3:  # noqa: PLR2004
             print("=== all targets ===")
             for node in dag:
                 print(f"- {node.target}:")
@@ -312,7 +312,7 @@ class MakeCommand:
     def _print_reasons(self, recipe: Recipe, options: set[str]) -> Iterator[bool]:
         yield "echo" in options
         yield recipe.echo
-        yield self.verbosity > 2
+        yield self.verbosity > 2  # noqa: PLR2004
         yield self.echo_override
 
     def _print_command(self, command: str) -> None:
