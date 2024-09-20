@@ -287,8 +287,16 @@ class MakeCommand:
             return False, float("inf")
         if not self._path_exists(node):
             return True, float("inf")
+
+        if not recipe.phony and recipe.recursive:
+            mtime = max(
+                p.stat().st_mtime for p in itertools.chain([path], path.rglob("*"))
+            )
+        else:
+            mtime = path.stat().st_mtime
+
         if recipe.exists_only:
-            return False, 0
+            return False, mtime
 
         if not node.requires:
             msg = (
@@ -297,12 +305,6 @@ class MakeCommand:
             )
             raise ValueError(msg)
 
-        if not recipe.phony and recipe.recursive:
-            mtime = max(
-                p.stat().st_mtime for p in itertools.chain([path], path.rglob("*"))
-            )
-        else:
-            mtime = path.stat().st_mtime
         if any(child.should_build for child in node.requires):
             return True, mtime
 

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fixed timestamp issue of exists_only targets
+
 ## [8.1.0] - 2024-07-15
 
 ### Fixed
