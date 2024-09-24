@@ -25,6 +25,8 @@ keywords = [
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: BSD License",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Build Tools",
 ]
