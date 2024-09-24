@@ -33,7 +33,7 @@ classifiers = [
 
 requires-python = ">=3.9"
 dependencies = [
-    "dj_settings~=5.0",
+    "dj_settings~=6.0",
     "pyutilkit~=0.5",
 ]
 
