@@ -189,16 +189,20 @@ forced-separate = [
 split-on-trailing-comma = false
 
 [tool.pytest.ini_options]
-addopts = "-vv"
+addopts = "-ra -v --cov"
 testpaths = "tests"
 
 [tool.coverage.run]
+branch = true
 source = [
     "src/",
 ]
 data_file = ".cov_cache/coverage.dat"
 
 [tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+]
 show_missing = true
 skip_covered = true
 skip_empty = true
