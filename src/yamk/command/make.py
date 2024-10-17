@@ -84,7 +84,7 @@ class MakeCommand:
     def make(self) -> None:
         dag = self._preprocess_target()
         for node in filter(lambda x: x.should_build, dag):
-            self._make_target(cast(Recipe, node.recipe))
+            self._make_target(node)
         if self.print_timing_report:
             print_reports(self.reports)
 
@@ -197,7 +197,24 @@ class MakeCommand:
                 print(f"    required_by: {node.required_by}")
         return dag
 
-    def _make_target(self, recipe: Recipe) -> None:
+    def _update_ts(self, node: Node) -> None:
+        path = self._path(node)
+        recipe = node.recipe
+        if recipe is None:
+            msg = f"No recipe to build {node.target}"
+            raise ValueError(msg)
+        if recipe.phony and recipe.keep_ts:
+            self.phony_dir.mkdir(exist_ok=True)
+            path.touch()
+        if not recipe.phony and recipe.update:
+            pathlib.Path(recipe.target).touch()
+
+    def _make_target(self, node: Node) -> None:
+        recipe = node.recipe
+        if recipe is None:
+            msg = f"No recipe to build {node.target}"
+            raise ValueError(msg)
+
         if self.verbosity > 1:
             print(f"=== target: {recipe.target} ===")
 
@@ -220,12 +237,7 @@ class MakeCommand:
                 sys.exit(return_code)
             if i != n - 1:
                 print()
-        if recipe.phony and recipe.keep_ts:
-            path = self._phony_path(recipe.target)
-            self.phony_dir.mkdir(exist_ok=True)
-            path.touch()
-        if recipe.update and not recipe.phony:
-            pathlib.Path(recipe.target).touch()
+        self._update_ts(node)
 
     def _extract_recipe(self, target: str, *, use_extra: bool = False) -> Recipe | None:
         if target in self.aliases:
@@ -268,7 +280,10 @@ class MakeCommand:
     def _path_exists(self, node: Node) -> bool:
         recipe = node.recipe
         path = self._path(node)
-        if recipe is not None and recipe.phony and recipe.existence_check:
+        if recipe is not None and recipe.existence_check:
+            if not recipe.phony:
+                msg = "Existence commands need to be phony"
+                raise ValueError(msg)
             if not recipe.exists_only:
                 msg = "Existence commands need exists_only"
                 raise ValueError(msg)
@@ -287,6 +302,9 @@ class MakeCommand:
             return False, float("inf")
         if not self._path_exists(node):
             return True, float("inf")
+        if recipe.existence_check:
+            self._update_ts(node)
+            return False, float("inf")
 
         if not recipe.phony and recipe.recursive:
             mtime = max(
