@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+## [8.1.2] - 2024-10-18
+
 ### Fixed
 
 -   Fixed issue of missing timestamp for exists_only targets
@@ -474,7 +476,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
-[Unreleased]: https://github.com/spapanik/yamk/compare/v8.1.1...main
+[Unreleased]: https://github.com/spapanik/yamk/compare/v8.1.2...main
+[8.1.2]: https://github.com/spapanik/yamk/compare/v8.1.1...v8.1.2
 [8.1.1]: https://github.com/spapanik/yamk/compare/v8.1.0...v8.1.1
 [8.1.0]: https://github.com/spapanik/yamk/compare/v8.0.0...v8.1.0
 [8.0.0]: https://github.com/spapanik/yamk/compare/v7.0.0...v8.0.0
