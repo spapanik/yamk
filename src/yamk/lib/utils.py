@@ -229,7 +229,7 @@ class Node:
         self, recipe: Recipe | None = None, *, target: str | None = None
     ) -> None:
         self.recipe = recipe
-        self.target = target if self.recipe is None else self.recipe.target
+        self.target = cast(str, target if self.recipe is None else self.recipe.target)
         self.requires = []
         self.required_by = set()
 
