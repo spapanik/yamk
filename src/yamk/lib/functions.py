@@ -15,7 +15,7 @@ class Function:
     def __init__(self, base_dir: Path) -> None:
         self.base_dir = base_dir
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:  # noqa: ARG002
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         msg = f"{self.__class__.__name__} must be callable"
         raise NotImplementedError(msg)
 
