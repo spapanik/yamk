@@ -40,6 +40,13 @@ jobs:
           uv venv .venv
           echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
           echo "$PWD/.venv/bin" >> $GITHUB_PATH
+      - name: Create and activate a virtual environment (${{ matrix.os }})
+        shell: pwsh
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          uv venv .venv
+          "VIRTUAL_ENV=.venv" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "$PWD/.venv/Scripts" | Out-File -FilePath $env:GITHUB_PATH -Append
       - name: Use cache
         uses: actions/cache@v4
         with:
