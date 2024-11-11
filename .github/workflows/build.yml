@@ -1,4 +1,4 @@
-name: tests
+name: build
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  unittest-python:
+  build-python:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -47,9 +47,6 @@ jobs:
           uv venv .venv
           "VIRTUAL_ENV=.venv" | Out-File -FilePath $env:GITHUB_ENV -Append
           "$PWD/.venv/Scripts" | Out-File -FilePath $env:GITHUB_PATH -Append
-      - name: Install dependencies
+      - name: Build the project
         run: |
-          yam install -g main -g test
-      - name: Test the project
-        run: |
-          yam -e tests
+          yam -e build

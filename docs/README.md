@@ -1,5 +1,7 @@
 # yam: yet another make
 
+[![build][build_badge]][build_url]
+[![lint][lint_badge]][lint_url]
 [![tests][test_badge]][test_url]
 [![license][licence_badge]][licence_url]
 [![pypi][pypi_badge]][pypi_url]
@@ -45,6 +47,8 @@ the same extension inside a directory named `<cookbook_filename>.d/`.
 -   [Documentation]
 -   [Changelog]
 
+[build_badge]: https://github.com/spapanik/yamk/actions/workflows/build.yml/badge.svg
+[build_url]: https://github.com/spapanik/yamk/actions/workflows/build.yml
 [test_badge]: https://github.com/spapanik/yamk/actions/workflows/tests.yml/badge.svg
 [test_url]: https://github.com/spapanik/yamk/actions/workflows/tests.yml
 [licence_badge]: https://img.shields.io/pypi/l/yamk
