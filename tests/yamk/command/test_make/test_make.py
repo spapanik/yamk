@@ -206,25 +206,6 @@ def test_make_allowed_failure_in_command(
     assert runner.call_args_list == calls
 
 
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_make_extra_vars(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
-    os.environ["prefix"] = ""  # noqa: SIM112
-    os.environ["dir"] = "/home/user/.config/generic.d"  # noqa: SIM112
-    mock_args.target = "variables"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 1
-    calls = [
-        mock.call(
-            "echo /home/user/.config/generic.d/service.d/service.conf",
-            **make_command.subprocess_kwargs,
-        )
-    ]
-    assert runner.call_args_list == calls
-
-
 @mock.patch("yamk.command.make.print", new_callable=mock.MagicMock)
 @mock.patch(
     "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
@@ -285,23 +266,6 @@ def test_make_alias(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
 @mock.patch(
     "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
 )
-def test_make_with_variable_in_name(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "call"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 2
-    calls = [
-        mock.call("ls", **make_command.subprocess_kwargs),
-        mock.call("echo 42", **make_command.subprocess_kwargs),
-    ]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
 def test_regex_file_target(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
     mock_args.target = "file_1024.txt"
     make_command = make.MakeCommand(mock_args)
@@ -325,65 +289,6 @@ def test_regex_strength(runner: mock.MagicMock, mock_args: mock.MagicMock) -> No
             **make_command.subprocess_kwargs,
         )
     ]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_variable_strength_argument_vs_env(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    os.environ["VARIABLE"] = "env"
-    mock_args.target = "variable_strength"
-    mock_args.variables = ["VARIABLE=argument"]
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 1
-    calls = [mock.call("echo argument", **make_command.subprocess_kwargs)]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_variable_strength_env_vs_local(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    os.environ["VARIABLE"] = "env"
-    mock_args.target = "variable_strength"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 1
-    calls = [mock.call("echo env", **make_command.subprocess_kwargs)]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_variable_strength_local_vs_regex(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "variable_strength_1024"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 1
-    calls = [mock.call("echo 42", **make_command.subprocess_kwargs)]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_variable_strength_regex_vs_global(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "variable_strength_1024_v2"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 1
-    calls = [mock.call("echo 1024", **make_command.subprocess_kwargs)]
     assert runner.call_args_list == calls
 
 
@@ -417,23 +322,6 @@ def test_make_with_requirements(
     calls = [
         mock.call("ls", **make_command.subprocess_kwargs),
         mock.call("true", **make_command.subprocess_kwargs),
-    ]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_make_with_implicit_variables(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "implicit_vars"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 2
-    calls = [
-        mock.call("echo implicit_vars", **make_command.subprocess_kwargs),
-        mock.call("echo / phony", **make_command.subprocess_kwargs),
     ]
     assert runner.call_args_list == calls
 

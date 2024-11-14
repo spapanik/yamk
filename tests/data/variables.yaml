@@ -1,0 +1,56 @@
+$globals:
+  version: "8.1"
+  vars:
+    PREFIX: /home/user/.config
+    CONF_DIR: service.d
+    "[strong]FILENAME": service.conf
+    recipe: call
+    major: 42
+
+no_commands:
+  phony: true
+
+implicit_vars:
+  phony: true
+  requires:
+    - no_commands
+  commands:
+    - echo ${.target}
+    - echo ${.requirements}
+    - echo ${.extra}
+
+variables:
+  phony: true
+  vars:
+    PREFIX: /etc
+    "[weak]CONF_DIR": server.d
+    FILENAME: server.conf
+  commands:
+    - echo ${PREFIX}/${CONF_DIR}/${FILENAME}
+
+single_variable:
+  phony: true
+  vars:
+    VARIABLE: local
+  commands:
+    - echo ${VARIABLE}
+
+'regex_variable_v(?P<major>\d+)':
+  regex: true
+  phony: true
+  vars:
+    major: "42"
+  commands:
+    - echo v${major}
+
+'regex_variable_v(?P<major>\d+)\.(?P<minor>\d+)':
+  regex: true
+  phony: true
+  commands:
+    - echo v${major}.${minor}
+
+${recipe}:
+  phony: true
+  commands:
+    - echo 'called with variable'
+    - echo ${.target}

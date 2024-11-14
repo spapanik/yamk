@@ -2,11 +2,6 @@
 version = "8.1"
 
 ["$globals".vars]
-"[weak]prefix" = "/home/user/.config/"
-dir = "/etc"
-conf_dir = "service.d"
-filename = "generic.conf"
-name = "call"
 sub = "initial"
 list = [
     "1",
@@ -14,7 +9,6 @@ list = [
 ]
 dict = { "x" = "1", "y" = "2", "z" = "${sub}" }
 value = "1"
-VARIABLE = "global"
 echo = "echo"
 
 [phony]
@@ -32,16 +26,6 @@ commands = [
     "ls",
     "echo 42",
 ]
-
-[variables]
-phony = true
-commands = [
-    "echo ${prefix}${dir}/${conf_dir}/${filename}",
-]
-
-[variables.vars]
-"[weak]conf_dir" = "/path/to/local/conf"
-filename = "service.conf"
 
 [failure]
 phony = true
@@ -118,9 +102,6 @@ commands = [
 [alias]
 alias = "two_commands"
 
-["${name}"]
-alias = "two_commands"
-
 ['regex[-_](?P<number>[^.]\d+)']
 phony = true
 regex = true
@@ -134,29 +115,6 @@ requires = [
     "phony_requirement",
     "phony_requirement",
 ]
-
-[variable_strength]
-phony = true
-vars = { VARIABLE = "local" }
-commands = [
-    "echo ${VARIABLE}",
-]
-
-['variable_strength_(?P<number_>[^.]\d+)']
-regex = true
-phony = true
-vars = { number = "42" }
-commands = [
-    "echo ${number}",
-]
-
-['variable_strength_(?P<value>[^.]\d+)_v2']
-regex = true
-phony = true
-commands = [
-    "echo ${value}",
-]
-
 
 [multiple_regex]
 phony = true
@@ -198,17 +156,6 @@ requires = [
 ]
 commands = [
     "true",
-]
-
-[implicit_vars]
-phony = true
-requires = [
-    "/",
-    "phony",
-]
-commands = [
-    "echo ${.target}",
-    "echo ${.requirements}",
 ]
 
 [keep_ts]
