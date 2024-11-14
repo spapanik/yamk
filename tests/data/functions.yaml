@@ -1,0 +1,67 @@
+$globals:
+  version: "8.1"
+
+sort_variable:
+  phony: true
+  vars:
+    all_files: $((glob ./functions.*))
+    sorted_files: $((sort '${all_files}'))
+  commands:
+    - echo ${sorted_files}
+
+sort_function:
+  phony: true
+  vars:
+    sorted_files: $((sort '$((glob ./functions.*))'))
+  commands:
+    - echo ${sorted_files}
+
+ternary_if_true:
+  phony: true
+  vars:
+    make_exists: $((exists ./functions.yaml))
+    number: $((ternary_if '${make_exists}' 42 1024))
+  commands:
+    - echo ${number}
+
+ternary_if_false:
+  phony: true
+  vars:
+    make_exists: $((exists ./functions.ini))
+    number: $((ternary_if '${make_exists}' 42 1024))
+  commands:
+    - echo ${number}
+
+ternary_if_function:
+  phony: true
+  vars:
+    number: $((ternary_if '$((exists ./functions.yaml))' 42 1024))
+  commands:
+    - echo ${number}
+
+pwd:
+  phony: true
+  vars:
+    pwd: $((pwd))
+  commands:
+    - echo ${pwd}
+
+substitute:
+  phony: true
+  vars:
+    text: $((sub old new 'the old version'))
+  commands:
+    - echo ${text}
+
+merge:
+  phony: true
+  vars:
+    first:
+      - one
+      - two
+    second:
+      - three
+    third: four
+    all: $((merge ${first} ${second} ${third}))
+  commands:
+    - echo ${all}
