@@ -202,64 +202,6 @@ commands = [
     "ls",
 ]
 
-[sort_variable]
-phony = true
-commands = [
-    "echo ${sorted_files}",
-]
-
-[sort_variable.vars]
-toml_files = "$((glob ./*.toml))"
-sorted_files = "$((sort '${toml_files}'))"
-
-[sort_function]
-phony = true
-vars = { sorted_files = "$((sort '$((glob ./*.toml))'))" }
-commands = [
-    "echo ${sorted_files}",
-]
-
-[ternary_if_true]
-phony = true
-commands = [
-    "echo ${number}",
-]
-
-[ternary_if_true.vars]
-make_exists = "$((exists ./mk.toml))"
-number = "$((ternary_if '${make_exists}' 42 1024))"
-
-[ternary_if_false]
-phony = true
-commands = [
-    "echo ${number}",
-]
-
-[ternary_if_false.vars]
-make_exists = "$((exists ./mk.yaml))"
-number = "$((ternary_if '${make_exists}' 42 1024))"
-
-[ternary_if_function]
-phony = true
-vars = { number = "$((ternary_if '$((exists ./mk.toml))' 42 1024))" }
-commands = [
-    "echo ${number}",
-]
-
-[pwd]
-phony = true
-vars = { pwd = "$((pwd))" }
-commands = [
-    "echo ${pwd}",
-]
-
-[substitute]
-phony = true
-vars = { text = "$((sub old new 'the old version'))" }
-commands = [
-    "echo ${text}",
-]
-
 [inner_one]
 phony = true
 commands = [
@@ -283,23 +225,6 @@ requirements = [
     "inner_one",
     "inner_two",
 ]
-
-[merge]
-phony = true
-commands = [
-    "echo ${all}",
-]
-
-[merge.vars]
-first = [
-    "one",
-    "two",
-]
-second = [
-    "three",
-]
-third = "four"
-all = "$((merge ${first} ${second} ${third}))"
 
 [".d_override"]
 phony = true
