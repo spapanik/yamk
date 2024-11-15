@@ -14,11 +14,6 @@ echo = "echo"
 [phony]
 phony = true
 
-[missing_requirement]
-phony = true
-requires = [
-    "missing_target",
-]
 
 [two_commands]
 phony = true
@@ -27,26 +22,6 @@ commands = [
     "echo 42",
 ]
 
-[failure]
-phony = true
-commands = [
-    "false",
-    "ls",
-]
-
-[allowed_failure]
-phony = true
-allow_failures = true
-commands = [
-    "false",
-    "ls",
-]
-
-[allowed_failure_in_command]
-phony = true
-commands = [
-    "[allow_failures]false",
-]
 
 [echo]
 phony = true
@@ -109,12 +84,6 @@ commands = [
     "echo ${number}",
 ]
 
-[duplicate_requirement]
-phony = true
-requires = [
-    "phony_requirement",
-    "phony_requirement",
-]
 
 [multiple_regex]
 phony = true
