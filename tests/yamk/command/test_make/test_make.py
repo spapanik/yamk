@@ -1,8 +1,6 @@
 import os
 from unittest import mock
 
-import pytest
-
 from yamk.command import make
 
 
@@ -85,20 +83,6 @@ def test_requires_from_global(
     assert runner.call_args_list == calls
 
 
-def test_make_raises_on_missing_target(mock_args: mock.MagicMock) -> None:
-    mock_args.target = "missing_target"
-    make_command = make.MakeCommand(mock_args)
-    with pytest.raises(ValueError):
-        make_command.make()
-
-
-def test_make_raises_on_missing_requirement(mock_args: mock.MagicMock) -> None:
-    mock_args.target = "missing_requirement"
-    make_command = make.MakeCommand(mock_args)
-    with pytest.raises(ValueError):
-        make_command.make()
-
-
 @mock.patch("yamk.command.make.subprocess.run")
 def test_make_builds_with_no_commands(
     runner: mock.MagicMock, mock_args: mock.MagicMock
@@ -156,53 +140,6 @@ def test_make_builds_with_two_commands(
         mock.call("ls", **make_command.subprocess_kwargs),
         mock.call("echo 42", **make_command.subprocess_kwargs),
     ]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=42)
-)
-def test_make_builds_wrong_command_breaks(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "failure"
-    make_command = make.MakeCommand(mock_args)
-    with pytest.raises(SystemExit) as exc_info:
-        make_command.make()
-    assert exc_info.value.code == 42
-    assert runner.call_count == 1
-    calls = [mock.call("false", **make_command.subprocess_kwargs)]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=42)
-)
-def test_make_allowed_failure(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "allowed_failure"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 2
-    calls = [
-        mock.call("false", **make_command.subprocess_kwargs),
-        mock.call("ls", **make_command.subprocess_kwargs),
-    ]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=42)
-)
-def test_make_allowed_failure_in_command(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "allowed_failure_in_command"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 1
-    calls = [mock.call("false", **make_command.subprocess_kwargs)]
     assert runner.call_args_list == calls
 
 
@@ -322,23 +259,6 @@ def test_make_with_requirements(
     calls = [
         mock.call("ls", **make_command.subprocess_kwargs),
         mock.call("true", **make_command.subprocess_kwargs),
-    ]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_duplicate_requirements_warning(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "duplicate_requirement"
-    make_command = make.MakeCommand(mock_args)
-    with pytest.warns(RuntimeWarning):
-        make_command.make()
-    assert runner.call_count == 1
-    calls = [
-        mock.call("ls", **make_command.subprocess_kwargs),
     ]
     assert runner.call_args_list == calls
 

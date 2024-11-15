@@ -27,6 +27,10 @@ def runner_exit_success() -> mock.MagicMock:
     return mock.MagicMock(return_value=mock.MagicMock(returncode=0))
 
 
+def runner_exit_failure() -> mock.MagicMock:
+    return mock.MagicMock(return_value=mock.MagicMock(returncode=42))
+
+
 def get_make_command(**kwargs: Any) -> MakeCommand:
     if cookbook_name := kwargs.pop("cookbook_name"):
         kwargs["cookbook"] = TEST_DATA_ROOT.joinpath(cookbook_name)
