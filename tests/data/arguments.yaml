@@ -1,0 +1,18 @@
+$globals:
+  version: "8.1"
+  vars:
+    global: echo
+
+no_command:
+  phony: true
+
+echo:
+  phony: true
+  echo: true
+  commands:
+    - "echo '${.target}'"
+
+echo_in_command:
+  phony: true
+  commands:
+    - "[echo]echo '${.target}'"

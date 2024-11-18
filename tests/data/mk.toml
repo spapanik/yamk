@@ -12,20 +12,6 @@ commands = [
     "echo 42",
 ]
 
-
-[echo]
-phony = true
-echo = true
-commands = [
-    "ls -l",
-]
-
-[echo_in_command]
-phony = true
-commands = [
-    "[echo]ls",
-]
-
 [alias]
 alias = "two_commands"
 
