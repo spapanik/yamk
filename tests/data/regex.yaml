@@ -1,0 +1,19 @@
+$globals:
+  version: "8.1"
+
+echo_42:
+  phony: true
+  commands:
+    - echo 'The answer to life, the universe, and everything'
+
+'echo[-_](?P<number>[^.]\d+)':
+  phony: true
+  regex: true
+  commands:
+    - echo ${number}
+
+multiple_regex:
+  phony: true
+  requires:
+    - echo_42
+    - echo_1024

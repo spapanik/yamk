@@ -49,52 +49,6 @@ def test_make_alias(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
 @mock.patch(
     "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
 )
-def test_regex_file_target(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
-    mock_args.target = "file_1024.txt"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 1
-    calls = [mock.call("ls file_1024.txt", **make_command.subprocess_kwargs)]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_regex_strength(runner: mock.MagicMock, mock_args: mock.MagicMock) -> None:
-    mock_args.target = "echo_42"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 1
-    calls = [
-        mock.call(
-            "echo 'The answer to life, the universe, and everything'",
-            **make_command.subprocess_kwargs,
-        )
-    ]
-    assert runner.call_args_list == calls
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
-def test_multiple_regex_targets(
-    runner: mock.MagicMock, mock_args: mock.MagicMock
-) -> None:
-    mock_args.target = "multiple_regex"
-    make_command = make.MakeCommand(mock_args)
-    make_command.make()
-    assert runner.call_count == 2
-    calls = [
-        mock.call("ls file_42.txt", **make_command.subprocess_kwargs),
-        mock.call("ls file_1024.txt", **make_command.subprocess_kwargs),
-    ]
-    assert sorted(runner.call_args_list) == sorted(calls)
-
-
-@mock.patch(
-    "yamk.command.make.subprocess.run", return_value=mock.MagicMock(returncode=0)
-)
 def test_make_with_requirements(
     runner: mock.MagicMock, mock_args: mock.MagicMock
 ) -> None:
