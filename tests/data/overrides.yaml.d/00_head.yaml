@@ -1,0 +1,14 @@
+$globals:
+  vars:
+    sub: final
+    list:
+      - "3"
+      - "4"
+    dict:
+      x: a
+    value: "2"
+
+.d_override:
+  phony: true
+  commands:
+    - echo head

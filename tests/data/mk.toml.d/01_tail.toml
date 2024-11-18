@@ -1,8 +1,0 @@
-["$globals".vars]
-value = "3"
-
-[".d_override"]
-phony = true
-commands = [
-    "echo tail",
-]
