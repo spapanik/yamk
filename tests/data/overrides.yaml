@@ -1,0 +1,24 @@
+$globals:
+  version: "8.1"
+  vars:
+    sub: "initial"
+    list:
+      - "1"
+      - "2"
+    dict:
+      "x": "1"
+      "y": "2"
+      "z": "${sub}"
+    value: "1"
+
+.d_override:
+  phony: true
+  commands:
+    - echo base
+
+.d_override_variables:
+  phony: true
+  commands:
+    - echo ${list}
+    - echo ${dict}
+    - echo ${value}
