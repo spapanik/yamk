@@ -1,0 +1,40 @@
+$globals:
+  version: "8.1"
+  vars:
+    global: echo
+
+requirement_ext:
+  phony: true
+  requires:
+    - ${EXT_VARIABLE}
+  commands:
+    - echo '${.requirements}'
+
+"requirement_(?P<name>[a-z]+)":
+  regex: true
+  phony: true
+  requires:
+    - ${name}
+  commands:
+    - echo '${.requirements}'
+
+requirement_local:
+  phony: true
+  requires:
+    - ${local_variable}
+  vars:
+    local_variable: echo
+  commands:
+    - echo '${.requirements}'
+
+requirement:
+  phony: true
+  requires:
+    - ${global}
+  commands:
+    - echo '${.requirements}'
+
+echo:
+  phony: true
+  commands:
+    - echo 'target=${.target}'
