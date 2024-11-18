@@ -81,7 +81,6 @@ def test_name(path: Pathlike | list[Pathlike], name: str | list[str]) -> None:
 @pytest.mark.parametrize(
     ("path", "new_parent", "new_path"),
     [
-        ("make.toml", "/etc", "/etc/make.toml"),
         (
             "path/random_name.extension",
             "dir/",
@@ -101,6 +100,12 @@ def test_change_parent(
     path: Pathlike | list[Pathlike], new_parent: str, new_path: str | list[str]
 ) -> None:
     assert functions.ChangeParent(BASE_DIR)(path, new_parent) == new_path
+
+
+def test_change_parent_absolute_path() -> None:
+    drive = Path.cwd().drive
+    expected = drive + Path("/etc/make.toml").as_posix()
+    assert functions.ChangeParent(BASE_DIR)("make.toml", "/etc") == expected
 
 
 @pytest.mark.parametrize(
