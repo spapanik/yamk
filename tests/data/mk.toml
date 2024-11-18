@@ -1,6 +1,5 @@
 ["$globals"]
-shell = "bash"
-version = "6.0"
+version = "8.1"
 
 ["$globals".vars]
 "[weak]prefix" = "/home/user/.config/"
