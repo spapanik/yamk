@@ -1,0 +1,23 @@
+$globals:
+  version: "8.1"
+
+no_commands:
+  phony: true
+
+
+two_commands:
+  phony: true
+  commands:
+    - echo ${.target}
+    - echo 42
+
+alias:
+  alias: two_commands
+
+with_requirements:
+  phony: true
+  requires:
+    - no_commands
+    - two_commands
+  commands:
+    - echo ${.target}
