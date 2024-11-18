@@ -15,40 +15,6 @@ commands = [
 [alias]
 alias = "two_commands"
 
-['regex[-_](?P<number>[^.]\d+)']
-phony = true
-regex = true
-commands = [
-    "echo ${number}",
-]
-
-
-[multiple_regex]
-phony = true
-requires = [
-    "file_42.txt",
-    "file_1024.txt",
-]
-
-['file_(?P<number>[^.]\d+).txt']
-regex = true
-commands = [
-    "ls file_${number}.txt",
-]
-
-['echo_(?P<number>\d+)']
-regex = true
-phony = true
-commands = [
-    "echo ${number}",
-]
-
-[echo_42]
-phony = true
-commands = [
-    "echo 'The answer to life, the universe, and everything'",
-]
-
 [phony_requirement]
 phony = true
 commands = [
