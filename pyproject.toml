@@ -54,7 +54,7 @@ dev = [
 lint = [
     "black~=24.10",
     "mypy~=1.13",
-    "ruff~=0.7",
+    "ruff~=0.8",
 ]
 test = [
     "pytest~=8.3",
@@ -154,8 +154,6 @@ select = [
     "YTT",
 ]
 ignore = [
-    "ANN101",
-    "ANN102",
     "ANN401",
     "COM812",
     "E501",
