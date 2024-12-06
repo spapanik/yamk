@@ -9,7 +9,7 @@ COOKBOOK = "exceptions.yaml"
 
 def test_make_raises_on_missing_target() -> None:
     make_command = get_make_command(cookbook_name=COOKBOOK, target="missing_target")
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="No recipe to build missing_target"):
         make_command.make()
 
 
@@ -17,7 +17,7 @@ def test_make_raises_on_missing_requirement() -> None:
     make_command = get_make_command(
         cookbook_name=COOKBOOK, target="missing_requirement"
     )
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="No recipe to build .*missing_target"):
         make_command.make()
 
 
