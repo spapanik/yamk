@@ -90,7 +90,7 @@ def test_topological_sort_detects_cycles() -> None:
     node.add_requirement(root)
     dag = DAG(root)
     dag.add_node(node)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Cyclic dependencies detected"):
         dag.topological_sort()
 
 
@@ -101,7 +101,7 @@ def test_c3_sort_detects_cycles() -> None:
     node.add_requirement(root)
     dag = DAG(root)
     dag.add_node(node)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Cannot compute c3_sort"):
         dag.c3_sort()
 
 
