@@ -16,8 +16,7 @@ class Function:
         self.base_dir = base_dir
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        msg = f"{self.__class__.__name__} must be callable"
-        raise NotImplementedError(msg)
+        raise NotImplementedError
 
 
 class Glob(Function):
