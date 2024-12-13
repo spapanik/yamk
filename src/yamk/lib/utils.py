@@ -8,9 +8,9 @@ import warnings
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from re import Match
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import TYPE_CHECKING, Any, Literal, TypeVar, cast
 
-from pyutilkit.term import SGRCodes, SGRString
+from pyutilkit.term import SGRCodes, SGROutput, SGRString
 
 from yamk.lib.functions import functions
 
@@ -20,6 +20,9 @@ if TYPE_CHECKING:
 
     from pyutilkit.timing import Timing
 
+    from yamk.lib.types import RawRecipe
+
+T = TypeVar("T")
 VAR = re.compile(
     r"(?P<dollars>\$+){(?P<variable>[a-zA-Z0-9_.]+)(?P<sep>:)?(?P<key>[a-zA-Z0-9_.]+)?}"
 )
@@ -31,18 +34,20 @@ SUPPORTED_FILE_EXTENSIONS = {
     ".yaml": "yaml",
     ".json": "json",
 }
+FlatVariables = dict[str, Any]  # type: ignore[misc]
+Variables = dict[str, FlatVariables]
 
 
 class Recipe:
     def __init__(
         self,
         target: str,
-        raw_recipe: dict[str, Any],
+        raw_recipe: RawRecipe,
         base_dir: Path,
-        file_vars: dict[str, Any],
-        arg_vars: dict[str, Any],
+        file_vars: dict[str, str],
+        arg_vars: dict[str, str],
         extra: list[str],
-        original_regex: str | None = None,
+        original_regex: str | re.Pattern[str] | None = None,
         *,
         specified: bool = False,
     ) -> None:
@@ -63,7 +68,7 @@ class Recipe:
             self.existence_check["command"] = existence_command
         self.recursive = raw_recipe.get("recursive", False)
         self.update = raw_recipe.get("update", False)
-        temp_vars = {
+        temp_vars: Variables = {
             "global": file_vars,
             "env": dict(**os.environ),
             "arg": arg_vars,
@@ -81,7 +86,7 @@ class Recipe:
                 if original_regex is None:
                     msg = "original_regex must be specified when target is specific"
                     raise RuntimeError(msg)
-                match_obj = re.fullmatch(original_regex, self.target)
+                match_obj = re.fullmatch(original_regex, cast(str, self.target))
                 if match_obj is None:
                     msg = (
                         f"original_regex {original_regex} does not match {self.target}"
@@ -116,9 +121,9 @@ class Recipe:
             specified=True,
         )
 
-    def _evaluate(
-        self, obj: Any, variables: dict[str, dict[str, Any]] | None = None
-    ) -> Any:
+    def _evaluate(  # type: ignore[misc]
+        self, obj: object, variables: Variables | None = None
+    ) -> Any:  # noqa: ANN401
         if variables is None:
             variables = self.vars
         flat_vars = flatten_vars(variables, self.base_dir)
@@ -134,12 +139,14 @@ class Recipe:
             self.existence_check.setdefault("stderr", None)
             self.existence_check.setdefault("returncode", 0)
 
-    def _alias(self, alias: str | Literal[False], variables: dict[str, Any]) -> Any:
+    def _alias(  # type: ignore[misc]
+        self, alias: str | Literal[False], variables: Variables
+    ) -> Any:  # noqa: ANN401
         if alias is False:
             return alias
         return self._evaluate(alias, variables)
 
-    def _target(self, target: str, variables: dict[str, Any]) -> Any:
+    def _target(self, target: str, variables: Variables) -> str | re.Pattern[str]:
         if not self._specified:
             target = self._evaluate(target, variables)
         if not self.phony and not self.alias:
@@ -150,17 +157,19 @@ class Recipe:
 
 
 class Parser:
-    def __init__(self, variables: dict[str, Any], base_dir: Path) -> None:
+    def __init__(self, variables: FlatVariables, base_dir: Path) -> None:
         self.vars = variables
         self.base_dir = base_dir
 
     @staticmethod
-    def _stringify(value: Any) -> str:
+    def _stringify(value: object) -> str:
         if isinstance(value, list):
             return " ".join(map(str, value))
         return str(value)
 
-    def expand_function(self, name: str, args: str) -> Any:
+    def expand_function(  # type: ignore[misc]
+        self, name: str, args: str
+    ) -> Any:  # noqa: ANN401
         split_args = shlex.split(args)
         for i, arg in enumerate(split_args):
             split_args[i] = self.evaluate(arg)
@@ -180,7 +189,7 @@ class Parser:
             return self._stringify(value[key])
         return f"{'$'*(len(dollars)//2)}{{{variable}}}"
 
-    def substitute(self, string: str) -> Any:
+    def substitute(self, string: str) -> Any:  # type: ignore[misc]  # noqa: ANN401
         function = re.fullmatch(FUNCTION, string)
         if function is not None:
             return self.expand_function(**function.groupdict())
@@ -195,7 +204,7 @@ class Parser:
                 return self.vars[match["variable"]]
         return re.sub(VAR, self.repl, string)
 
-    def evaluate(self, obj: Any) -> Any:
+    def evaluate(self, obj: object) -> Any:  # type: ignore[misc]  # noqa: ANN401
         if isinstance(obj, str):
             return self.substitute(obj)
         if isinstance(obj, list):
@@ -375,13 +384,13 @@ class CommandReport:
             indicator = "🟢"
             sgr_code = SGRCodes.GREEN
         timing = str(self.timing)
-        padding = " " * (cols - len(self.command) - len(timing) - 7)
-        print(
-            indicator,
-            f"`{self.command}`",
-            padding,
-            SGRString(timing, params=[sgr_code]),
-        )
+        padding = " " * (cols - len(self.command) - len(timing) - 4)
+        SGROutput(
+            [
+                SGRString(f"`{self.command}`", prefix=indicator, suffix=padding),
+                SGRString(timing, params=[sgr_code]),
+            ]
+        ).print()
 
 
 @dataclass(frozen=True, order=True)
@@ -401,9 +410,7 @@ class Version:
         return cls(major, minor, patch)
 
 
-def flatten_vars(
-    variables: dict[str, dict[str, Any]], base_dir: Path
-) -> dict[str, Any]:
+def flatten_vars(variables: Variables, base_dir: Path) -> FlatVariables:
     order = [
         "env",
         "arg",
@@ -417,7 +424,7 @@ def flatten_vars(
         "env",
         "arg",
     ]
-    output: dict[str, Any] = {}
+    output: Variables = {}
     strong_keys: set[str] = set()
     for var_type in order:
         var_block = variables.get(var_type, {})
@@ -456,9 +463,7 @@ def human_readable_timestamp(timestamp: float) -> str:
 
 
 def print_reports(reports: list[CommandReport]) -> None:
-    SGRString("Yam Report", params=[SGRCodes.BOLD]).header(
-        padding=SGRString("=", params=[SGRCodes.BOLD])
-    )
+    SGRString("Yam Report", params=[SGRCodes.BOLD]).header(padding="=")
 
     cols = os.get_terminal_size().columns
     for report in reports:

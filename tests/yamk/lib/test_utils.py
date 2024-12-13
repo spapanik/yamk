@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import pathlib
-from typing import Any
 
 import pytest
 
@@ -90,7 +89,7 @@ def test_topological_sort_detects_cycles() -> None:
     node.add_requirement(root)
     dag = DAG(root)
     dag.add_node(node)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Cyclic dependencies detected"):
         dag.topological_sort()
 
 
@@ -101,12 +100,12 @@ def test_c3_sort_detects_cycles() -> None:
     node.add_requirement(root)
     dag = DAG(root)
     dag.add_node(node)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Cannot compute c3_sort"):
         dag.c3_sort()
 
 
 @pytest.mark.parametrize("obj", [("string in a tuple",), None])
-def test_parser_evaluation_raises(obj: Any) -> None:
+def test_parser_evaluation_raises(obj: object) -> None:
     parser = Parser({}, PATH)
     with pytest.raises(TypeError):
         parser.evaluate(obj)
@@ -135,7 +134,7 @@ def test_parser_evaluation_raises(obj: Any) -> None:
     ],
 )
 def test_parser_evaluation(
-    obj: str | list[str], variables: dict[str, Any], expected: str | list[str]
+    obj: str | list[str], variables: dict[str, object], expected: str | list[str]
 ) -> None:
     parser = Parser(variables, PATH)
     assert parser.evaluate(obj) == expected

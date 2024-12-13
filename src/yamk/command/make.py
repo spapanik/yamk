@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import itertools
+import os
 import pathlib
 import re
 import subprocess
 import sys
 from time import sleep
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, cast
 
 from dj_settings import ConfigParser
-from pyutilkit.term import SGRCodes, SGRString
+from pyutilkit.term import SGRCodes, SGROutput, SGRString
 from pyutilkit.timing import Stopwatch
 
 from yamk.__version__ import __version__
@@ -29,13 +30,13 @@ if TYPE_CHECKING:
     import argparse
     from collections.abc import Iterator
 
-    from yamk.lib.types import ExistenceCheck
+    from yamk.lib.types import ExistenceCheck, RawRecipe
 
 
 class MakeCommand:
     def __init__(self, args: argparse.Namespace) -> None:
         self.verbosity = args.verbosity
-        self.regex_recipes: dict[str, Recipe] = {}
+        self.regex_recipes: dict[re.Pattern[str], Recipe] = {}
         self.static_recipes: dict[str, Recipe] = {}
         self.aliases: dict[str, str] = {}
         self.target = args.target
@@ -106,7 +107,7 @@ class MakeCommand:
 
             if i != self.retries:
                 a, b = b, a + b
-                print(f"{command} failed. Retrying in {a}s...")
+                SGRString(f"{command} failed. Retrying in {a}s...").print()
                 sleep(a)
 
         report = CommandReport(
@@ -129,7 +130,7 @@ class MakeCommand:
             return False
         return result.returncode == check["returncode"]
 
-    def _parse_recipes(self, parsed_cookbook: dict[str, dict[str, Any]]) -> None:
+    def _parse_recipes(self, parsed_cookbook: dict[str, RawRecipe]) -> None:
         for target, raw_recipe in parsed_cookbook.items():
             recipe = Recipe(
                 target,
@@ -141,11 +142,11 @@ class MakeCommand:
             )
 
             if recipe.alias:
-                self.aliases[recipe.target] = recipe.alias
+                self.aliases[cast(str, recipe.target)] = recipe.alias
             elif recipe.regex:
-                self.regex_recipes[recipe.target] = recipe
+                self.regex_recipes[cast(re.Pattern[str], recipe.target)] = recipe
             else:
-                self.static_recipes[recipe.target] = recipe
+                self.static_recipes[cast(str, recipe.target)] = recipe
 
     def _preprocess_target(self) -> DAG:
         recipe = self._extract_recipe(self.target, use_extra=True)
@@ -170,7 +171,7 @@ class MakeCommand:
                         msg = f"No recipe to build {requirement}"
                         raise ValueError(msg)
                 else:
-                    requirement = recipe.target
+                    requirement = cast(str, recipe.target)
                 target_recipe.requires[index] = requirement
 
                 if requirement in dag:
@@ -188,13 +189,17 @@ class MakeCommand:
         dag.sort()
         self._mark_unchanged(dag)
         if self.verbosity > 3:  # noqa: PLR2004
-            print("=== all targets ===")
+            SGRString("=== all targets ===").print()
             for node in dag:
-                print(f"- {node.target}:")
-                print(f"    timestamp: {human_readable_timestamp(node.timestamp)}")
-                print(f"    should_build: {node.should_build}")
-                print(f"    requires: {node.requires}")
-                print(f"    required_by: {node.required_by}")
+                SGROutput(
+                    [
+                        f"- {node.target}:",
+                        f"    timestamp: {human_readable_timestamp(node.timestamp)}",
+                        f"    should_build: {node.should_build}",
+                        f"    requires: {node.requires}",
+                        f"    required_by: {node.required_by}",
+                    ]
+                ).print(sep=os.linesep)
         return dag
 
     def _update_ts(self, node: Node) -> None:
@@ -207,7 +212,7 @@ class MakeCommand:
             self.phony_dir.mkdir(exist_ok=True)
             path.touch()
         if not recipe.phony and recipe.update:
-            pathlib.Path(recipe.target).touch()
+            pathlib.Path(cast(str, recipe.target)).touch()
 
     def _make_target(self, node: Node) -> None:
         recipe = node.recipe
@@ -216,7 +221,7 @@ class MakeCommand:
             raise ValueError(msg)
 
         if self.verbosity > 1:
-            print(f"=== target: {recipe.target} ===")
+            SGRString(f"=== target: {recipe.target} ===").print()
 
         n = len(recipe.commands)
         for i, raw_command in enumerate(recipe.commands):
@@ -236,7 +241,7 @@ class MakeCommand:
                     print_reports(self.reports)
                 sys.exit(return_code)
             if i != n - 1:
-                print()
+                SGRString("").print()
         self._update_ts(node)
 
     def _extract_recipe(self, target: str, *, use_extra: bool = False) -> Recipe | None:
@@ -287,7 +292,7 @@ class MakeCommand:
             if not recipe.exists_only:
                 msg = "Existence commands need exists_only"
                 raise ValueError(msg)
-            return self._check_command(recipe.existence_check)
+            return self._check_command(recipe.existence_check)  # type: ignore[arg-type]
 
         return path.exists()
 
@@ -336,18 +341,20 @@ class MakeCommand:
         yield self.echo_override
 
     def _print_command(self, command: str) -> None:
-        bold_command = SGRString(command, params=[SGRCodes.BOLD])
-        print(f"🔧 Running `{bold_command}`")
+        SGROutput(
+            ["🔧 Running ", "`", SGRString(command, params=[SGRCodes.BOLD]), "`"]
+        ).print()
 
     def _print_result(self, command: str, return_code: int) -> None:
-        bold_command = SGRString(command, params=[SGRCodes.BOLD])
         if return_code:
-            prefix = "❌"
-            suffix = f"failed with exit code {return_code}"
+            prefix = "❌ "
+            suffix = f" failed with exit code {return_code}"
         else:
-            prefix = "✅"
-            suffix = "run successfully!"
-        print(f"{prefix} `{bold_command}` {suffix}")
+            prefix = "✅ "
+            suffix = " run successfully!"
+        SGROutput(
+            [prefix, "`", SGRString(command, params=[SGRCodes.BOLD]), "`", suffix]
+        ).print()
 
     def _get_version(self) -> Version:
         return Version.from_string(self.globals["version"])

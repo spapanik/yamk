@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from functools import reduce
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
 
-    from yamk.lib.types import Pathlike
+    from yamk.lib.types import Comparable, Pathlike
+
+S = TypeVar("S")
+T = TypeVar("T")
 
 
 class Function:
@@ -15,7 +19,7 @@ class Function:
     def __init__(self, base_dir: Path) -> None:
         self.base_dir = base_dir
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[misc]  # noqa: ANN401
         raise NotImplementedError
 
 
@@ -26,11 +30,11 @@ class Glob(Function):
         return [path.as_posix() for path in self.base_dir.glob(pattern)]
 
 
-class Sort(Function):
+class Sort(Function, Generic[T]):
     name = "sort"
 
-    def __call__(self, *args: Any) -> list[Any]:
-        return sorted(*args)
+    def __call__(self, args: Iterable[Comparable]) -> list[Comparable]:
+        return sorted(args)
 
 
 class Exists(Function):
@@ -109,7 +113,7 @@ class PWD(Function):
 class FilterOut(Function):
     name = "filter_out"
 
-    def __call__(self, odd: Any, obj: list[Any]) -> list[Any]:
+    def __call__(self, odd: T, obj: list[T]) -> list[T]:
         return list(filter(lambda x: x != odd, obj))
 
 
@@ -117,8 +121,8 @@ class TernaryIf(Function):
     name = "ternary_if"
 
     def __call__(
-        self, condition: bool, if_true: Any, if_false: Any  # noqa: FBT001
-    ) -> Any:
+        self, condition: bool, if_true: S, if_false: T  # noqa: FBT001
+    ) -> S | T:
         return if_true if condition else if_false
 
 
@@ -135,11 +139,14 @@ class Merge(Function):
     name = "merge"
 
     @staticmethod
-    def _as_list(obj: Any | list[Any]) -> list[Any]:
+    def _as_list(obj: T | list[T]) -> list[T]:
         return obj if isinstance(obj, list) else [obj]
 
-    def __call__(self, *args: Any | list[Any]) -> list[Any]:
-        return reduce(lambda x, y: self._as_list(x) + self._as_list(y), args)
+    def _concat(self, x: T | list[T], y: T | list[T]) -> list[T]:
+        return self._as_list(x) + self._as_list(y)
+
+    def __call__(self, *args: T | list[T]) -> list[T]:
+        return reduce(self._concat, args)  # type: ignore[arg-type]
 
 
 functions = {function.name: function for function in Function.__subclasses__()}
