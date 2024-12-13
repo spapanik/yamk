@@ -187,7 +187,7 @@ forced-separate = [
 split-on-trailing-comma = false
 
 [tool.pytest.ini_options]
-addopts = "-ra -v --cov"
+addopts = "-ra -v"
 testpaths = "tests"
 
 [tool.coverage.run]
@@ -201,6 +201,8 @@ data_file = ".cov_cache/coverage.dat"
 exclude_also = [
     "if TYPE_CHECKING:",
 ]
+fail_under = 85
+precision = 2
 show_missing = true
 skip_covered = true
 skip_empty = true
