@@ -1,6 +1,6 @@
 from unittest import mock
 
-from tests.conftest import get_make_command, runner_exit_success
+from tests.helpers import get_make_command, runner_exit_success
 
 COOKBOOK = "regex.yaml"
 

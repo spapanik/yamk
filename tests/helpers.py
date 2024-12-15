@@ -3,8 +3,6 @@ from itertools import chain
 from typing import Any
 from unittest import mock
 
-import pytest
-
 from yamk.command.make import MakeCommand
 
 TEST_DATA_ROOT = pathlib.Path(__file__).resolve().parent.joinpath("data")
@@ -41,18 +39,3 @@ def get_make_command(**kwargs: Any) -> MakeCommand:
         setattr(mock_args, key, value)
 
     return MakeCommand(mock_args)
-
-
-@pytest.fixture
-def mock_args() -> mock.MagicMock:
-    args = mock.MagicMock()
-    args.directory = "."
-    args.cookbook = TEST_COOKBOOK
-    args.cookbook_type = None
-    args.verbosity = 0
-    args.bare = False
-    args.time = False
-    args.force = False
-    args.dry_run = False
-    args.extra = []
-    return args

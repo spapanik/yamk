@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from tests.conftest import get_make_command, runner_exit_failure, runner_exit_success
+from tests.helpers import get_make_command, runner_exit_failure, runner_exit_success
 
 COOKBOOK = "exceptions.yaml"
 
