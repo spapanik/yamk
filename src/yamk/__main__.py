@@ -1,5 +1,5 @@
 from yamk.command.make import MakeCommand
-from yamk.lib.parser import parse_args
+from yamk.lib.cli import parse_args
 
 
 def main() -> None:

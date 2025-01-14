@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from yamk.lib.parser import parse_args
+from yamk.lib.cli import parse_args
 
 
 @mock.patch("sys.argv", ["yamk", "target"])

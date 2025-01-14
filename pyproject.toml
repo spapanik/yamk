@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "phosphorus>=0.8",
+    "phosphorus>=0.10",
 ]
 build-backend = "phosphorus.construction.api"
 
@@ -46,20 +46,27 @@ documentation = "https://yamk.readthedocs.io/en/stable/"
 yamk = "yamk.__main__:main"
 yam = "yamk.__main__:main"
 
-[tool.phosphorus.dev-dependencies]
+[dependency-groups]
 dev = [
     "ipdb~=0.13",
     "ipython~=8.18",
+    { include-group = "lint" },
+    { include-group = "test" },
+    { include-group = "docs" },
 ]
 lint = [
     "black~=24.10",
     "mypy~=1.13",
     "ruff~=0.8",
     "typing-extensions~=4.12",  # upgrade: py3.10: use typing module
+    { include-group = "test_core" },
 ]
 test = [
-    "pytest~=8.3",
     "pytest-cov~=6.0",
+    { include-group = "test_core" },
+]
+test_core = [
+    "pytest~=8.3",
 ]
 docs = [
     "mkdocs~=1.6",
@@ -157,7 +164,7 @@ source = [
 ]
 data_file = ".cov_cache/coverage.dat"
 omit = [
-    "src/yamk/lib/types.py",
+    "src/yamk/lib/type_defs.py",
 ]
 
 [tool.coverage.report]

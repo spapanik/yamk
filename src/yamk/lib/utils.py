@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
     from pyutilkit.timing import Timing
 
-    from yamk.lib.types import RawRecipe
+    from yamk.lib.type_defs import RawRecipe
 
 T = TypeVar("T")
 VAR = re.compile(

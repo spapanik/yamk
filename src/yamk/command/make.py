@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     import argparse
     from collections.abc import Iterator
 
-    from yamk.lib.types import ExistenceCheck, RawRecipe
+    from yamk.lib.type_defs import ExistenceCheck, RawRecipe
 
 
 class MakeCommand:

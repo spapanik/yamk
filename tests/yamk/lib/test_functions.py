@@ -8,7 +8,7 @@ import pytest
 from yamk.lib import functions
 
 if TYPE_CHECKING:
-    from yamk.lib.types import Pathlike
+    from yamk.lib.type_defs import Pathlike
 
 PATH = Path(__file__)
 BASE_DIR = PATH.parent

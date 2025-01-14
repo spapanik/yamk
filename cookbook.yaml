@@ -1,26 +1,23 @@
 $globals:
   version: "8.1"
   vars:
-    p_sync: --sync
-    p_verbose: --verbose
+    FROZEN: --frozen
+    UV_GROUPS: --all-groups
 
 build:
   phony: true
+  requires:
+    - clean
   commands:
-    - p build ${.extra}
-
-clean:
-  phony: true
-  commands:
-    - rm -f dist/*
+    - p build
 
 install:
   phony: true
   keep_ts: true
   requires:
-    - p-lock.toml
+    - uv.lock
   commands:
-    - p install ${p_sync} ${p_verbose} ${.extra}
+    - uv sync ${FROZEN} ${UV_GROUPS}
 
 format:
   phony: true
@@ -36,7 +33,7 @@ lint:
     - install
   commands:
     - black --check .
-    - p check --lockfile
+    - uv lock --check
     - ruff check .
     - mypy .
 
@@ -47,9 +44,14 @@ tests:
   commands:
     - pytest ${.extra}
 
-p-lock.toml:
+clean:
+  phony: true
+  commands:
+    - rm -f dist/*
+
+uv.lock:
   update: true
   requires:
     - pyproject.toml
   commands:
-    - p lock ${p_verbose}
+    - uv lock

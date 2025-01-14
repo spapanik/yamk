@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pathlib import Path
 
-    from yamk.lib.types import Comparable, Pathlike
+    from yamk.lib.type_defs import Comparable, Pathlike
 
 S = TypeVar("S")
 T = TypeVar("T")
