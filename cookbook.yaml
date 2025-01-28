@@ -1,6 +1,7 @@
 $globals:
   version: "8.1"
   vars:
+    RUNNER: uv run
     FROZEN: --frozen
     UV_GROUPS: --all-groups
 
@@ -9,7 +10,7 @@ build:
   requires:
     - clean
   commands:
-    - p build
+    - ${RUNNER} p build
 
 install:
   phony: true
@@ -24,25 +25,25 @@ format:
   requires:
     - install
   commands:
-    - black .
-    - ruff check --fix-only .
+    - ${RUNNER} black .
+    - ${RUNNER} ruff check --fix-only .
 
 lint:
   phony: true
   requires:
     - install
   commands:
-    - black --check .
-    - uv lock --check
-    - ruff check .
-    - mypy .
+    - ${RUNNER} black --check .
+    - ${RUNNER} uv lock --check
+    - ${RUNNER} ruff check .
+    - ${RUNNER} mypy .
 
 tests:
   phony: true
   requires:
     - install
   commands:
-    - pytest ${.extra}
+    - ${RUNNER} pytest ${.extra}
 
 clean:
   phony: true
