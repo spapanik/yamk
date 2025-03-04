@@ -19,7 +19,7 @@ class Function:
     def __init__(self, base_dir: Path) -> None:
         self.base_dir = base_dir
 
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[misc]  # noqa: ANN401
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[explicit-any]  # noqa: ANN401
         raise NotImplementedError
 
 
@@ -121,7 +121,10 @@ class TernaryIf(Function):
     name = "ternary_if"
 
     def __call__(
-        self, condition: bool, if_true: S, if_false: T  # noqa: FBT001
+        self,
+        condition: bool,  # noqa: FBT001
+        if_true: S,
+        if_false: T,
     ) -> S | T:
         return if_true if condition else if_false
 
