@@ -142,11 +142,11 @@ class MakeCommand:
             )
 
             if recipe.alias:
-                self.aliases[cast(str, recipe.target)] = recipe.alias
+                self.aliases[cast("str", recipe.target)] = recipe.alias
             elif recipe.regex:
-                self.regex_recipes[cast(re.Pattern[str], recipe.target)] = recipe
+                self.regex_recipes[cast("re.Pattern[str]", recipe.target)] = recipe
             else:
-                self.static_recipes[cast(str, recipe.target)] = recipe
+                self.static_recipes[cast("str", recipe.target)] = recipe
 
     def _preprocess_target(self) -> DAG:
         recipe = self._extract_recipe(self.target, use_extra=True)
@@ -160,7 +160,7 @@ class MakeCommand:
         while unprocessed and not self.bare:
             target, target_node = unprocessed.popitem()
             dag.add_node(target_node)
-            target_recipe = cast(Recipe, target_node.recipe)
+            target_recipe = cast("Recipe", target_node.recipe)
             target_recipe.requires.reverse()
             for index, raw_requirement in enumerate(target_recipe.requires):
                 recipe = self._extract_recipe(raw_requirement)
@@ -171,7 +171,7 @@ class MakeCommand:
                         msg = f"No recipe to build {requirement}"
                         raise ValueError(msg)
                 else:
-                    requirement = cast(str, recipe.target)
+                    requirement = cast("str", recipe.target)
                 target_recipe.requires[index] = requirement
 
                 if requirement in dag:
@@ -212,7 +212,7 @@ class MakeCommand:
             self.phony_dir.mkdir(exist_ok=True)
             path.touch()
         if not recipe.phony and recipe.update:
-            pathlib.Path(cast(str, recipe.target)).touch()
+            pathlib.Path(cast("str", recipe.target)).touch()
 
     def _make_target(self, node: Node) -> None:
         recipe = node.recipe

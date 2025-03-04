@@ -34,7 +34,7 @@ SUPPORTED_FILE_EXTENSIONS = {
     ".yaml": "yaml",
     ".json": "json",
 }
-FlatVariables = dict[str, Any]  # type: ignore[misc]
+FlatVariables = dict[str, Any]  # type: ignore[explicit-any]
 Variables = dict[str, FlatVariables]
 
 
@@ -86,7 +86,7 @@ class Recipe:
                 if original_regex is None:
                     msg = "original_regex must be specified when target is specific"
                     raise RuntimeError(msg)
-                match_obj = re.fullmatch(original_regex, cast(str, self.target))
+                match_obj = re.fullmatch(original_regex, cast("str", self.target))
                 if match_obj is None:
                     msg = (
                         f"original_regex {original_regex} does not match {self.target}"
@@ -121,7 +121,7 @@ class Recipe:
             specified=True,
         )
 
-    def _evaluate(  # type: ignore[misc]
+    def _evaluate(  # type: ignore[explicit-any]
         self, obj: object, variables: Variables | None = None
     ) -> Any:  # noqa: ANN401
         if variables is None:
@@ -139,7 +139,7 @@ class Recipe:
             self.existence_check.setdefault("stderr", None)
             self.existence_check.setdefault("returncode", 0)
 
-    def _alias(  # type: ignore[misc]
+    def _alias(  # type: ignore[explicit-any]
         self, alias: str | Literal[False], variables: Variables
     ) -> Any:  # noqa: ANN401
         if alias is False:
@@ -167,7 +167,7 @@ class Parser:
             return " ".join(map(str, value))
         return str(value)
 
-    def expand_function(  # type: ignore[misc]
+    def expand_function(  # type: ignore[explicit-any]
         self, name: str, args: str
     ) -> Any:  # noqa: ANN401
         split_args = shlex.split(args)
@@ -187,9 +187,9 @@ class Parser:
             if isinstance(value, list):
                 key = int(key)
             return self._stringify(value[key])
-        return f"{'$'*(len(dollars)//2)}{{{variable}}}"
+        return f"{'$' * (len(dollars) // 2)}{{{variable}}}"
 
-    def substitute(self, string: str) -> Any:  # type: ignore[misc]  # noqa: ANN401
+    def substitute(self, string: str) -> Any:  # type: ignore[explicit-any]  # noqa: ANN401
         function = re.fullmatch(FUNCTION, string)
         if function is not None:
             return self.expand_function(**function.groupdict())
@@ -199,12 +199,12 @@ class Parser:
             and not string.startswith("$$")
             and re.fullmatch(VAR, string)
         ):
-            match = cast(Match[str], re.fullmatch(VAR, string))
+            match = cast("Match[str]", re.fullmatch(VAR, string))
             if match["sep"] is None:
                 return self.vars[match["variable"]]
         return re.sub(VAR, self.repl, string)
 
-    def evaluate(self, obj: object) -> Any:  # type: ignore[misc]  # noqa: ANN401
+    def evaluate(self, obj: object) -> Any:  # type: ignore[explicit-any]  # noqa: ANN401
         if isinstance(obj, str):
             return self.substitute(obj)
         if isinstance(obj, list):
@@ -238,7 +238,7 @@ class Node:
         self, recipe: Recipe | None = None, *, target: str | None = None
     ) -> None:
         self.recipe = recipe
-        self.target = cast(str, target if self.recipe is None else self.recipe.target)
+        self.target = cast("str", target if self.recipe is None else self.recipe.target)
         self.requires = []
         self.required_by = set()
 

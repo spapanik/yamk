@@ -5,7 +5,7 @@
 We recommend using [uv] for the installation of `yam` as it provides
 an isolated environment for the package, preventing any dependency conflicts.
 
-The minimum python version needed is `3.11` but as uv is used, version 3.13
+The minimum python version needed is `3.9` but as uv is used, version 3.13
 is preferred.
 
 To install `yam` using uv, run the following command in your terminal:

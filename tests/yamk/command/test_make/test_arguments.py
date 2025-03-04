@@ -8,7 +8,8 @@ COOKBOOK = "arguments.yaml"
 
 @mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
 def test_make_dry_run(
-    runner: mock.MagicMock, capsys: mock.MagicMock  # upgrade: pytest: check for isatty
+    runner: mock.MagicMock,
+    capsys: mock.MagicMock,  # upgrade: pytest: check for isatty
 ) -> None:
     make_command = get_make_command(cookbook_name=COOKBOOK, target="echo", dry_run=True)
     make_command.make()
@@ -25,7 +26,8 @@ def test_make_dry_run(
 
 @mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
 def test_make_verbosity(
-    runner: mock.MagicMock, capsys: mock.MagicMock  # upgrade: pytest: check for isatty
+    runner: mock.MagicMock,
+    capsys: mock.MagicMock,  # upgrade: pytest: check for isatty
 ) -> None:
     make_command = get_make_command(cookbook_name=COOKBOOK, target="echo", verbosity=4)
     make_command.make()
@@ -51,7 +53,8 @@ def test_make_verbosity(
 
 @mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
 def test_make_echo_in_recipe(
-    runner: mock.MagicMock, capsys: mock.MagicMock  # upgrade: pytest: check for isatty
+    runner: mock.MagicMock,
+    capsys: mock.MagicMock,  # upgrade: pytest: check for isatty
 ) -> None:
     make_command = get_make_command(cookbook_name=COOKBOOK, target="echo")
     make_command.make()
@@ -70,7 +73,8 @@ def test_make_echo_in_recipe(
 
 @mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
 def test_make_echo_in_command(
-    runner: mock.MagicMock, capsys: mock.MagicMock  # upgrade: pytest: check for isatty
+    runner: mock.MagicMock,
+    capsys: mock.MagicMock,  # upgrade: pytest: check for isatty
 ) -> None:
     make_command = get_make_command(cookbook_name=COOKBOOK, target="echo_in_command")
     make_command.make()
