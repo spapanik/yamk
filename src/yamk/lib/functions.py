@@ -42,7 +42,7 @@ class Exists(Function):
 
     def __call__(self, path: Pathlike | list[Pathlike]) -> bool | list[bool]:
         if isinstance(path, list):
-            return [cast(bool, self(file)) for file in path]
+            return [cast("bool", self(file)) for file in path]
         return self.base_dir.joinpath(path).exists()
 
 
@@ -51,7 +51,7 @@ class Name(Function):
 
     def __call__(self, path: Pathlike | list[Pathlike]) -> str | list[str]:
         if isinstance(path, list):
-            return [cast(str, self(file)) for file in path]
+            return [cast("str", self(file)) for file in path]
         return self.base_dir.joinpath(path).name
 
 
@@ -60,7 +60,7 @@ class Stem(Function):
 
     def __call__(self, path: Pathlike | list[Pathlike]) -> str | list[str]:
         if isinstance(path, list):
-            return [cast(str, self(file)) for file in path]
+            return [cast("str", self(file)) for file in path]
         return self.base_dir.joinpath(path).stem
 
 
@@ -69,7 +69,7 @@ class Suffix(Function):
 
     def __call__(self, path: Pathlike | list[Pathlike]) -> str | list[str]:
         if isinstance(path, list):
-            return [cast(str, self(file)) for file in path]
+            return [cast("str", self(file)) for file in path]
         return self.base_dir.joinpath(path).suffix
 
 
@@ -78,7 +78,7 @@ class Parent(Function):
 
     def __call__(self, path: Pathlike | list[Pathlike]) -> str | list[str]:
         if isinstance(path, list):
-            return [cast(str, self(file)) for file in path]
+            return [cast("str", self(file)) for file in path]
         return self.base_dir.joinpath(path).parent.as_posix()
 
 
@@ -87,7 +87,7 @@ class ChangeSuffix(Function):
 
     def __call__(self, path: Pathlike | list[Pathlike], suffix: str) -> str | list[str]:
         if isinstance(path, list):
-            return [cast(str, self(file, suffix)) for file in path]
+            return [cast("str", self(file, suffix)) for file in path]
         return self.base_dir.joinpath(path).with_suffix(suffix).as_posix()
 
 
@@ -98,7 +98,7 @@ class ChangeParent(Function):
         self, path: Pathlike | list[Pathlike], parent: Pathlike
     ) -> str | list[str]:
         if isinstance(path, list):
-            return [cast(str, self(file, parent)) for file in path]
+            return [cast("str", self(file, parent)) for file in path]
         name = self.base_dir.joinpath(path).name
         return self.base_dir.joinpath(parent, name).as_posix()
 
@@ -134,7 +134,7 @@ class Substitute(Function):
 
     def __call__(self, old: str, new: str, obj: list[str] | str) -> list[str] | str:
         if isinstance(obj, list):
-            return [cast(str, self(old, new, string)) for string in obj]
+            return [cast("str", self(old, new, string)) for string in obj]
         return obj.replace(old, new)
 
 
