@@ -32,11 +32,20 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v5
+      - name: Set up python ${{ matrix.python-version }} (${{ matrix.os }})
+        uses: actions/setup-python@v5
         with:
-          enable-cache: false
           python-version: ${{ matrix.python-version }}
+      - name: Install uv (${{ matrix.os }})
+        shell: bash
+        if: ${{ runner.os != 'Windows' }}
+        run: |
+          wget -qO- https://astral.sh/uv/install.sh | sh
+      - name: Install uv (${{ matrix.os }})
+        shell: pwsh
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
       - name: Install cli tools
         run: |
           uv tool install phosphorus
