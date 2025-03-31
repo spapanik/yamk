@@ -1,8 +1,8 @@
 $globals:
   version: "8.1"
   vars:
-    RUNNER: uv run
     FROZEN: --frozen
+    RUNNER: uv run ${FROZEN}
     UV_GROUPS: --all-groups
 
 build:
