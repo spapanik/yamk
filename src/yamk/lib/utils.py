@@ -86,7 +86,7 @@ class Recipe:
                 if original_regex is None:
                     msg = "original_regex must be specified when target is specific"
                     raise RuntimeError(msg)
-                match_obj = re.fullmatch(original_regex, cast(str, self.target))
+                match_obj = re.fullmatch(original_regex, cast("str", self.target))
                 if match_obj is None:
                     msg = (
                         f"original_regex {original_regex} does not match {self.target}"
@@ -199,7 +199,7 @@ class Parser:
             and not string.startswith("$$")
             and re.fullmatch(VAR, string)
         ):
-            match = cast(Match[str], re.fullmatch(VAR, string))
+            match = cast("Match[str]", re.fullmatch(VAR, string))
             if match["sep"] is None:
                 return self.vars[match["variable"]]
         return re.sub(VAR, self.repl, string)
@@ -238,7 +238,7 @@ class Node:
         self, recipe: Recipe | None = None, *, target: str | None = None
     ) -> None:
         self.recipe = recipe
-        self.target = cast(str, target if self.recipe is None else self.recipe.target)
+        self.target = cast("str", target if self.recipe is None else self.recipe.target)
         self.requires = []
         self.required_by = set()
 
