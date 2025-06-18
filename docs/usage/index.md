@@ -4,9 +4,9 @@
 `cookbook.<extension>`, but if a different filename is required, it can be passed
 using the `-c/--cookbook` flag. The supported extensions are:
 
--   toml
--   yml,yaml
--   json
+- toml
+- yml,yaml
+- json
 
 If the cookbook has a different extension, the type won't be automatically recognised,
 but this can be configured by the `-t/--cookbook-type` flag.
@@ -36,9 +36,9 @@ To use a normal target that starts with a dollar sign, use one more dollar sign,
 is needed, and `yam` will strip one of them and turn it into a normal target or an alias.
 Currently the only meta-target is `$globals`, that has 3 valid keys:
 
--   `vars`, which is the same as the key with the same name in targets, but weaker
--   `shell`, to override the default shell used to execute the commands
--   `version`, which is the minimum version of `yam` needed for the cookbook.
+- `vars`, which is the same as the key with the same name in targets, but weaker
+- `shell`, to override the default shell used to execute the commands
+- `version`, which is the minimum version of `yam` needed for the cookbook.
 
 ### Aliases
 
@@ -122,10 +122,10 @@ The implicit variables are variables created by the target itself, implicitly. T
 overriding, as they start with a dot. This dot acts as a safeguard so they cannot mix with environment ones.
 At the moment, the following three implicit variables exist:
 
--   **.target**: the name of the target. In case of a file target, it's the absolute path to the file, regardless
-    of they way it was defined.
--   **.requirements**: the array of the requirements. All the file requirements are given as their absolute paths.
--   **.extra**: an array of all the extra arguments passed to the yam command.
+- **.target**: the name of the target. In case of a file target, it's the absolute path to the file, regardless
+  of they way it was defined.
+- **.requirements**: the array of the requirements. All the file requirements are given as their absolute paths.
+- **.extra**: an array of all the extra arguments passed to the yam command.
 
 #### Regex
 

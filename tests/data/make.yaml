@@ -4,7 +4,6 @@ $globals:
 no_commands:
   phony: true
 
-
 two_commands:
   phony: true
   commands:
