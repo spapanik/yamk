@@ -8,7 +8,6 @@
 [![readthedocs][readthedocs_badge]][readthedocs_url]
 [![pypi][pypi_badge]][pypi_url]
 [![downloads][pepy_badge]][pepy_url]
-[![code style: black][black_badge]][black_url]
 [![build automation: yam][yam_badge]][yam_url]
 [![Lint: ruff][ruff_badge]][ruff_url]
 
@@ -56,7 +55,7 @@ the same extension inside a directory named `<cookbook_filename>.d/`.
 [tests_badge]: https://github.com/spapanik/yamk/actions/workflows/tests.yml/badge.svg
 [tests_url]: https://github.com/spapanik/yamk/actions/workflows/tests.yml
 [licence_badge]: https://img.shields.io/pypi/l/yamk
-[licence_url]: https://cloninator.readthedocs.io/en/stable/LICENSE/
+[licence_url]: https://yamk.readthedocs.io/en/stable/LICENSE/
 [codecov_badge]: https://codecov.io/github/spapanik/yamk/graph/badge.svg?token=Q20F84BW72
 [codecov_url]: https://codecov.io/github/spapanik/yamk
 [readthedocs_badge]: https://readthedocs.org/projects/yamk/badge/?version=latest
@@ -65,14 +64,9 @@ the same extension inside a directory named `<cookbook_filename>.d/`.
 [pypi_url]: https://pypi.org/project/yamk
 [pepy_badge]: https://pepy.tech/badge/yamk
 [pepy_url]: https://pepy.tech/project/yamk
-[black_badge]: https://img.shields.io/badge/code%20style-black-000000.svg
-[black_url]: https://github.com/psf/black
 [yam_badge]: https://img.shields.io/badge/build%20automation-yamk-success
 [yam_url]: https://github.com/spapanik/yamk
 [ruff_badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json
 [ruff_url]: https://github.com/charliermarsh/ruff
 [Documentation]: https://yamk.readthedocs.io/en/stable/
 [Changelog]: https://yamk.readthedocs.io/en/stable/CHANGELOG/
-[Project Euler]: https://projecteuler.net/
-[leetcode]: https://leetcode.com/
-[topcoder]: https://www.topcoder.com/

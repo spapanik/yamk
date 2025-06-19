@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Protocol, TypedDict, Union
+from typing import TYPE_CHECKING, Protocol, TypedDict
 
 if TYPE_CHECKING:
     from typing_extensions import Self  # upgrade: py3.10: import from typing
 
-Pathlike = Union[str, Path]
+Pathlike = str | Path
 
 
 class Comparable(Protocol):
