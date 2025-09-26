@@ -50,18 +50,19 @@ yam = "yamk.__main__:main"
 dev = [
     "ipdb~=0.13",
     "ipython~=8.37",
+    "ptpython~=3.0",
     { include-group = "lint" },
     { include-group = "test" },
     { include-group = "docs" },
 ]
 lint = [
-    "mypy~=1.16",
-    "ruff~=0.12",
+    "mypy~=1.18",
+    "ruff~=0.13",
     "typing-extensions~=4.14",  # upgrade: py3.10: use typing module
     { include-group = "test_core" },
 ]
 test = [
-    "pytest-cov~=6.2",
+    "pytest-cov~=7.0",
     { include-group = "test_core" },
 ]
 test_core = [
