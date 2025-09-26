@@ -158,7 +158,7 @@ class MakeCommand:
         unprocessed = {root.target: root}
         dag = DAG(root)
         while unprocessed and not self.bare:
-            target, target_node = unprocessed.popitem()
+            _, target_node = unprocessed.popitem()
             dag.add_node(target_node)
             target_recipe = cast("Recipe", target_node.recipe)
             target_recipe.requires.reverse()
