@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ### Changed
 
--   Dropped support for python 3.9
+- Dropped support for python 3.9
 
 ## [8.1.2] - 2024-10-18
 
