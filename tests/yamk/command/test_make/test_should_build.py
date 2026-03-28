@@ -37,7 +37,9 @@ def test_make_with_phony_and_keep_ts_older_requirement_and_force(
     runner: mock.MagicMock,
 ) -> None:
     target = "keep_ts"
-    make_command = get_make_command(cookbook_name=COOKBOOK, target=target, force=True)
+    make_command = get_make_command(
+        cookbook_name=COOKBOOK, target=target, force_make=True
+    )
     make_command.phony_dir.mkdir(exist_ok=True)
     make_command.phony_dir.joinpath(target).touch()
     os.utime(make_command.phony_dir, times=(2, 3))

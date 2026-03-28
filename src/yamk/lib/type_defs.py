@@ -13,6 +13,12 @@ class Comparable(Protocol):
     def __lt__(self, other: Self) -> bool: ...
 
 
+class SubprocessKwargs(TypedDict):
+    shell: bool
+    cwd: Path
+    executable: str | None
+
+
 class ExistenceCheck(TypedDict):
     command: str
     returncode: int

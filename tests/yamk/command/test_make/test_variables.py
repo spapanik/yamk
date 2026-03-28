@@ -36,7 +36,7 @@ def test_variable_strength_argument_vs_env(runner: mock.MagicMock) -> None:
     make_command = get_make_command(
         cookbook_name=COOKBOOK,
         target="single_variable",
-        variables=["VARIABLE=argument"],
+        variables={"VARIABLE": "argument"},
     )
     make_command.make()
     assert runner.call_count == 1

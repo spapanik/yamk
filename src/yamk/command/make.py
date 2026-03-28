@@ -7,7 +7,7 @@ import re
 import subprocess
 import sys
 from time import sleep
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 from dj_settings import ConfigParser
 from pyutilkit.term import SGRCodes, SGROutput, SGRString
@@ -16,7 +16,6 @@ from pyutilkit.timing import Stopwatch
 from yamk.__version__ import __version__
 from yamk.lib.utils import (
     DAG,
-    SUPPORTED_FILE_EXTENSIONS,
     CommandReport,
     Node,
     Recipe,
@@ -27,60 +26,59 @@ from yamk.lib.utils import (
 )
 
 if TYPE_CHECKING:
-    import argparse
     from collections.abc import Iterator
 
-    from yamk.lib.type_defs import ExistenceCheck, RawRecipe
+    from yamk.lib.type_defs import ExistenceCheck, RawRecipe, SubprocessKwargs
 
 
 class MakeCommand:
-    def __init__(self, args: argparse.Namespace) -> None:
-        self.verbosity = args.verbosity
+    def __init__(
+        self,
+        target: str,
+        *,
+        bare: bool,
+        cookbook: pathlib.Path,
+        cookbook_type: Literal["json", "yaml", "toml"] | None,
+        dry_run: bool,
+        echo_override: bool,
+        extra: list[str],
+        force_make: bool,
+        print_timing_report: bool,
+        retries: int,
+        shell: str | None,
+        up_to_date: list[str],
+        variables: dict[str, str],
+        verbosity: int,
+    ) -> None:
+        self.verbosity = verbosity
         self.regex_recipes: dict[re.Pattern[str], Recipe] = {}
         self.static_recipes: dict[str, Recipe] = {}
         self.aliases: dict[str, str] = {}
-        self.target = args.target
-        self.bare = args.bare
-        self.force_make = args.force
-        self.extra = args.extra
-        self.retries = args.retries
-        self.dry_run = args.dry_run
-        self.echo_override = args.echo
-        cookbook = self.find_cookbook(args)
+        self.target = target
+        self.bare = bare
+        self.force_make = force_make
+        self.extra = extra
+        self.retries = retries
+        self.dry_run = dry_run
+        self.echo_override = echo_override
         self.base_dir = cookbook.parent
         self.phony_dir = self.base_dir.joinpath(".yamk")
-        self.arg_vars = dict(var.split("=", maxsplit=1) for var in args.variables)
-        parsed_cookbook = ConfigParser([cookbook], force_type=args.cookbook_type).data
+        self.arg_vars = variables
+        parsed_cookbook = ConfigParser([cookbook], force_type=cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self.version = self._get_version()
         if self.version > Version.from_string(__version__):
             msg = f"This cookbook requires an yamk >= v{self.version}"
             raise RuntimeError(msg)
-        self.up_to_date = args.assume
+        self.up_to_date = up_to_date
         self._parse_recipes(parsed_cookbook)
-        self.subprocess_kwargs = {
+        self.subprocess_kwargs: SubprocessKwargs = {
             "shell": True,
             "cwd": self.base_dir,
-            "executable": self.globals.get("shell") or args.shell,
+            "executable": self.globals.get("shell") or shell,
         }
-        self.print_timing_report = args.time
+        self.print_timing_report = print_timing_report
         self.reports: list[CommandReport] = []
-
-    @staticmethod
-    def find_cookbook(args: argparse.Namespace) -> pathlib.Path:
-        absolute_path = pathlib.Path(args.directory).absolute()
-        if args.cookbook:
-            return absolute_path.joinpath(args.cookbook)
-
-        cookbooks = (
-            absolute_path.joinpath("cookbook").with_suffix(suffix)
-            for suffix in SUPPORTED_FILE_EXTENSIONS
-        )
-        for cookbook in cookbooks:
-            if cookbook.exists():
-                return cookbook
-        msg = f"No candidate cookbook found in {args.directory}"
-        raise FileNotFoundError(msg)
 
     def make(self) -> None:
         dag = self._preprocess_target()

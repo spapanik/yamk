@@ -11,7 +11,7 @@ def test_requirement_from_argv(runner: mock.MagicMock) -> None:
     make_command = get_make_command(
         cookbook_name=COOKBOOK,
         target="requirement_ext",
-        variables=["EXT_VARIABLE=echo"],
+        variables={"EXT_VARIABLE": "echo"},
     )
     make_command.make()
     assert runner.call_count == 2
