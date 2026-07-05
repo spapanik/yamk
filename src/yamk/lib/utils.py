@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
     from pyutilkit.timing import Timing
 
-    from yamk.lib.type_defs import RawRecipe
+    from yamk.lib.type_defs import ExistenceCheck, RawRecipe
 
 T = TypeVar("T")
 VAR = re.compile(
@@ -63,9 +63,12 @@ class Recipe:
         self.allow_failures = raw_recipe.get("allow_failures", False)
         self.exists_only = raw_recipe.get("exists_only", False)
         self.keep_ts = raw_recipe.get("keep_ts", False)
-        self.existence_check = raw_recipe.get("existence_check", {})
+        self.existence_check: ExistenceCheck | None = raw_recipe.get("existence_check")
         if existence_command := raw_recipe.get("existence_command"):
-            self.existence_check["command"] = existence_command
+            if self.existence_check is None:
+                self.existence_check = {"command": existence_command}
+            else:
+                self.existence_check["command"] = existence_command
         self.recursive = raw_recipe.get("recursive", False)
         self.update = raw_recipe.get("update", False)
         temp_vars: Variables = {
@@ -133,11 +136,8 @@ class Recipe:
     def _re_evaluate(self) -> None:
         self.requires = self._evaluate(self.requires)
         self.commands = self._evaluate(self.commands)
-        self.existence_check = self._evaluate(self.existence_check)
-        if self.existence_check:
-            self.existence_check.setdefault("stdout", None)
-            self.existence_check.setdefault("stderr", None)
-            self.existence_check.setdefault("returncode", 0)
+        if self.existence_check is not None:
+            self.existence_check = self._evaluate(self.existence_check)
 
     def _alias(  # type: ignore[explicit-any]
         self, alias: str | Literal[False], variables: Variables

@@ -149,7 +149,7 @@ class Merge(Function):
         return self._as_list(x) + self._as_list(y)
 
     def __call__(self, *args: T | list[T]) -> list[T]:
-        return reduce(self._concat, args)  # type: ignore[arg-type]
+        return reduce(self._concat, args, [])
 
 
 functions = {function.name: function for function in Function.__subclasses__()}

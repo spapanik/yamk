@@ -122,11 +122,13 @@ class MakeCommand:
         result = subprocess.run(  # noqa: PLW1510, S603
             command, capture_output=True, text=True, **self.subprocess_kwargs
         )
-        if check["stdout"] is not None and result.stdout != check["stdout"]:
+        expected_stdout = check.get("stdout")
+        if expected_stdout is not None and result.stdout != expected_stdout:
             return False
-        if check["stderr"] is not None and result.stderr != check["stdout"]:
+        expected_stderr = check.get("stderr")
+        if expected_stderr is not None and result.stderr != expected_stderr:
             return False
-        return result.returncode == check["returncode"]
+        return result.returncode == check.get("returncode", 0)
 
     def _parse_recipes(self, parsed_cookbook: dict[str, RawRecipe]) -> None:
         for target, raw_recipe in parsed_cookbook.items():
@@ -290,7 +292,7 @@ class MakeCommand:
             if not recipe.exists_only:
                 msg = "Existence commands need exists_only"
                 raise ValueError(msg)
-            return self._check_command(recipe.existence_check)  # type: ignore[arg-type]
+            return self._check_command(recipe.existence_check)
 
         return path.exists()
 

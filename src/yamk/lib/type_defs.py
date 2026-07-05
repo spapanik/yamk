@@ -4,13 +4,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Protocol, TypedDict
 
 if TYPE_CHECKING:
-    from typing_extensions import Self  # upgrade: py3.10: import from typing
+    from typing_extensions import Required, Self  # upgrade: py3.10: import from typing
 
 Pathlike = str | Path
 
 
 class Comparable(Protocol):
-    def __lt__(self, other: Self) -> bool: ...
+    def __lt__(self, other: Self, /) -> bool: ...
 
 
 class SubprocessKwargs(TypedDict):
@@ -19,8 +19,8 @@ class SubprocessKwargs(TypedDict):
     executable: str | None
 
 
-class ExistenceCheck(TypedDict):
-    command: str
+class ExistenceCheck(TypedDict, total=False):
+    command: Required[str]
     returncode: int
     stdout: str | None
     stderr: str | None
