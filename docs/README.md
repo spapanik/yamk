@@ -1,3 +1,5 @@
+![yamk logo: a neon cyberpunk yam with a terminal prompt](assets/logo.png)
+
 # yam: yet another make
 
 [![build][build_badge]][build_url]
