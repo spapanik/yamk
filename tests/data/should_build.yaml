@@ -57,3 +57,10 @@ nested_requires:
     requirements:
       - inner_one
       - inner_two
+
+update_ts:
+  update: true
+  requires:
+    - keep_ts
+  commands:
+    - echo update_ts

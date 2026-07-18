@@ -1,7 +1,9 @@
 import os
 from unittest import mock
 
-from tests.helpers import get_make_command, runner_exit_success
+import pytest
+
+from tests.helpers import get_make_command, runner_exit_failure, runner_exit_success
 
 COOKBOOK = "arguments.yaml"
 
@@ -45,6 +47,39 @@ def test_make_verbosity(
         "=== target: echo ===",
         "🔧 Running `echo 'echo'`",
         "✅ `echo 'echo'` run successfully!",
+    )
+    captured = capsys.readouterr()
+    assert captured.out == os.linesep.join(expected_out_lines) + os.linesep
+    assert captured.err == ""
+
+
+@mock.patch("yamk.command.make.print_reports")
+@mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
+def test_make_print_timing_report(
+    runner: mock.MagicMock, print_reports: mock.MagicMock
+) -> None:
+    make_command = get_make_command(
+        cookbook_name=COOKBOOK, target="echo", print_timing_report=True
+    )
+    make_command.make()
+    assert runner.call_count == 1
+    assert print_reports.call_count == 1
+
+
+@mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_failure)
+def test_make_echo_failed_command(
+    runner: mock.MagicMock,
+    capsys: mock.MagicMock,  # upgrade: pytest: check for isatty
+) -> None:
+    make_command = get_make_command(cookbook_name=COOKBOOK, target="echo")
+    with pytest.raises(SystemExit) as exc_info:
+        make_command.make()
+    assert exc_info.value.code == 42
+    assert runner.call_count == 1
+
+    expected_out_lines = (
+        "🔧 Running `echo 'echo'`",
+        "❌ `echo 'echo'` failed with exit code 42",
     )
     captured = capsys.readouterr()
     assert captured.out == os.linesep.join(expected_out_lines) + os.linesep

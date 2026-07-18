@@ -86,6 +86,69 @@ def test_make_with_existence_command(runner: mock.MagicMock) -> None:
 
 
 @mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
+def test_make_with_existence_command_dry_run(runner: mock.MagicMock) -> None:
+    make_command = get_make_command(
+        cookbook_name=COOKBOOK, target="existence_command", dry_run=True
+    )
+    make_command.make()
+    assert runner.call_count == 0
+
+
+@mock.patch("yamk.command.make.subprocess.run")
+def test_check_command_with_unexpected_stderr(runner: mock.MagicMock) -> None:
+    make_command = get_make_command(cookbook_name=COOKBOOK, target="existence_command")
+    runner.return_value = mock.MagicMock(
+        stdout="yoink", stderr="unexpected", returncode=0
+    )
+    check = make_command._check_command(
+        {"command": "sub", "stdout": "yoink", "stderr": "expected"}
+    )
+    assert check is False
+
+
+@mock.patch("yamk.command.make.subprocess.run")
+def test_check_command_with_expected_output(runner: mock.MagicMock) -> None:
+    make_command = get_make_command(cookbook_name=COOKBOOK, target="existence_command")
+    runner.return_value = mock.MagicMock(
+        stdout="yoink", stderr="expected", returncode=0
+    )
+    check = make_command._check_command(
+        {"command": "sub", "stdout": "yoink", "stderr": "expected"}
+    )
+    assert check is True
+
+
+@mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
+def test_make_with_assumed_up_to_date_target(runner: mock.MagicMock) -> None:
+    target = "keep_ts"
+    make_command = get_make_command(
+        cookbook_name=COOKBOOK, target=target, up_to_date=[target]
+    )
+    make_command.phony_dir.mkdir(exist_ok=True)
+    make_command.phony_dir.joinpath(target).unlink(missing_ok=True)
+    make_command.make()
+    assert runner.call_count == 0
+
+
+@mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
+def test_make_with_update_touches_target(runner: mock.MagicMock) -> None:
+    target = "update_ts"
+    make_command = get_make_command(cookbook_name=COOKBOOK, target=target)
+    target_path = make_command.base_dir.joinpath(target)
+    target_path.unlink(missing_ok=True)
+    make_command.phony_dir.mkdir(exist_ok=True)
+    make_command.phony_dir.joinpath("keep_ts").touch()
+    os.utime(make_command.phony_dir, times=(2, 3))
+    os.utime(make_command.phony_dir.joinpath("keep_ts"), times=(1, 5))
+    make_command.make()
+    assert runner.call_count == 1
+    calls = [mock.call("echo update_ts", **make_command.subprocess_kwargs)]
+    assert runner.call_args_list == calls
+    assert target_path.exists()
+    target_path.unlink()
+
+
+@mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
 def test_make_with_exists_only_target_missing(runner: mock.MagicMock) -> None:
     target = "exists_only"
     make_command = get_make_command(cookbook_name=COOKBOOK, target=target)

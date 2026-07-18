@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import os
 import pathlib
+from typing import TYPE_CHECKING
+from unittest import mock
 
 import pytest
+from pyutilkit.timing import Timing
 
 from yamk.lib.utils import (
     DAG,
+    CommandReport,
     Node,
     Parser,
     Recipe,
@@ -13,7 +18,11 @@ from yamk.lib.utils import (
     extract_options,
     flatten_vars,
     human_readable_timestamp,
+    print_reports,
 )
+
+if TYPE_CHECKING:
+    from yamk.lib.type_defs import RawRecipe
 
 PATH = pathlib.Path(__file__)
 
@@ -31,6 +40,48 @@ def test_recipe_for_target() -> None:
     recipe_specified_again = recipe_specified.for_target("target", extra=[])
     assert recipe is not recipe_specified
     assert recipe_specified is recipe_specified_again
+
+
+def test_recipe_existence_command_creates_check() -> None:
+    raw_recipe: RawRecipe = {
+        "phony": True,
+        "exists_only": True,
+        "existence_command": "cmd",
+    }
+    recipe = Recipe("target", raw_recipe, pathlib.Path(), {}, {}, extra=[])
+    assert recipe.existence_check == {"command": "cmd"}
+
+
+def test_recipe_existence_command_overrides_check() -> None:
+    raw_recipe: RawRecipe = {
+        "phony": True,
+        "exists_only": True,
+        "existence_check": {"command": "old", "stdout": "out"},
+        "existence_command": "new",
+    }
+    recipe = Recipe("target", raw_recipe, pathlib.Path(), {}, {}, extra=[])
+    assert recipe.existence_check == {"command": "new", "stdout": "out"}
+
+
+def test_specified_regex_recipe_needs_original_regex() -> None:
+    raw_recipe: RawRecipe = {"phony": True, "regex": True}
+    with pytest.raises(RuntimeError, match="original_regex must be specified"):
+        Recipe("target", raw_recipe, pathlib.Path(), {}, {}, extra=[], specified=True)
+
+
+def test_specified_regex_recipe_needs_matching_regex() -> None:
+    raw_recipe: RawRecipe = {"phony": True, "regex": True}
+    with pytest.raises(RuntimeError, match="does not match"):
+        Recipe(
+            "target",
+            raw_recipe,
+            pathlib.Path(),
+            {},
+            {},
+            extra=[],
+            original_regex="mismatch",
+            specified=True,
+        )
 
 
 @pytest.mark.parametrize(
@@ -102,6 +153,61 @@ def test_c3_sort_detects_cycles() -> None:
     dag.add_node(node)
     with pytest.raises(ValueError, match="Cannot compute c3_sort"):
         dag.c3_sort()
+
+
+def test_c3_sort_reraises_recursion_error() -> None:
+    root = Node(target="target")
+    node = Node(target="requirement")
+    root.add_requirement(node)
+    dag = DAG(root)
+    dag.add_node(node)
+    with (
+        mock.patch.object(DAG, "_merge", side_effect=RecursionError),
+        pytest.raises(ValueError, match="Cannot compute c3_sort"),
+    ):
+        dag.c3_sort()
+
+
+def test_flatten_vars_raises_on_dotted_var() -> None:
+    with pytest.raises(ValueError, match="Only implicit vars can start with a dot"):
+        flatten_vars({"local": {".x": "1"}}, PATH)
+
+
+@pytest.mark.parametrize(
+    ("success", "retries"),
+    [
+        (False, 0),
+        (True, 1),
+        (True, 0),
+    ],
+)
+def test_command_report_print(
+    success: bool,
+    retries: int,
+    capsys: mock.MagicMock,  # upgrade: pytest: check for isatty
+) -> None:
+    report = CommandReport(
+        command="ls", retries=retries, timing=Timing(seconds=1), success=success
+    )
+    report.print(cols=80)
+    captured = capsys.readouterr()
+    assert captured.out == "`ls`1.00s" + os.linesep
+    assert captured.err == ""
+
+
+@mock.patch(
+    "os.get_terminal_size", new=mock.MagicMock(return_value=os.terminal_size((80, 24)))
+)
+def test_print_reports(
+    capsys: mock.MagicMock,  # upgrade: pytest: check for isatty
+) -> None:
+    report = CommandReport(
+        command="ls", retries=0, timing=Timing(seconds=1), success=True
+    )
+    print_reports([report])
+    captured = capsys.readouterr()
+    assert "Yam Report" in captured.out
+    assert "`ls`" in captured.out
 
 
 @pytest.mark.parametrize("obj", [("string in a tuple",), None])

@@ -34,3 +34,20 @@ phony_requirement:
   phony: true
   commands:
     - echo ${.target}
+
+existence_not_phony:
+  existence_check:
+    command: sub
+  commands:
+    - ls
+
+existence_not_exists_only:
+  phony: true
+  existence_check:
+    command: sub
+  commands:
+    - ls
+
+dir/file_in_dir:
+  commands:
+    - echo should_not_run
