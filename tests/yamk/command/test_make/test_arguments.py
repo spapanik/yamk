@@ -106,6 +106,58 @@ def test_make_echo_in_recipe(
     assert captured.err == ""
 
 
+@mock.patch("yamk.command.make.print_reports")
+@mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
+def test_timing_report_success_flag(
+    runner: mock.MagicMock, print_reports: mock.MagicMock
+) -> None:
+    make_command = get_make_command(
+        cookbook_name=COOKBOOK, target="echo", print_timing_report=True
+    )
+    make_command.make()
+    assert runner.call_count == 1
+    assert len(make_command.reports) == 1
+    assert make_command.reports[0].success is True
+
+
+@mock.patch("yamk.command.make.print_reports")
+@mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_failure)
+def test_timing_report_failure_flag(
+    runner: mock.MagicMock, print_reports: mock.MagicMock
+) -> None:
+    make_command = get_make_command(
+        cookbook_name=COOKBOOK, target="echo", print_timing_report=True
+    )
+    with pytest.raises(SystemExit) as exc_info:
+        make_command.make()
+    assert exc_info.value.code == 42
+    assert runner.call_count == 1
+    assert len(make_command.reports) == 1
+    assert make_command.reports[0].success is False
+
+
+@mock.patch("yamk.command.make.print_reports")
+@mock.patch("yamk.command.make.sleep")
+@mock.patch("yamk.command.make.subprocess.run")
+def test_timing_report_retry_then_success(
+    runner: mock.MagicMock,
+    sleep_mock: mock.MagicMock,  # noqa: ARG001
+    print_reports: mock.MagicMock,
+) -> None:
+    runner.side_effect = [
+        mock.MagicMock(returncode=1),
+        mock.MagicMock(returncode=0),
+    ]
+    make_command = get_make_command(
+        cookbook_name=COOKBOOK, target="echo", print_timing_report=True, retries=1
+    )
+    make_command.make()
+    assert runner.call_count == 2
+    assert len(make_command.reports) == 1
+    assert make_command.reports[0].success is True
+    assert make_command.reports[0].retries == 1
+
+
 @mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
 def test_make_echo_in_command(
     runner: mock.MagicMock,

@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 - Dropped support for python 3.9
 
+### Fixed
+
+- Fixed timing report always marking commands as failed (🔴) regardless of exit code
+
 ## [8.1.2] - 2024-10-18
 
 ### Fixed

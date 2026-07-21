@@ -109,7 +109,7 @@ class MakeCommand:
                 sleep(a)
 
         report = CommandReport(
-            command=command, timing=stopwatch.elapsed, retries=i, success=False
+            command=command, timing=stopwatch.elapsed, retries=i, success=(status == 0)
         )
         self.reports.append(report)
         return status
