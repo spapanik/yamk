@@ -1,13 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal, TypedDict
+from typing import Literal, TypedDict, Unpack
 from unittest import mock
 
 from yamk.command.make import MakeCommand
-
-if TYPE_CHECKING:
-    from typing_extensions import Unpack  # upgrade: py3.10: import from typing
 
 TEST_DATA_ROOT = Path(__file__).resolve().parent.joinpath("data")
 TEST_COOKBOOK = TEST_DATA_ROOT.joinpath("mk.toml")

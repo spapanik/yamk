@@ -6,7 +6,7 @@ import re
 import shlex
 import warnings
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from re import Match
 from typing import TYPE_CHECKING, Any, Literal, TypeVar, cast
 
@@ -459,7 +459,7 @@ def extract_options(string: str) -> tuple[str, set[str]]:
 def human_readable_timestamp(timestamp: float) -> str:
     if math.isinf(timestamp):
         return "end of time"
-    return str(datetime.fromtimestamp(timestamp, tz=timezone.utc))
+    return str(datetime.fromtimestamp(timestamp, tz=UTC))
 
 
 def print_reports(reports: list[CommandReport]) -> None:

@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Protocol, TypedDict
-
-if TYPE_CHECKING:
-    from typing_extensions import Required, Self  # upgrade: py3.10: import from typing
+from typing import Protocol, Required, Self, TypedDict
 
 Pathlike = str | Path
 

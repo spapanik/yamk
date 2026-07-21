@@ -4,16 +4,13 @@ import sys
 from argparse import REMAINDER, ArgumentParser, BooleanOptionalAction
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, Self
 
 from yamk.__version__ import __version__
 from yamk.lib.utils import SUPPORTED_FILE_EXTENSIONS
 
 if TYPE_CHECKING:
     from argparse import Namespace
-
-    from typing_extensions import Self  # upgrade: py3.10: import from typing
-
 
 sys.tracebacklimit = 0
 
