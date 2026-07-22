@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 ### Fixed
 
 - Fixed timing report always marking commands as failed (🔴) regardless of exit code
+- Fixed missing `$globals.version` raising a bare `KeyError` instead of a clear error message
 
 ## [8.1.2] - 2024-10-18
 

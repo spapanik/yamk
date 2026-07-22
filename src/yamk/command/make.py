@@ -357,4 +357,9 @@ class MakeCommand:
         ).print()
 
     def _get_version(self) -> Version:
-        return Version.from_string(self.globals["version"])
+        try:
+            version_str = self.globals["version"]
+        except KeyError:
+            msg = "This cookbook is missing the required $globals.version"
+            raise RuntimeError(msg) from None
+        return Version.from_string(version_str)

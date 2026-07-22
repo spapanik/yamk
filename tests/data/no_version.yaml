@@ -1,0 +1,4 @@
+phony:
+  phony: true
+  commands:
+    - echo ${.target}
