@@ -64,7 +64,7 @@ class MakeCommand:
         self.base_dir = cookbook.parent
         self.phony_dir = self.base_dir.joinpath(".yamk")
         self.arg_vars = variables
-        parsed_cookbook = ConfigParser([cookbook], force_type=cookbook_type).data
+        parsed_cookbook = ConfigParser(cookbook, force_type=cookbook_type).data
         self.globals = parsed_cookbook.pop("$globals", {})
         self.version = self._get_version()
         if self.version > Version.from_string(__version__):

@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "uv_build>=0.11.0,<0.12.0",
+    "uv_build>=0.12.0,<0.13",
 ]
 build-backend = "uv_build"
 
@@ -30,8 +30,8 @@ classifiers = [
 
 requires-python = ">=3.11"
 dependencies = [
-    "dj_settings~=8.0",
-    "pyutilkit~=0.11",
+    "dj_settings~=9.0",
+    "pyutilkit~=0.13",
 ]
 
 [project.urls]
@@ -46,16 +46,16 @@ yam = "yamk.__main__:main"
 [dependency-groups]
 dev = [
     "ipdb~=0.13",
-    "ipython~=9.15",
+    "ipython~=9.17",
     "ptpython~=3.0",
     { include-group = "lint" },
     { include-group = "test" },
     { include-group = "docs" },
 ]
 lint = [
-    "mypy~=2.3",                     # Keep mypy for CI/CD
-    "ruff~=0.15",
-    "ty~=0.0.61",
+    "mypy~=2.4",                     # Keep mypy for CI/CD
+    "ruff~=0.16",
+    "ty~=0.0.84",
     { include-group = "test_core" },
 ]
 test = [
@@ -69,8 +69,8 @@ docs = [
     "mkdocs~=1.6",
     "mkdocs-material~=9.7",
     "mkdocs-material-extensions~=1.3",
-    "pygments~=2.20",
-    "pymdown-extensions~=11.0",
+    "pygments~=2.21",
+    "pymdown-extensions~=12.0",
 ]
 
 [tool.mypy]
@@ -115,6 +115,7 @@ select = [
 ]
 ignore = [
     "C901",   # Adding a limit to complexity is too arbitrary
+    "CPY001", # Use only a project copyright
     "COM812", # Avoid conflicts with the formatter
     "D10",    # Not everything needs a docstring
     "D203",   # Prefer `no-blank-line-before-class` (D211)
