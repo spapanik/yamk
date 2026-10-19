@@ -311,3 +311,20 @@ def test_version_parsing(version: str, major: int, minor: int, patch: int) -> No
 )
 def test_version_comparison(old_version: str, new_version: str) -> None:
     assert Version.from_string(old_version) < Version.from_string(new_version)
+
+
+@mock.patch("os.get_terminal_size", side_effect=OSError("not a terminal"))
+def test_print_reports_without_terminal(
+    terminal_size: mock.MagicMock,
+    capsys: mock.MagicMock,
+) -> None:
+    report = CommandReport(
+        command="ls", retries=0, timing=Timing(seconds=1), success=True
+    )
+    print_reports([report])
+    captured = capsys.readouterr()
+    assert "Yam Report" in captured.out
+    assert "`ls`" in captured.out
+    assert "1.00s" in captured.out
+    assert captured.err == ""
+    terminal_size.assert_called()

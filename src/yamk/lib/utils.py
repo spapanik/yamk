@@ -4,6 +4,7 @@ import math
 import os
 import re
 import shlex
+import shutil
 import warnings
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -465,7 +466,7 @@ def human_readable_timestamp(timestamp: float) -> str:
 def print_reports(reports: list[CommandReport]) -> None:
     SGRString("Yam Report", params=[SGRCodes.BOLD]).header(padding="=")
 
-    cols = os.get_terminal_size().columns
+    cols = shutil.get_terminal_size().columns
     for report in reports:
         report.print(cols)
 
