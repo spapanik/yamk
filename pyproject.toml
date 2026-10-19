@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "uv_build>=0.12.0,<0.13",
+    "uv_build>=0.11.0,<0.14",
 ]
 build-backend = "uv_build"
 
@@ -55,7 +55,7 @@ dev = [
 lint = [
     "mypy~=2.4",                     # Keep mypy for CI/CD
     "ruff~=0.16",
-    "ty~=0.0.84",
+    "ty~=0.0.89",
     { include-group = "test_core" },
 ]
 test = [
