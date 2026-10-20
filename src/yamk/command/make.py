@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import itertools
-import os
 import pathlib
 import re
 import subprocess
@@ -199,7 +198,7 @@ class MakeCommand:
                         f"    requires: {node.requires}",
                         f"    required_by: {node.required_by}",
                     ]
-                ).print(sep=os.linesep)
+                ).print(sep="\n")
         return dag
 
     def _update_ts(self, node: Node) -> None:

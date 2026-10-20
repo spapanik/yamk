@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 - Fixed timing report always marking commands as failed (🔴) regardless of exit code
 - Fixed timing reports crashing when output is redirected or no terminal is available
 - Fixed missing `$globals.version` raising a bare `KeyError` instead of a clear error message
+- Fixed extra carriage returns in verbose target output on Windows
 
 ## [8.1.2] - 2024-10-18
 
@@ -487,7 +488,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.1.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
-[Unreleased]: https://github.com/spapanik/yamk/compare/v8.1.2...main
+[Unreleased]: https://github.com/spapanik/yamk/compare/v8.2.0...main
+[8.2.0]: https://github.com/spapanik/yamk/compare/v8.1.2...v8.2.0
 [8.1.2]: https://github.com/spapanik/yamk/compare/v8.1.1...v8.1.2
 [8.1.1]: https://github.com/spapanik/yamk/compare/v8.1.0...v8.1.1
 [8.1.0]: https://github.com/spapanik/yamk/compare/v8.0.0...v8.1.0

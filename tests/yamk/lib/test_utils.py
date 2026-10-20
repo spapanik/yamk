@@ -191,7 +191,7 @@ def test_command_report_print(
     )
     report.print(cols=80)
     captured = capsys.readouterr()
-    assert captured.out == "`ls`1.00s" + os.linesep
+    assert captured.out == "`ls`1.00s\n"
     assert captured.err == ""
 
 

@@ -1,4 +1,3 @@
-import os
 from unittest import mock
 
 import pytest
@@ -22,15 +21,19 @@ def test_make_dry_run(
         "✅ `echo 'echo'` run successfully!",
     )
     captured = capsys.readouterr()
-    assert captured.out == os.linesep.join(expected_out_lines) + os.linesep
+    assert captured.out == "\n".join(expected_out_lines) + "\n"
     assert captured.err == ""
 
 
+@pytest.mark.parametrize("linesep", ["\n", "\r\n"], ids=["unix", "windows"])
 @mock.patch("yamk.command.make.subprocess.run", new_callable=runner_exit_success)
 def test_make_verbosity(
     runner: mock.MagicMock,
     capsys: mock.MagicMock,  # upgrade: pytest: check for isatty
+    monkeypatch: pytest.MonkeyPatch,
+    linesep: str,
 ) -> None:
+    monkeypatch.setattr("os.linesep", linesep)
     make_command = get_make_command(cookbook_name=COOKBOOK, target="echo", verbosity=4)
     make_command.make()
     assert runner.call_count == 1
@@ -49,7 +52,7 @@ def test_make_verbosity(
         "✅ `echo 'echo'` run successfully!",
     )
     captured = capsys.readouterr()
-    assert captured.out == os.linesep.join(expected_out_lines) + os.linesep
+    assert captured.out == "\n".join(expected_out_lines) + "\n"
     assert captured.err == ""
 
 
@@ -82,7 +85,7 @@ def test_make_echo_failed_command(
         "❌ `echo 'echo'` failed with exit code 42",
     )
     captured = capsys.readouterr()
-    assert captured.out == os.linesep.join(expected_out_lines) + os.linesep
+    assert captured.out == "\n".join(expected_out_lines) + "\n"
     assert captured.err == ""
 
 
@@ -102,7 +105,7 @@ def test_make_echo_in_recipe(
         "✅ `echo 'echo'` run successfully!",
     )
     captured = capsys.readouterr()
-    assert captured.out == os.linesep.join(expected_out_lines) + os.linesep
+    assert captured.out == "\n".join(expected_out_lines) + "\n"
     assert captured.err == ""
 
 
@@ -168,5 +171,5 @@ def test_make_echo_in_command(
         "✅ `echo 'echo_in_command'` run successfully!",
     )
     captured = capsys.readouterr()
-    assert captured.out == os.linesep.join(expected_out_lines) + os.linesep
+    assert captured.out == "\n".join(expected_out_lines) + "\n"
     assert captured.err == ""
