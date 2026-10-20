@@ -6,7 +6,7 @@ build-backend = "uv_build"
 
 [project]
 name = "yamk"
-version = "8.1.2"
+version = "8.2.0"
 
 authors = [
     { name = "Stephanos Kuma", email = "stephanos@kuma.ai" },
