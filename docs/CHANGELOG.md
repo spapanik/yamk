@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+## [8.2.0] - 2026-10-20
+
 ### Changed
 
 - Dropped support for python 3.9
